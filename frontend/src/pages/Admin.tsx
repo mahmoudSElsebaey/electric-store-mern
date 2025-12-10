@@ -14,8 +14,7 @@ type Product = {
 };
 
 export default function Admin() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { state, dispatch } = useStore();
+  const { dispatch } = useStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
