@@ -1,32 +1,55 @@
 import { Link } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useToast } from "../context/ToastContext";
 
 export default function Cart() {
   const { state, dispatch } = useStore();
   const { cart } = state;
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+
+  // التحقق من تسجيل الدخول قبل عرض السلة
+  useEffect(() => {
+    if (!state.isAuthenticated) {
+      showToast("يجب تسجيل الدخول لعرض السلة!", "error");
+      navigate("/login");
+    }
+  }, [state.isAuthenticated, navigate, showToast]);
+
+  if (!state.isAuthenticated) return null; // أو loading
 
   const removeFromCart = (id: string) => {
     dispatch({ type: "REMOVE_FROM_CART", payload: id });
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+  const increaseQuantity = (id: string) => {
+    dispatch({ type: "INCREASE_QTY", payload: id });
+  };
+
+  const decreaseQuantity = (id: string) => {
+    dispatch({ type: "DECREASE_QTY", payload: id });
+  };
+
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.price * (item.quantity || 1),
+    0
+  );
 
   if (cart.length === 0) {
     return (
-      <>
-        
-        <div className="min-h-screen bg-gray-50 py-20 text-center">
-          <h1 className="text-5xl font-bold text-gray-800 mb-8">
-            السلة فارغة 🛒
-          </h1>
-          <Link
-            to="/"
-            className="text-2xl bg-blue-600 text-white px-10 py-5 rounded-xl hover:bg-blue-700 transition"
-          >
-            تصفح المنتجات
-          </Link>
-        </div>
-      </>
+      <div className="min-h-screen bg-gray-50 py-20 text-center">
+        <h1 className="text-5xl font-bold text-gray-800 mb-8">
+          السلة فارغة 🛒
+        </h1>
+        <Link
+          to="/"
+          className="text-2xl bg-blue-600 text-white px-10 py-5 rounded-xl hover:bg-blue-700 transition"
+        >
+          تصفح المنتجات
+        </Link>
+      </div>
     );
   }
 
@@ -50,11 +73,34 @@ export default function Cart() {
               />
               <div className="flex-1">
                 <h3 className="text-2xl font-bold">{item.name}</h3>
-                <p className="text-gray-600">{item.brand}</p>
+                <p className="text-gray-600">{item.brand?.name}</p>
+                <p className="text-gray-600">{item.category?.name}</p>
               </div>
-              <div className="text-3xl font-bold text-blue-600">
-                {item.price} ج.م
+
+              {/* خيارات الكمية */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center gap-2 text-xl">
+                  <button
+                    onClick={() => decreaseQuantity(item._id)}
+                    className="px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300"
+                  >
+                    -
+                  </button>
+                  <span className="text-2xl font-bold">
+                    {item.quantity || 1}
+                  </span>
+                  <button
+                    onClick={() => increaseQuantity(item._id)}
+                    className="px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="text-3xl font-bold text-blue-600 mt-2">
+                  {(item.price * (item.quantity || 1)).toLocaleString()} ج.م
+                </div>
               </div>
+
               <button
                 onClick={() => removeFromCart(item._id)}
                 className="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition text-xl"
@@ -66,9 +112,24 @@ export default function Cart() {
 
           <div className="mt-12 text-right">
             <div className="text-4xl font-bold text-gray-800 mb-8">
-              الإجمالي: <span className="text-blue-600">{totalPrice} ج.م</span>
+              الإجمالي:{" "}
+              <span className="text-blue-600">
+                {totalPrice.toLocaleString()} ج.م
+              </span>
             </div>
-            <button className="bg-green-600 text-white text-3xl px-16 py-6 rounded-2xl hover:bg-green-700 transition font-bold">
+            <button
+              onClick={() => {
+                if (!state.isAuthenticated) {
+                  showToast("يجب تسجيل الدخول لإتمام الشراء!", "error");
+
+                  navigate("/login");
+                } else {
+                  // روح لصفحة Checkout أو اعمل اللي عايزه
+                  showToast("جاري توجيهك لإتمام الشراء...", "success");
+                }
+              }}
+              className="bg-green-600 text-white text-3xl px-16 py-6 rounded-2xl hover:bg-green-700 transition font-bold"
+            >
               إتمام الشراء 💳
             </button>
           </div>

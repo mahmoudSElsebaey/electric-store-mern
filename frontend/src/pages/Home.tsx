@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 // src/pages/Home.tsx
 import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
@@ -10,149 +9,98 @@ type Product = {
   description: string;
   price: number;
   image: string;
-  brand: string;
-  category: string;
+  brand: { _id: string; name: string };
+  category: { _id: string; name: string };
   countInStock: number;
 };
 
+const PRODUCTS_PER_PAGE = 8;
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filtered, setFiltered] = useState<Product[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // حالات الفلاتر
-  const [search, setSearch] = useState("");
-  const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-
-  // جلب المنتجات
+  // جلب كل المنتجات مرة واحدة
   useEffect(() => {
-    api.get("/products")
-      .then(res => {
+    api
+      .get("/products")
+      .then((res) => {
         setProducts(res.data);
-        setFiltered(res.data);
+        setDisplayedProducts(res.data.slice(0, PRODUCTS_PER_PAGE));
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+      });
   }, []);
 
-  
+  // زرار عرض المزيد
+  const loadMore = () => {
+    setLoadingMore(true);
+    setTimeout(() => { // لإضافة تأثير تحميل بسيط
+      const currentLength = displayedProducts.length;
+      const moreProducts = products.slice(currentLength, currentLength + PRODUCTS_PER_PAGE);
+      setDisplayedProducts([...displayedProducts, ...moreProducts]);
+      setLoadingMore(false);
+    }, 500);
+  };
 
-  // تطبيق الفلاتر
-  useEffect(() => {
-    let result = products;
-
-    if (search) {
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.brand.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-
-    if (brand) {
-      result = result.filter(p => p.brand === brand);
-    }
-
-    if (category) {
-      result = result.filter(p => p.category === category);
-    }
-
-    if (minPrice) {
-      result = result.filter(p => p.price >= Number(minPrice));
-    }
-
-    if (maxPrice) {
-      result = result.filter(p => p.price <= Number(maxPrice));
-    }
-
-    setFiltered(result);
-  }, [search, brand, category, minPrice, maxPrice, products]);
-
-  // استخراج الماركات والتصنيفات الفريدة
-  const brands = [...new Set(products.map(p => p.brand))];
-  const categories = [...new Set(products.map(p => p.category))];
+  const hasMore = displayedProducts.length < products.length;
 
   return (
     <>
-      
+      <h2 className="text-6xl font-bold text-gray-800 text-center my-12">
+        أحدث المنتجات ⚡
+      </h2>
 
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 pb-20">
         <div className="max-w-7xl mx-auto px-6">
-
-          {/* شريط البحث والفلاتر */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 mb-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-
-              {/* البحث */}
-              <input
-                type="text"
-                placeholder="ابحث بالاسم أو الماركة..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg"
-              />
-
-              {/* فلتر الماركة */}
-              <select 
-                value={brand} 
-                onChange={(e) => setBrand(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg"
-              >
-                <option value="">كل الماركات</option>
-                {brands.map(b => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
-
-              {/* فلتر التصنيف */}
-              <select 
-                value={category} 
-                onChange={(e) => setCategory(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg"
-              >
-                <option value="">كل التصنيفات</option>
-                {categories.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-
-              {/* فلتر السعر */}
-              <input
-                type="number"
-                placeholder="السعر من"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg"
-              />
-
-              <input
-                type="number"
-                placeholder="السعر إلى"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg"
-              />
-            </div>
-
-            {/* عدد النتائج */}
-            <p className="text-right mt-4 text-xl text-gray-600">
-              عرض {filtered.length} من {products.length} منتج
-            </p>
-          </div>
-
           {/* المنتجات */}
           {loading ? (
-            <div className="text-center py-20 text-3xl text-blue-600">جاري التحميل...</div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-20 text-3xl text-gray-500">لا توجد منتجات</div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filtered.map(product => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+            <div className="text-center py-32">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+              <p className="mt-6 text-2xl text-gray-600">جاري تحميل المنتجات...</p>
             </div>
+          ) : displayedProducts.length === 0 ? (
+            <div className="text-center py-32 text-3xl text-gray-500">
+              لا توجد منتجات متاحة حاليًا
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {displayedProducts.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))}
+              </div>
+
+              {/* زرار عرض المزيد */}
+              {hasMore && (
+                <div className="text-center mt-16">
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-2xl font-bold px-12 py-6 rounded-2xl transition transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed shadow-xl"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <span className="inline-block animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-white mr-4"></span>
+                        جاري التحميل...
+                      </>
+                    ) : (
+                      "عرض المزيد"
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {!hasMore && products.length > PRODUCTS_PER_PAGE && (
+                <div className="text-center mt-16 text-2xl text-gray-600">
+                  تم عرض كل المنتجات ({products.length} منتج)
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

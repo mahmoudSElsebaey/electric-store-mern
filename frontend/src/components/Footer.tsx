@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-gray-900 to-black text-white py-16 mt-20">
+    <footer className="bg-linear-to-r from-gray-900 to-black text-white py-16 mt-20">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
         
         {/* العمود الأول - المتجر */}

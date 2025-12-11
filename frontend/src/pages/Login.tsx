@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/pages/Login.tsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import api from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const navigate = useNavigate();
   const { dispatch } = useStore();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -27,11 +28,11 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
-      alert("تم تسجيل الدخول بنجاح! 🎉");
+       showToast("تم تسجيل الدخول بنجاح", "success");
       navigate("/");
     } catch (err: any) {
       const message = err.response?.data?.message || "بيانات الدخول غير صحيحة";
-      alert(message);
+      showToast(message, "error");
     } finally {
       setLoading(false);
     }

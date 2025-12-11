@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/pages/Register.tsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import api from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 export default function Register() {
   const navigate = useNavigate();
   const { dispatch } = useStore();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,12 +23,12 @@ export default function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("كلمتا المرور غير متطابقتين!");
+      showToast("كلمتا المرور غير متطابقتين!", "error");
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل", "error");
       return;
     }
 
@@ -44,11 +45,11 @@ export default function Register() {
       localStorage.setItem("token", res.data.token);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
-      alert("تم إنشاء الحساب بنجاح! 🎉");
+      showToast("تم إنشاء الحساب بنجاح! 🎉", "success");
       navigate("/");
     } catch (err: any) {
       const message = err.response?.data?.message || "حدث خطأ أثناء التسجيل";
-      alert(message);
+      showToast(message, "error");
     } finally {
       setLoading(false);
     }
@@ -145,7 +146,7 @@ export default function Register() {
         {/* الفوتر */}
         <div className="bg-gray-50 p-8 text-center">
           <p className="text-gray-600">
-            لديك حساب بالفعل؟{" "}
+            لديك حساب بالفعل؟
             <Link
               to="/login"
               className="text-blue-600 font-bold hover:underline"

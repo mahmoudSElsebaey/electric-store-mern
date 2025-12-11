@@ -2,21 +2,23 @@ import express from "express";
 import { connectDB } from "./config/db/connectDB.js";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import productRoutes from "./src/modules/Products/product.route.js";
 import authRoutes from "./src/modules/Auth/auth.route.js";
 
 dotenv.config();
 
-// console.log("ENV Values:", {
-//   name: process.env.CLOUDINARY_CLOUD_NAME,
-//   key: process.env.CLOUDINARY_API_KEY,
-//   secret: process.env.CLOUDINARY_API_SECRET ? "exists" : "missing",
-// });
-
 const port = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",  
+    credentials: true,
+  })
+);
+// app.options("*", cors());
+app.use(cookieParser());
 app.use(express.json());
 connectDB();
 

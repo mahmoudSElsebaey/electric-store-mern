@@ -1,77 +1,242 @@
-// server/seed.js
- 
 import dotenv from "dotenv";
-import Product from "./src/models/product.model.js";
 import { connectDB } from "./config/db/connectDB.js";
- 
- 
-
+import Product from "./src/models/product.model.js";
+import Category from "./src/models/category.model.js";
+import Brand from "./src/models/brand.model.js";
 dotenv.config();
 
-const sampleProducts = [
+const categoriesData = [
+  { name: "غسالات", description: "غسالات ملابس أوتوماتيك وفوق أوتوماتيك" },
+  { name: "ثلاجات", description: "ثلاجات وفريزرات نوفروست" },
+  { name: "تكييفات", description: "تكييفات سبليت وشباك" },
+  { name: "خلاطات", description: "خلاطات وكبّات متعددة الاستخدامات" },
+  { name: "مكانس", description: "مكانس كهربائية عادية وروبوت" },
+  { name: "مكاوي", description: "مكاوي بخار وعادية" },
+  { name: "ميكروويف", description: "أفران ميكروويف" },
+  { name: "توستر", description: "توستر وشوايات خبز" },
+  { name: "قهوة ميكرز", description: "ماكينات قهوة وكبسولات" },
+  { name: "غسالة أطباق", description: "غسالات أطباق مدمجة ومنفصلة" },
+];
+
+const brandsData = [
+  { name: "LG" },
+  { name: "Samsung" },
+  { name: "Toshiba" },
+  { name: "Sharp" },
+  { name: "Bosch" },
+  { name: "Whirlpool" },
+  { name: "Beko" },
+  { name: "Unionaire" },
+  { name: "Kenwood" },
+  { name: "Braun" },
+  { name: "Philips" },
+  { name: "Nespresso" },
+];
+
+const productsData = [
+  // غسالات (4)
   {
-    name: "مفك عازل 1000V - Wera",
-    description: "مفك عازل ألماني عالي الجودة 1000 فولت",
-    price: 185,
-    image: "https://images.unsplash.com/photo-1581092583633-2d565a9f5e9f?w=800",
-    brand: "Wera",
-    category: "مفكات",
-    countInStock: 15,
+    name: "غسالة LG أوتوماتيك 10 كجم",
+    price: 18500,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "LG",
+    category: "غسالات",
+    countInStock: 12,
   },
   {
-    name: "كماشة قطع 8 بوصة - Knipex",
-    description: "كماشة ألماني قوية جدًا للأسلاك والكابلات",
-    price: 220,
-    image: "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=800",
-    brand: "Knipex",
-    category: "كماشات",
+    name: "غسالة Samsung 9 كجم ديجيتال",
+    price: 16200,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Samsung",
+    category: "غسالات",
     countInStock: 8,
   },
   {
-    name: "متر قياس 5 متر - Stanley",
-    description: "متر قياس ضد الصدمات والكسر",
-    price: 95,
-    image: "https://images.unsplash.com/photo-1581092921461-7f65d1c5712e?w=800",
-    brand: "Stanley",
-    category: "أدوات قياس",
-    countInStock: 25,
+    name: "غسالة Toshiba فوق أوتوماتيك 12 كجم",
+    price: 9800,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Toshiba",
+    category: "غسالات",
+    countInStock: 20,
   },
   {
-    name: "شنيور 710 واط - Bosch",
-    description: "شنيور احترافي بسرعات متغيرة",
-    price: 2850,
+    name: "غسالة Beko 8 كجم",
+    price: 13500,
     image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
-    brand: "Bosch",
-    category: "ماكينات",
+    brand: "Beko",
+    category: "غسالات",
+    countInStock: 15,
+  },
+
+  // ثلاجات (4)
+  {
+    name: "ثلاجة LG 600 لتر نوفروست",
+    price: 28900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "LG",
+    category: "ثلاجات",
     countInStock: 5,
   },
   {
-    name: "طقم لقم 32 قطعة - Makita",
-    description: "طقم لقم عالي التحمل مع علبة",
-    price: 650,
-    image: "https://images.unsplash.com/photo-1581093577422-7e8d9e3e3f2c?w=800",
-    brand: "Makita",
-    category: "إكسسوارات",
-    countInStock: 12,
+    name: "ثلاجة Samsung 500 لتر إنفرتر",
+    price: 25900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Samsung",
+    category: "ثلاجات",
+    countInStock: 7,
+  },
+  {
+    name: "ثلاجة Sharp 450 لتر",
+    price: 18900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Sharp",
+    category: "ثلاجات",
+    countInStock: 10,
+  },
+  {
+    name: "ثلاجة Whirlpool 550 لتر",
+    price: 27500,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Whirlpool",
+    category: "ثلاجات",
+    countInStock: 6,
+  },
+
+  // تكييفات (3)
+  {
+    name: "تكييف Unionaire سبليت 1.5 حصان بارد",
+    price: 14500,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Unionaire",
+    category: "تكييفات",
+    countInStock: 18,
+  },
+  {
+    name: "تكييف LG إنفرتر 2.25 حصان بارد/ساخن",
+    price: 22900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "LG",
+    category: "تكييفات",
+    countInStock: 9,
+  },
+  {
+    name: "تكييف Sharp 3 حصان",
+    price: 28900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Sharp",
+    category: "تكييفات",
+    countInStock: 4,
+  },
+
+  // خلاطات ومكانس ومكاوي (4)
+  {
+    name: "خلاط Kenwood 1000 وات",
+    price: 1890,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Kenwood",
+    category: "خلاطات",
+    countInStock: 25,
+  },
+  {
+    name: "خلاط Braun متعدد الاستخدامات",
+    price: 1590,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Braun",
+    category: "خلاطات",
+    countInStock: 30,
+  },
+  {
+    name: "مكنسة Bosch كيس",
+    price: 4500,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Bosch",
+    category: "مكانس",
+    countInStock: 14,
+  },
+  {
+    name: "مكواة بخار Philips",
+    price: 1290,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Philips",
+    category: "مكاوي",
+    countInStock: 22,
+  },
+
+  // ميكروويف وتوستر وقهوة وغسالة أطباق (5)
+  {
+    name: "ميكروويف Samsung 40 لتر",
+    price: 6900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Samsung",
+    category: "ميكروويف",
+    countInStock: 11,
+  },
+  {
+    name: "توستر Kenwood 4 شرائح",
+    price: 890,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Kenwood",
+    category: "توستر",
+    countInStock: 28,
+  },
+  {
+    name: "ماكينة قهوة Nespresso",
+    price: 4900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Nespresso",
+    category: "قهوة ميكرز",
+    countInStock: 15,
+  },
+  {
+    name: "غسالة أطباق Bosch 13 فرد",
+    price: 28900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Bosch",
+    category: "غسالة أطباق",
+    countInStock: 5,
+  },
+  {
+    name: "غسالة أطباق Whirlpool 12 فرد",
+    price: 24900,
+    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    brand: "Whirlpool",
+    category: "غسالة أطباق",
+    countInStock: 8,
   },
 ];
 
 const seedDB = async () => {
-  try {
-    await connectDB();
-    console.log("Connected to database...");
+  await connectDB();
 
-    await Product.deleteMany({});
-    console.log("Old products deleted");
+  await Category.deleteMany({});
+  await Brand.deleteMany({});
+  await Product.deleteMany({});
 
-    await Product.insertMany(sampleProducts);
-    console.log("✅ Successfully added 5 sample products!");
+  const createdCategories = await Category.insertMany(categoriesData);
+  const createdBrands = await Brand.insertMany(brandsData);
 
-    process.exit(0);
-  } catch (error) {
-    console.error("Error in seed:", error.message);
-    process.exit(1);
-  }
+  const categoryMap = createdCategories.reduce((map, cat) => {
+    map[cat.name] = cat._id;
+    return map;
+  }, {});
+
+  const brandMap = createdBrands.reduce((map, br) => {
+    map[br.name] = br._id;
+    return map;
+  }, {});
+
+  const mappedProducts = productsData.map((p) => ({
+    ...p,
+    brand: brandMap[p.brand],
+    category: categoryMap[p.category],
+  }));
+
+  await Product.insertMany(mappedProducts);
+
+  console.log(
+    `✅ تم إضافة ${mappedProducts.length} منتج، ${categoriesData.length} تصنيف، ${brandsData.length} براند بنجاح!`
+  );
+  process.exit();
 };
 
 seedDB();

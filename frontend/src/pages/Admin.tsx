@@ -3,19 +3,27 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { useStore } from "../context/StoreContext";
+import { useToast } from "../context/ToastContext";
 
 type Product = {
   _id: string;
   name: string;
   price: number;
-  brand: string;
+  brand: { name: string; _id?: string };
+  category: { name: string; _id?: string };
   countInStock: number;
+  description: string;
   image: string;
 };
+
+type Brand = { _id: string; name: string };
+type Category = { _id: string; name: string };
 
 export default function Admin() {
   const { dispatch } = useStore();
   const [products, setProducts] = useState<Product[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
@@ -27,19 +35,55 @@ export default function Admin() {
     category: "",
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const { showToast } = useToast();
 
   const fetchProducts = async () => {
     const res = await api.get("/products");
     setProducts(res.data);
+    dispatch({ type: "FETCH_SUCCESS", payload: res.data });
   };
+
+  const fetchBrandsAndCategories = async () => {
+    try {
+      const [brandsRes, categoriesRes] = await Promise.all([
+        api.get("/brands"),
+        api.get("/categories"),
+      ]);
+      setBrands(brandsRes.data);
+      setCategories(categoriesRes.data);
+    } catch (err) {
+      console.error("Failed to fetch brands or categories", err);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchBrandsAndCategories();
   }, []);
+
+  const startEdit = (p: Product) => {
+    setEditingProduct(p);
+    setFormData({
+      name: p.name,
+      price: p.price,
+      brand: p.brand._id || "",
+      countInStock: p.countInStock,
+      description: p.description,
+      category: p.category._id || "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("متأكد إنك عايز تحذف المنتج؟")) return;
+    await api.delete(`/products/${id}`);
+    fetchProducts();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = new FormData();
 
-    // ملء البيانات العادية
     data.append("name", formData.name);
     data.append("price", formData.price.toString());
     data.append("brand", formData.brand);
@@ -47,32 +91,22 @@ export default function Admin() {
     data.append("description", formData.description);
     data.append("category", formData.category);
 
-    // المهم: الصورة بس لو موجودة فعلاً
     if (imageFile) {
       data.append("image", imageFile);
     }
 
     try {
       if (editingProduct) {
-        // للتعديل: لو مفيش صورة جديدة، خلّي الصورة القديمة زي ما هي
-        if (!imageFile) {
-          data.append("image", editingProduct.image); // الصورة القديمة
-        }
         await api.put(`/products/${editingProduct._id}`, data);
       } else {
-        // للإضافة: الصورة مطلوبة
         if (!imageFile) {
-          alert("الصورة مطلوبة للمنتج الجديد!");
+          showToast("الصورة مطلوبة للمنتج الجديد!", "error");
           return;
         }
         await api.post("/products", data);
       }
 
-      fetchProducts();
-      dispatch({
-        type: "FETCH_SUCCESS",
-        payload: await (await api.get("/products")).data,
-      });
+      await fetchProducts();
       setShowForm(false);
       setEditingProduct(null);
       setFormData({
@@ -84,34 +118,14 @@ export default function Admin() {
         category: "",
       });
       setImageFile(null);
-      alert("تم الحفظ بنجاح! ✅");
+      showToast("تم الحفظ بنجاح! ✅", "success");
     } catch (err: any) {
       console.error("Error:", err.response?.data || err.message);
-      alert(
-        `خطأ في الحفظ: ${err.response?.data?.message || "مشكلة في السيرفر"}`
+      showToast(
+        `خطأ في الحفظ: ${err.response?.data?.message || "مشكلة في السيرفر"}`,
+        "error"
       );
     }
-  };
-  const handleDelete = async (id: string) => {
-    if (!confirm("متأكد إنك عايز تحذف المنتج؟")) return;
-    await api.delete(`/products/${id}`);
-    fetchProducts();
-    dispatch({
-      type: "FETCH_SUCCESS",
-      payload: await (await api.get("/products")).data,
-    });
-  };
-  const startEdit = (p: Product) => {
-    setEditingProduct(p);
-    setFormData({
-      name: p.name,
-      price: p.price,
-      brand: p.brand,
-      countInStock: p.countInStock,
-      description: "",
-      category: "",
-    });
-    setShowForm(true);
   };
 
   return (
@@ -142,6 +156,7 @@ export default function Admin() {
                 <h2 className="text-3xl font-bold mb-8 text-center">
                   {editingProduct ? "تعديل المنتج" : "إضافة منتج جديد"}
                 </h2>
+
                 <input
                   type="text"
                   placeholder="اسم المنتج"
@@ -152,6 +167,7 @@ export default function Admin() {
                   }
                   className="w-full p-4 mb-4 border rounded-xl text-xl"
                 />
+
                 <input
                   type="number"
                   placeholder="السعر"
@@ -162,16 +178,24 @@ export default function Admin() {
                   }
                   className="w-full p-4 mb-4 border rounded-xl text-xl"
                 />
-                <input
-                  type="text"
-                  placeholder="الماركة"
+
+                {/* قائمة الماركات */}
+                <select
                   required
                   value={formData.brand}
                   onChange={(e) =>
                     setFormData({ ...formData, brand: e.target.value })
                   }
                   className="w-full p-4 mb-4 border rounded-xl text-xl"
-                />
+                >
+                  <option value="">اختر الماركة</option>
+                  {brands.map((b) => (
+                    <option key={b._id} value={b._id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+
                 <input
                   type="number"
                   placeholder="الكمية المتاحة"
@@ -182,6 +206,24 @@ export default function Admin() {
                   }
                   className="w-full p-4 mb-4 border rounded-xl text-xl"
                 />
+
+                {/* قائمة التصنيفات */}
+                <select
+                  required
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="w-full p-4 mb-4 border rounded-xl text-xl"
+                >
+                  <option value="">اختر التصنيف</option>
+                  {categories.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+
                 <input
                   type="file"
                   accept="image/*"
@@ -195,6 +237,18 @@ export default function Admin() {
                       : "اختيار صورة (مطلوب)"
                   }
                 />
+
+                <input
+                  type="text"
+                  placeholder="وصف المنتج"
+                  required
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  className="w-full p-4 mb-6 border rounded-xl text-xl"
+                />
+
                 <div className="flex gap-4">
                   <button
                     type="submit"
@@ -238,7 +292,7 @@ export default function Admin() {
                       />
                     </td>
                     <td className="p-6 text-right font-bold">{p.name}</td>
-                    <td className="p-6 text-right">{p.brand}</td>
+                    <td className="p-6 text-right">{p.brand.name}</td>
                     <td className="p-6 text-right text-xl font-bold text-blue-600">
                       {p.price} ج.م
                     </td>

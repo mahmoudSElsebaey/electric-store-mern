@@ -3,21 +3,36 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import api from "../services/api";
 
+export type Brand = {
+  _id: string;
+  name: string;
+};
+
+export type Category = {
+  _id: string;
+  name: string;
+};
+
 export type Product = {
   _id: string;
   name: string;
   description: string;
   price: number;
   image: string;
-  brand: string;
-  category: string;
+  brand: { name: string };
+  category: { name: string };
   countInStock: number;
+  quantity?: number; // للسلة فقط
 };
 
 export type User = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  address?: string;
+  birthdate?: string;
+  additionalInfo?: { [key: string]: string };
   isAdmin: boolean;
 };
 
@@ -33,6 +48,8 @@ type Action =
   | { type: "FETCH_SUCCESS"; payload: Product[] }
   | { type: "ADD_TO_CART"; payload: Product }
   | { type: "REMOVE_FROM_CART"; payload: string }
+  | { type: "INCREASE_QTY"; payload: string }
+  | { type: "DECREASE_QTY"; payload: string }
   | { type: "LOGIN_SUCCESS"; payload: User }
   | { type: "LOGOUT" }
   | { type: "LOAD_CART"; payload: Product[] };
@@ -51,7 +68,17 @@ function reducer(state: State, action: Action): State {
       return { ...state, products: action.payload, loading: false };
 
     case "ADD_TO_CART": {
-      const newCart = [...state.cart, action.payload];
+      const exist = state.cart.find((item) => item._id === action.payload._id);
+      let newCart;
+      if (exist) {
+        newCart = state.cart.map((item) =>
+          item._id === action.payload._id
+            ? { ...item, quantity: (item.quantity || 1) + 1 }
+            : item
+        );
+      } else {
+        newCart = [...state.cart, { ...action.payload, quantity: 1 }];
+      }
       localStorage.setItem("cart", JSON.stringify(newCart));
       return { ...state, cart: newCart };
     }
@@ -62,15 +89,39 @@ function reducer(state: State, action: Action): State {
       return { ...state, cart: newCart };
     }
 
+    case "INCREASE_QTY": {
+      const newCart = state.cart.map((item) =>
+        item._id === action.payload
+          ? { ...item, quantity: (item.quantity || 1) + 1 }
+          : item
+      );
+      localStorage.setItem("cart", JSON.stringify(newCart));
+      return { ...state, cart: newCart };
+    }
+
+    case "DECREASE_QTY": {
+      const newCart = state.cart
+        .map((item) =>
+          item._id === action.payload
+            ? { ...item, quantity: Math.max(1, (item.quantity || 1) - 1) }
+            : item
+        )
+        .filter((item) => (item.quantity || 0) > 0);
+      localStorage.setItem("cart", JSON.stringify(newCart));
+      return { ...state, cart: newCart };
+    }
+
     case "LOAD_CART":
       return { ...state, cart: action.payload };
 
     case "LOGIN_SUCCESS":
+      localStorage.setItem("user", JSON.stringify(action.payload));
       return { ...state, user: action.payload, isAuthenticated: true };
 
     case "LOGOUT":
       localStorage.removeItem("token");
       localStorage.removeItem("cart");
+      localStorage.removeItem("user");
       return { ...state, user: null, isAuthenticated: false, cart: [] };
 
     default:
@@ -112,10 +163,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      // هنا ممكن نجيب بيانات اليوزر من /api/auth/me
-      // لكن دلوقتي هنسيبها لما نعمل الـ login
+      // هنا ممكن نجيب بيانات اليوزر من /api/auth/me لو عايز
+      // لكن حاليًا الـ login بيحدث الـ state
     }
   }, []);
+
+  // تحقق اذا كان المستخدم مسجل دخول
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/auth/me"); // يستخدم الكوكي تلقائي
+        dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
+      } catch (err) {
+        dispatch({ type: "LOGOUT" }); // مهم: لو مفيش توكن نشيل كل حاجة
+        console.log("غير مسجل دخول");
+      }
+    };
+    checkAuth();
+  }, [dispatch]);
 
   return (
     <StoreContext.Provider value={{ state, dispatch }}>

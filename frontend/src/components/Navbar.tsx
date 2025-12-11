@@ -1,23 +1,57 @@
-// src/components/Navbar.tsx
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
+import { useToast } from "../context/ToastContext";
+import api from "../services/api";
+import { useState, useRef, useEffect } from "react";
 
 export default function Navbar() {
   const { state, dispatch } = useStore();
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const cartCount = state.cart?.length || 0;
   const isAuthenticated = state.isAuthenticated;
   const user = state.user;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (err) {
+      console.error("Logout Error:", err);
+    }
+
     dispatch({ type: "LOGOUT" });
-    alert("تم تسجيل الخروج بنجاح!");
+    showToast("تم تسجيل الخروج بنجاح!", "success");
     navigate("/login");
   };
 
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      showToast("يجب تسجيل الدخول أولاً للوصول إلى السلة!", "error");
+      navigate("/login");
+      return;
+    }
+    navigate("/cart");
+  };
+
+  // إغلاق الـ dropdown لما نضغط خارج منه
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
+    <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
         {/* اللوجو */}
         <Link
@@ -35,8 +69,8 @@ export default function Navbar() {
           <Link to="/" className="hover:text-yellow-300 transition">
             الرئيسية
           </Link>
-          <Link to="/all-products" className="hover:text-yellow-300 transition">
-            جميع المنتجات
+          <Link to="/store" className="hover:text-yellow-300 transition">
+            المتجر
           </Link>
           <Link to="/about" className="hover:text-yellow-300 transition">
             عن الموقع
@@ -49,7 +83,10 @@ export default function Navbar() {
         {/* الجانب الأيمن: السلة + الحساب */}
         <div className="flex items-center gap-4 md:gap-6">
           {/* أيقونة السلة */}
-          <Link to="/cart" className="relative group">
+          <button
+            onClick={handleCartClick}
+            className="relative group text-white"
+          >
             <span className="text-4xl group-hover:scale-110 transition-transform">
               🛒
             </span>
@@ -58,46 +95,44 @@ export default function Navbar() {
                 {cartCount}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* إذا مسجل دخول */}
           {isAuthenticated ? (
-            <div className="flex items-center gap-4">
-              <span className="hidden sm:block text-lg font-semibold">
-                مرحباً، {user?.name.split(" ")[0] || "مستخدم"}
-              </span>
-
-              {/* إذا كان Admin */}
-              {user?.isAdmin && (
-                <>
-                  <Link
-                    to="/admin"
-                    className="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-full text-sm font-bold transition hidden sm:block"
-                  >
-                    لوحة الإدارة
-                  </Link>
-                  <Link
-                    to="/admin-profile"
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 px-5 py-2 rounded-full text-sm font-bold transition"
-                  >
-                    لوحة المدير
-                  </Link>
-                </>
-              )}
-
-              <Link
-                to="/profile"
-                className="hover:text-yellow-300 transition text-lg"
-              >
-                حسابي
-              </Link>
-
+            <div className="relative" ref={dropdownRef}>
               <button
-                onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full text-sm font-bold transition"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="hover:text-yellow-300 transition text-lg font-semibold"
               >
-                تسجيل خروج
+                {user?.name.split(" ")[0] || "مستخدم"} ▼
               </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-xl shadow-xl py-2 z-50">
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100 transition"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    حسابي
+                  </Link>
+                  {user?.isAdmin && (
+                    <Link
+                      to="/admin-profile"
+                      className="block px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      لوحة التحكم
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+                  >
+                    تسجيل خروج
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             /* إذا مش مسجل دخول */

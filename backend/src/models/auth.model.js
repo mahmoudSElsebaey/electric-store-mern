@@ -5,9 +5,11 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     phone: { type: String },
     address: { type: String },
+    birthdate: { type: Date },
+    additionalInfo: { type: Map, of: String, default: {} }, // جديد (للحقول الإضافية اللي المستخدم يضيفها بنفسه)
     isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }
