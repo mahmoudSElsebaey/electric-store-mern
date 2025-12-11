@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../context/ToastContext";
 
 export default function Cart() {
@@ -10,15 +9,28 @@ export default function Cart() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  // التحقق من تسجيل الدخول قبل عرض السلة
+  // حالة loading مؤقتة أثناء التحقق من تسجيل الدخول
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (!state.isAuthenticated) {
+    // تحقق من وجود token في localStorage أو session
+    const token = localStorage.getItem("token"); // افترض أنك تحفظ توكن المستخدم هنا
+    if (!token) {
       showToast("يجب تسجيل الدخول لعرض السلة!", "error");
       navigate("/login");
+    } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false); // المستخدم مسجل دخول
     }
-  }, [state.isAuthenticated, navigate, showToast]);
+  }, [navigate, showToast]);
 
-  if (!state.isAuthenticated) return null; // أو loading
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <span className="text-2xl text-gray-600">جارٍ تحميل السلة...</span>
+      </div>
+    );
+  }
 
   const removeFromCart = (id: string) => {
     dispatch({ type: "REMOVE_FROM_CART", payload: id });
@@ -33,18 +45,18 @@ export default function Cart() {
   };
 
   const totalPrice = cart.reduce(
-    (sum, item) => sum + item.price * (item.quantity || 1),
+    (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
     0
   );
 
-  if (cart.length === 0) {
+  if (!cart || cart.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-20 text-center">
         <h1 className="text-5xl font-bold text-gray-800 mb-8">
           السلة فارغة 🛒
         </h1>
         <Link
-          to="/"
+          to="/store"
           className="text-2xl bg-blue-600 text-white px-10 py-5 rounded-xl hover:bg-blue-700 transition"
         >
           تصفح المنتجات
@@ -73,8 +85,16 @@ export default function Cart() {
               />
               <div className="flex-1">
                 <h3 className="text-2xl font-bold">{item.name}</h3>
-                <p className="text-gray-600">{item.brand?.name}</p>
-                <p className="text-gray-600">{item.category?.name}</p>
+                <p className="text-gray-600">
+                  {typeof item.brand === "string"
+                    ? item.brand
+                    : item.brand?.name}
+                </p>
+                <p className="text-gray-600">
+                  {typeof item.category === "string"
+                    ? item.category
+                    : item.category?.name}
+                </p>
               </div>
 
               {/* خيارات الكمية */}
@@ -97,7 +117,8 @@ export default function Cart() {
                   </button>
                 </div>
                 <div className="text-3xl font-bold text-blue-600 mt-2">
-                  {(item.price * (item.quantity || 1)).toLocaleString()} ج.م
+                  {((item.price || 0) * (item.quantity || 1)).toLocaleString()}{" "}
+                  ج.م
                 </div>
               </div>
 
@@ -119,14 +140,8 @@ export default function Cart() {
             </div>
             <button
               onClick={() => {
-                if (!state.isAuthenticated) {
-                  showToast("يجب تسجيل الدخول لإتمام الشراء!", "error");
-
-                  navigate("/login");
-                } else {
-                  // روح لصفحة Checkout أو اعمل اللي عايزه
-                  showToast("جاري توجيهك لإتمام الشراء...", "success");
-                }
+                showToast("جاري توجيهك لإتمام الشراء...", "success");
+                // navigate("/checkout") لو عندك صفحة checkout
               }}
               className="bg-green-600 text-white text-3xl px-16 py-6 rounded-2xl hover:bg-green-700 transition font-bold"
             >
@@ -136,7 +151,7 @@ export default function Cart() {
         </div>
 
         <div className="text-center mt-10">
-          <Link to="/" className="text-2xl text-blue-600 hover:underline">
+          <Link to="/store" className="text-2xl text-blue-600 hover:underline">
             ← استمر في التسوق
           </Link>
         </div>

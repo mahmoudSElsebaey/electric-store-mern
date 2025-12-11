@@ -50,6 +50,16 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  if (isAuthenticated === null) {
+    return (
+      <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+          <span className="text-white text-xl">جارٍ التحقق من تسجيل الدخول...</span>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
@@ -118,7 +128,7 @@ export default function Navbar() {
                   </Link>
                   {user?.isAdmin && (
                     <Link
-                      to="/admin-profile"
+                      to="/dashboard"
                       className="block px-4 py-2 hover:bg-gray-100 transition"
                       onClick={() => setDropdownOpen(false)}
                     >

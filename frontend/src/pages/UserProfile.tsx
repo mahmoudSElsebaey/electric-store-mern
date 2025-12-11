@@ -99,62 +99,70 @@ export default function UserProfile() {
 
         <div className="bg-white rounded-3xl shadow-2xl p-10">
           {isEditing ? (
-            <form onSubmit={handleUpdate} className="space-y-6">
-              {/* الحقول الأساسية */}
+            <form onSubmit={handleUpdate} className="space-y-6 text-right">
+              {/* === الحقول الأساسية === */}
               <div>
                 <label className="block text-lg font-semibold mb-2">
                   الاسم
                 </label>
                 <input
                   type="text"
+                  placeholder="الاسم بالكامل"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full p-4 border rounded-xl text-lg"
+                  className="w-full p-4 border rounded-xl text-lg text-right"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-lg font-semibold mb-2">
                   البريد الإلكتروني
                 </label>
                 <input
                   type="email"
+                  placeholder="example@example.com"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full p-4 border rounded-xl text-lg"
+                  className="w-full p-4 border rounded-xl text-lg text-right"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-lg font-semibold mb-2">
                   رقم الهاتف
                 </label>
                 <input
                   type="tel"
+                  placeholder="مثال: 206 6123 0121  "
                   value={formData.phone}
                   onChange={(e) =>
                     setFormData({ ...formData, phone: e.target.value })
                   }
-                  className="w-full p-4 border rounded-xl text-lg"
+                  className="w-full p-4 border rounded-xl text-lg text-right"
                 />
               </div>
+
               <div>
                 <label className="block text-lg font-semibold mb-2">
                   العنوان
                 </label>
                 <input
                   type="text"
+                  placeholder="مثال: شارع الملك فهد،مصر الجديدة ،القاهرة ،مصر "
                   value={formData.address}
                   onChange={(e) =>
                     setFormData({ ...formData, address: e.target.value })
                   }
-                  className="w-full p-4 border rounded-xl text-lg"
+                  className="w-full p-4 border rounded-xl text-lg text-right"
                 />
               </div>
+
               <div>
                 <label className="block text-lg font-semibold mb-2">
                   تاريخ الميلاد
@@ -162,6 +170,7 @@ export default function UserProfile() {
                 <input
                   type="date"
                   value={formData.birthdate}
+                
                   onChange={(e) =>
                     setFormData({ ...formData, birthdate: e.target.value })
                   }
@@ -169,16 +178,17 @@ export default function UserProfile() {
                 />
               </div>
 
-              {/* الحقول الإضافية */}
+              {/* === الحقول / المعلومات الإضافية === */}
               <div className="border-t pt-6">
-                <h3 className="text-2xl font-bold mb-4">حقول إضافية</h3>
+                <h3 className="text-2xl font-bold mb-4">معلومات إضافية</h3>
+
                 {Object.entries(additionalFields).map(([key, value]) => (
-                  <div key={key} className="flex gap-4 mb-4">
+                  <div key={key} className="flex flex-row-reverse gap-4 mb-4">
                     <input
                       type="text"
                       value={key}
                       disabled
-                      className="flex-1 p-4 border rounded-xl text-lg bg-gray-100"
+                      className="flex-1 p-4 border rounded-xl text-lg bg-gray-100 text-right"
                     />
                     <input
                       type="text"
@@ -189,39 +199,39 @@ export default function UserProfile() {
                           [key]: e.target.value,
                         })
                       }
-                      className="flex-1 p-4 border rounded-xl text-lg"
+                      className="flex-1 p-4 border rounded-xl text-lg text-right"
                     />
                     <button
                       type="button"
                       onClick={() => removeAdditionalField(key)}
-                      className="bg-red-600 text-white px-4 py-4 rounded-xl hover:bg-red-700"
+                      className="bg-red-600 text-white px-4 py-4 rounded-xl hover:bg-red-700 cursor-pointer"
                     >
                       حذف
                     </button>
                   </div>
                 ))}
-
-                <div className="flex gap-4 mt-4">
+                
+                <div className="flex flex-row-reverse gap-4 mt-4">
                   <input
                     type="text"
                     value={newFieldKey}
                     onChange={(e) => setNewFieldKey(e.target.value)}
-                    className="flex-1 p-4 border rounded-xl text-lg"
-                    placeholder="اسم الحقل الجديد (مثل مهنة)"
+                    className="flex-1 p-4 border rounded-xl text-[15px] text-right"
+                    placeholder="اسم الحقل الجديد (مثال:الوظيفة)"
                   />
                   <input
                     type="text"
                     value={newFieldValue}
                     onChange={(e) => setNewFieldValue(e.target.value)}
-                    className="flex-1 p-4 border rounded-xl text-lg"
-                    placeholder="قيمة الحقل"
+                    className="flex-1 p-4 border rounded-xl text-[15px] text-right"
+                    placeholder="قيمة الحقل (مثال:مسؤل مبيعات)"
                   />
                   <button
                     type="button"
                     onClick={addAdditionalField}
-                    className="bg-green-600 text-white px-4 py-4 rounded-xl hover:bg-green-700"
+                    className="bg-green-600 text-white px-3 py-4 rounded-xl hover:bg-green-700 cursor-pointer"
                   >
-                    +
+                    إضافة
                   </button>
                 </div>
               </div>
@@ -235,35 +245,59 @@ export default function UserProfile() {
               </button>
             </form>
           ) : (
-            <div className="space-y-6 text-lg">
-              <p>
-                <span className="font-bold">الاسم:</span> {formData.name}
-              </p>
-              <p>
-                <span className="font-bold">البريد:</span> {formData.email}
-              </p>
-              <p>
-                <span className="font-bold">الهاتف:</span>{" "}
-                {formData.phone || "غير محدد"}
-              </p>
-              <p>
-                <span className="font-bold">العنوان:</span>{" "}
-                {formData.address || "غير محدد"}
-              </p>
-              <p>
-                <span className="font-bold">تاريخ الميلاد:</span>{" "}
-                {formData.birthdate || "غير محدد"}
-              </p>
+            //======================
+            // ===  عرض البيانات ===
+            //======================
+            <div className="space-y-6 text-lg" dir="rtl">
+              {/* الاسم */}
+              <div className="flex justify-between items-center  pb-2">
+                <span className="font-bold w-32 text-right">الاسم:</span>
+                <span className="flex-1">{formData.name}</span>
+              </div>
 
-              <h3 className="text-2xl font-bold mt-8 mb-4">حقول إضافية</h3>
+              {/* البريد */}
+              <div className="flex justify-between items-center  pb-2">
+                <span className="font-bold w-32 text-right">البريد:</span>
+                <span className="flex-1">{formData.email}</span>
+              </div>
+
+              {/* الهاتف */}
+              <div className="flex justify-between items-center  pb-2">
+                <span className="font-bold w-32 text-right">الهاتف:</span>
+                <span className="flex-1">{formData.phone || "غير محدد"}</span>
+              </div>
+
+              {/* العنوان */}
+              <div className="flex justify-between items-center  pb-2">
+                <span className="font-bold w-32 text-right">العنوان:</span>
+                <span className="flex-1">{formData.address || "غير محدد"}</span>
+              </div>
+
+              {/* الميلاد */}
+              <div className="flex justify-between items-center  pb-2">
+                <span className="font-bold w-32 text-right">
+                  تاريخ الميلاد:
+                </span>
+                <span className="flex-1">
+                  {formData.birthdate || "غير محدد"}
+                </span>
+              </div>
+
+              {/* === المعلومات الإضافية === */}
+              <h3 className="text-2xl font-bold mt-8 mb-4">معلومات إضافية</h3>
+
               {Object.entries(additionalFields).length > 0 ? (
                 Object.entries(additionalFields).map(([key, value]) => (
-                  <p key={key}>
-                    <span className="font-bold">{key}:</span> {value}
-                  </p>
+                  <div
+                    key={key}
+                    className="flex justify-between items-center pb-2"
+                  >
+                    <span className="font-bold w-32 text-right">{key}:</span>
+                    <span className="flex-1">{value}</span>
+                  </div>
                 ))
               ) : (
-                <p>لا توجد حقول إضافية</p>
+                <p>لا توجد معلومات إضافية</p>
               )}
 
               <button

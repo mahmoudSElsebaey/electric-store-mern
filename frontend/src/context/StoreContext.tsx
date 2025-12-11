@@ -3,16 +3,8 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import api from "../services/api";
 
-export type Brand = {
-  _id: string;
-  name: string;
-};
-
-export type Category = {
-  _id: string;
-  name: string;
-};
-
+export type Brand = { _id: string; name: string };
+export type Category = { _id: string; name: string };
 export type Product = {
   _id: string;
   name: string;
@@ -24,7 +16,6 @@ export type Product = {
   countInStock: number;
   quantity?: number; // للسلة فقط
 };
-
 export type User = {
   id: string;
   name: string;
@@ -40,7 +31,7 @@ type State = {
   products: Product[];
   cart: Product[];
   user: User | null;
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null; // null أول ما نبدأ
   loading: boolean;
 };
 
@@ -58,7 +49,7 @@ const initialState: State = {
   products: [],
   cart: [],
   user: null,
-  isAuthenticated: false,
+  isAuthenticated: null, // null بدل false
   loading: true,
 };
 
@@ -160,13 +151,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // تحميل اليوزر من التوكن (اختياري)
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // هنا ممكن نجيب بيانات اليوزر من /api/auth/me لو عايز
-      // لكن حاليًا الـ login بيحدث الـ state
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     // هنا ممكن نجيب بيانات اليوزر من /api/auth/me لو عايز
+  //     // لكن حاليًا الـ login بيحدث الـ state
+  //   }
+  // }, []);
 
   // تحقق اذا كان المستخدم مسجل دخول
   useEffect(() => {

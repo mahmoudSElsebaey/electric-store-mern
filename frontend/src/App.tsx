@@ -7,17 +7,17 @@ import {
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-import Admin from "./pages/Admin";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import UserProfile from "./pages/UserProfile";
-import AdminProfile from "./pages/AdminProfile";
 import { useStore } from "./context/StoreContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AllProducts from "./pages/AllProducts";
+import Dashboard from "./pages/Dashboard";
+import ProductsManagement from "./pages/ProductsManagement";
 
 const ProtectedRoute = ({
   children,
@@ -44,16 +44,14 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/admin-profile" element={<AdminProfile />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/admin"
+            path="/products-management"
             element={
               <ProtectedRoute adminOnly>
-                <Admin />
+                <ProductsManagement />
               </ProtectedRoute>
             }
           />

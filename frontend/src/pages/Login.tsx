@@ -16,6 +16,7 @@ export default function Login() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👁️ حالة إظهار وإخفاء الباسورد
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +25,10 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", formData);
 
-      // حفظ التوكن واليوزر في الـ localStorage والـ Context
       localStorage.setItem("token", res.data.token);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
-       showToast("تم تسجيل الدخول بنجاح", "success");
+      showToast("تم تسجيل الدخول بنجاح", "success");
       navigate("/");
     } catch (err: any) {
       const message = err.response?.data?.message || "بيانات الدخول غير صحيحة";
@@ -51,6 +51,7 @@ export default function Login() {
 
         {/* الفورم */}
         <form onSubmit={handleSubmit} className="p-10 space-y-6">
+          {/* البريد */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               البريد الإلكتروني
@@ -67,22 +68,34 @@ export default function Login() {
             />
           </div>
 
-          <div>
+          {/* كلمة المرور */}
+          <div className="relative">
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               كلمة المرور
             </label>
+
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition text-lg"
+              className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition text-lg pr-14"
               placeholder="••••••••"
             />
+
+            {/* زر إظهار/إخفاء */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-[52px] right-4 text-xl text-gray-600 hover:text-indigo-600 transition"
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
 
+          {/* زر تسجيل الدخول */}
           <button
             type="submit"
             disabled={loading}

@@ -19,6 +19,10 @@ export default function Register() {
 
   const [loading, setLoading] = useState(false);
 
+  // 👁️ حالتا إظهار/إخفاء كلمة المرور
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -41,7 +45,6 @@ export default function Register() {
         password: formData.password,
       });
 
-      // حفظ التوكن واليوزر
       localStorage.setItem("token", res.data.token);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
@@ -70,6 +73,7 @@ export default function Register() {
 
         {/* الفورم */}
         <form onSubmit={handleSubmit} className="p-10 space-y-6">
+          {/* الاسم */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               الاسم الكامل
@@ -86,6 +90,7 @@ export default function Register() {
             />
           </div>
 
+          {/* البريد */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               البريد الإلكتروني
@@ -102,38 +107,61 @@ export default function Register() {
             />
           </div>
 
-          <div>
+          {/* كلمة المرور */}
+          <div className="relative">
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               كلمة المرور
             </label>
+
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition text-lg"
+              className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition text-lg pr-14"
               placeholder="••••••••"
             />
+
+            {/* زر إظهار/إخفاء */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-[52px] right-4 text-xl text-gray-600 hover:text-blue-600 transition"
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
 
-          <div>
+          {/* تأكيد كلمة المرور */}
+          <div className="relative">
             <label className="block text-lg font-semibold text-gray-700 mb-2">
               تأكيد كلمة المرور
             </label>
+
             <input
-              type="password"
+              type={showConfirm ? "text" : "password"}
               required
               value={formData.confirmPassword}
               onChange={(e) =>
                 setFormData({ ...formData, confirmPassword: e.target.value })
               }
-              className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition text-lg"
+              className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300 focus:border-blue-500 transition text-lg pr-14"
               placeholder="••••••••"
             />
+
+            {/* زر إظهار/إخفاء */}
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute top-[52px] right-4 text-xl text-gray-600 hover:text-blue-600 transition"
+            >
+              {showConfirm ? "🙈" : "👁️"}
+            </button>
           </div>
 
+          {/* زر */}
           <button
             type="submit"
             disabled={loading}
