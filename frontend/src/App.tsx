@@ -1,3 +1,4 @@
+// src/App.tsx
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,55 +19,88 @@ import Register from "./pages/Register";
 import AllProducts from "./pages/AllProducts";
 import Dashboard from "./pages/Dashboard";
 import ProductsManagement from "./pages/ProductsManagement";
+import UsersManagement from "./pages/UsersManagement";
 
-const ProtectedRoute = ({
-  children,
-  adminOnly = false,
-}: {
+type ProtectedRouteProps = {
   children: React.ReactNode;
-  adminOnly?: boolean;
-}) => {
+  roles?: ("user" | "admin" | "owner")[]; // الصلاحيات المسموحة
+};
+
+const ProtectedRoute = ({ children, roles }: ProtectedRouteProps) => {
   const { state } = useStore();
+  if (state.isAuthenticated === null) {
+    return (
+      <div className="p-10 text-center text-gray-600">
+        جارٍ التحقق من تسجيل الدخول...
+      </div>
+    );
+  }
+
   if (!state.isAuthenticated) return <Navigate to="/login" />;
-  if (adminOnly && !state.user?.isAdmin) return <div>ممنوع - Admin فقط</div>;
+
+  if (roles && (!state.user || !roles.includes(state.user.role))) {
+    return (
+      <div className="p-10 text-center text-red-600 font-bold">
+        ممنوع - ليس لديك الصلاحية
+      </div>
+    );
+  }
+
   return children;
 };
 
 function App() {
   return (
-    <>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/store" element={<AllProducts />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/Dashboard" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/products-management"
-            element={
-              <ProtectedRoute adminOnly>
-                <ProductsManagement />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <UserProfile />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-        <Footer />
-      </Router>
-    </>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/store" element={<AllProducts />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute roles={["user", "admin", "owner"]}>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products-management"
+          element={
+            <ProtectedRoute roles={["admin", "owner"]}>
+              <ProductsManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users-management"
+          element={
+            <ProtectedRoute roles={["owner"]}>
+              <UsersManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute roles={["owner"]}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 

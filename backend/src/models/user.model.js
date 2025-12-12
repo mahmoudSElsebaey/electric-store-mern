@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     address: { type: String },
     birthdate: { type: Date },
     additionalInfo: { type: Map, of: String, default: {} }, // جديد (للحقول الإضافية اللي المستخدم يضيفها بنفسه)
-    isAdmin: { type: Boolean, default: false },
+    role: { type: String, default: "user", enum: ["user", "admin", "owner"] },
   },
   { timestamps: true }
 );

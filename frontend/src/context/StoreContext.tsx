@@ -5,17 +5,19 @@ import api from "../services/api";
 
 export type Brand = { _id: string; name: string };
 export type Category = { _id: string; name: string };
+
 export type Product = {
   _id: string;
   name: string;
   description: string;
   price: number;
   image: string;
-  brand: { name: string };
-  category: { name: string };
+  brand: Brand;
+  category: Category;
   countInStock: number;
-  quantity?: number; // للسلة فقط
+  quantity?: number;
 };
+
 export type User = {
   id: string;
   name: string;
@@ -24,14 +26,14 @@ export type User = {
   address?: string;
   birthdate?: string;
   additionalInfo?: { [key: string]: string };
-  isAdmin: boolean;
+  role: "user" | "admin" | "owner"; // ← غيّر isAdmin لـ role
 };
 
 type State = {
   products: Product[];
   cart: Product[];
   user: User | null;
-  isAuthenticated: boolean | null; // null أول ما نبدأ
+  isAuthenticated: boolean | null;
   loading: boolean;
 };
 
@@ -49,7 +51,7 @@ const initialState: State = {
   products: [],
   cart: [],
   user: null,
-  isAuthenticated: null, // null بدل false
+  isAuthenticated: null,
   loading: true,
 };
 
@@ -106,13 +108,11 @@ function reducer(state: State, action: Action): State {
       return { ...state, cart: action.payload };
 
     case "LOGIN_SUCCESS":
-      localStorage.setItem("user", JSON.stringify(action.payload));
       return { ...state, user: action.payload, isAuthenticated: true };
 
     case "LOGOUT":
       localStorage.removeItem("token");
       localStorage.removeItem("cart");
-      localStorage.removeItem("user");
       return { ...state, user: null, isAuthenticated: false, cart: [] };
 
     default:
@@ -128,7 +128,6 @@ const StoreContext = createContext<{
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // جلب المنتجات
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -142,7 +141,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     fetchProducts();
   }, []);
 
-  // تحميل السلة من localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
@@ -150,24 +148,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // تحميل اليوزر من التوكن (اختياري)
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     // هنا ممكن نجيب بيانات اليوزر من /api/auth/me لو عايز
-  //     // لكن حاليًا الـ login بيحدث الـ state
-  //   }
-  // }, []);
-
-  // تحقق اذا كان المستخدم مسجل دخول
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/auth/me"); // يستخدم الكوكي تلقائي
+        const res = await api.get("/auth/me");
         dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
       } catch (err) {
-        dispatch({ type: "LOGOUT" }); // مهم: لو مفيش توكن نشيل كل حاجة
-        console.log("غير مسجل دخول");
+        dispatch({ type: "LOGOUT" });
       }
     };
     checkAuth();

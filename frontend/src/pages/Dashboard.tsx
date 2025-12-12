@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/pages/AdminProfile.tsx
+ 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
@@ -21,22 +22,20 @@ export default function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
 
+  // نموذج إضافة أدمن جديد بالإيميل
+  const [showAdminForm, setShowAdminForm] = useState(false);
+  const [adminEmail, setAdminEmail] = useState("");
+  const [addAdminLoading, setAddAdminLoading] = useState(false);
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // جلب عدد المنتجات
         const productsRes = await api.get("/products");
         const totalProducts = productsRes.data.length;
 
-        // لو عندك موديل Orders، هتجيب عدد الطلبات والإيرادات
-        // مثال (لو عملت موديل Orders في المستقبل)
-        // const ordersRes = await api.get("/orders");
-        // const totalOrders = ordersRes.data.length;
-        // const totalRevenue = ordersRes.data.reduce((sum, order) => sum + order.totalPrice, 0);
-
-        // دلوقتي هنستخدم قيم مؤقتة للطلبات والإيرادات
-        const totalOrders = 342; // غيّرها لما تعمل موديل Orders
-        const totalRevenue = 1248500; // غيّرها لما تعمل موديل Orders
+        // قيم مؤقتة لحد ما تعمل موديل Orders
+        const totalOrders = 342;
+        const totalRevenue = 1248500;
 
         setStats({ totalProducts, totalOrders, totalRevenue });
         setLoading(false);
@@ -46,15 +45,36 @@ export default function Dashboard() {
       }
     };
 
-    if (state.user?.isAdmin) {
+    if (state.user?.role === "owner") {
       fetchStats();
     }
   }, [state.user]);
 
-  if (!state.isAuthenticated || !state.user?.isAdmin) {
+  const handleMakeAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminEmail.trim()) {
+      alert("الإيميل مطلوب!");
+      return;
+    }
+
+    setAddAdminLoading(true);
+    try {
+      await api.put("/auth/make-admin", { email: adminEmail });
+      alert("تم تحويل المستخدم إلى أدمن بنجاح! 🎉");
+      setShowAdminForm(false);
+      setAdminEmail("");
+    } catch (err: any) {
+      alert("خطأ: " + (err.response?.data?.message || "فشل في تحويل المستخدم"));
+    } finally {
+      setAddAdminLoading(false);
+    }
+  };
+
+  // حماية: الـ Owner بس يقدر يشوف الصفحة
+  if (!state.isAuthenticated || state.user?.role !== "owner") {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white text-4xl">
-        ممنوع - مطلوب صلاحيات Admin
+        ممنوع - مطلوب صلاحيات Owner
       </div>
     );
   }
@@ -71,17 +91,17 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-900 py-16">
       <div className="max-w-6xl mx-auto px-6">
         <h1 className="text-5xl font-bold text-center mb-16 text-white">
-          لوحة تحكم المدير
+          لوحة تحكم الـ Owner
         </h1>
 
         <div className="bg-gray-800 rounded-3xl shadow-2xl p-12">
           {/* الهيدر */}
           <div className="text-center mb-12">
-            <div className="w-40 h-40 bg-linear-to-br from-purple-500 to-pink-500 rounded-full mx-auto flex items-center justify-center text-8xl font-bold text-white mb-6">
-              {state.user?.name.charAt(0).toUpperCase() || "A"}
+            <div className="w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto flex items-center justify-center text-8xl font-bold text-white mb-6">
+              {state.user?.name.charAt(0).toUpperCase() || "O"}
             </div>
             <h2 className="text-4xl font-bold text-white">
-              {state.user?.name || "المدير"} - مدير النظام
+              {state.user?.name || "الـ Owner"} - المالك الرئيسي
             </h2>
             <p className="text-xl text-gray-400 mt-2">
               آخر دخول: اليوم {new Date().toLocaleTimeString("ar-EG")}
@@ -90,15 +110,15 @@ export default function Dashboard() {
 
           {/* الإحصائيات */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-linear-to-br from-blue-600 to-blue-800 p-10 rounded-3xl text-center text-white shadow-lg">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-10 rounded-3xl text-center text-white shadow-lg">
               <div className="text-6xl font-bold">{stats.totalProducts}</div>
-              <p className="text-2xl mt-3 ">منتج في المخزون</p>
+              <p className="text-2xl mt-3">منتج في المخزون</p>
             </div>
-            <div className="bg-linear-to-br from-green-600 to-green-800 p-10 rounded-3xl text-center text-white shadow-lg">
+            <div className="bg-gradient-to-br from-green-600 to-green-800 p-10 rounded-3xl text-center text-white shadow-lg">
               <div className="text-6xl font-bold">{stats.totalOrders}</div>
               <p className="text-2xl mt-3">طلب مكتمل</p>
             </div>
-            <div className="bg-linear-to-br from-yellow-500 to-orange-600 p-10 rounded-3xl text-center text-white shadow-lg">
+            <div className="bg-gradient-to-br from-yellow-500 to-orange-600 p-10 rounded-3xl text-center text-white shadow-lg">
               <div className="text-5xl font-bold">
                 {stats.totalRevenue.toLocaleString()} ج.م
               </div>
@@ -106,7 +126,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* أزرار الإدارة */}
+          {/* الأزرار */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <button
               onClick={() => navigate("/products-management")}
@@ -121,19 +141,59 @@ export default function Dashboard() {
               إدارة الطلبات
             </button>
             <button
-              onClick={() => alert("سيتم إضافتها قريبًا")}
+              onClick={() => setShowAdminForm(true)}
               className="bg-purple-600 hover:bg-purple-700 text-white py-6 rounded-2xl text-xl font-bold transition transform hover:scale-105 shadow-lg"
+            >
+              إضافة أدمن جديد
+            </button>
+            <button
+              onClick={() => navigate("/users-management")}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white py-6 rounded-2xl text-xl font-bold transition transform hover:scale-105 shadow-lg"
             >
               إدارة العملاء
             </button>
-            <button
-              onClick={() => alert("سيتم إضافتها قريبًا")}
-              className="bg-red-600 hover:bg-red-700 text-white py-6 rounded-2xl text-xl font-bold transition transform hover:scale-105 shadow-lg"
-            >
-              التقارير والإحصائيات
-            </button>
           </div>
         </div>
+
+        {/* نموذج إضافة أدمن جديد بالإيميل */}
+        {showAdminForm && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="bg-white rounded-3xl p-10 w-full max-w-md shadow-2xl">
+              <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
+                إضافة أدمن جديد
+              </h2>
+              <form onSubmit={handleMakeAdmin}>
+                <input
+                  type="email"
+                  placeholder="الإيميل الخاص بالمستخدم"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  className="w-full p-4 border rounded-xl text-lg mb-6 focus:ring-4 focus:ring-purple-300"
+                  required
+                />
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    disabled={addAdminLoading}
+                    className="flex-1 bg-purple-600 text-white py-4 rounded-xl text-xl font-bold hover:bg-purple-700 transition disabled:opacity-70"
+                  >
+                    {addAdminLoading ? "جاري التحويل..." : "تحويل إلى أدمن"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAdminForm(false);
+                      setAdminEmail("");
+                    }}
+                    className="flex-1 bg-gray-600 text-white py-4 rounded-xl text-xl font-bold hover:bg-gray-700 transition"
+                  >
+                    إلغاء
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

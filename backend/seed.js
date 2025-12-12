@@ -34,174 +34,284 @@ const brandsData = [
 ];
 
 const productsData = [
+  // ميكروويف وتوستر وقهوة وغسالة أطباق (5)
+  {
+    name: "ميكروويف Samsung 40 لتر",
+    price: 6900,
+    image:
+      "https://www.raneen.com/media/catalog/product/2/5/25-900-8-tmd-25se-bk_jxhxndwlvmzay8qr_1_1.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
+    brand: "Samsung",
+    category: "ميكروويف",
+    countInStock: 11,
+    description:
+      "ميكروويف Samsung بحجم 40 لتر، تسخين سريع وبرامج متعددة للطهي.",
+  },
+  {
+    name: "توستر Kenwood 4 شرائح",
+    price: 890,
+    image:
+      "https://www.raneen.com/media/catalog/product/1/_/1_1el0rjwhayyhauq0.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
+    brand: "Kenwood",
+    category: "توستر",
+    countInStock: 28,
+    description: "توستر Kenwood لأربع شرائح مع مستويات تحميص متعددة.",
+  },
+  {
+    name: "ماكينة قهوة Nespresso",
+    price: 4900,
+    image:
+      "https://www.raneen.com/media/catalog/product/e/s/es187609blk-conf_0norjikjqwmakvqz.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
+    brand: "Nespresso",
+    category: "قهوة ميكرز",
+    countInStock: 15,
+    description:
+      "ماكينة قهوة Nespresso بإستخراج احترافي للكبسولات وطعم قهوة ممتاز.",
+  },
+  {
+    name: "غسالة أطباق Bosch 13 فرد",
+    price: 28900,
+    image:
+      "https://www.raneen.com/media/catalog/product/e/l/el1065755slv-conf_fn8jzhqnzdzhwylg.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
+    brand: "Bosch",
+    category: "غسالة أطباق",
+    countInStock: 5,
+    description:
+      "غسالة أطباق 13 فرد من Bosch مع برامج غسيل قوية وموفرة للطاقة.",
+  },
+  {
+    name: "غسالة أطباق Whirlpool 12 فرد",
+    price: 24900,
+    image:
+      "https://www.raneen.com/media/catalog/product/a/g/agsms25ab00gblk-conf-abozied_olrbayt3xsgszsql_5.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
+    brand: "Whirlpool",
+    category: "غسالة أطباق",
+    countInStock: 8,
+    description: "غسالة أطباق Whirlpool بسعة 12 فرد مع نتائج تجفيف ممتازة.",
+  },
   // غسالات (4)
   {
     name: "غسالة LG أوتوماتيك 10 كجم",
     price: 18500,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/e/l/el1090993slv-conf_bhftb6zgyztbaa9j.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=1000&width=1000&canvas=1000:1000",
     brand: "LG",
     category: "غسالات",
     countInStock: 12,
+    description:
+      "غسالة LG بسعة 10 كجم، تقنية العناية بالملابس، برامج متعددة، موفرة للطاقة ودوران عالي للملابس.",
   },
   {
     name: "غسالة Samsung 9 كجم ديجيتال",
     price: 16200,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/5/_/5_mruhyfymh42o9vgl.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "Samsung",
     category: "غسالات",
     countInStock: 8,
+    description:
+      "غسالة Samsung مزودة بتقنية Eco Bubble، شاشة ديجيتال، أداء قوي وتنظيف مثالي للملابس.",
   },
   {
     name: "غسالة Toshiba فوق أوتوماتيك 12 كجم",
     price: 9800,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/1/7/1739204467_img-20241217-wa0016-1-1-1_zemro8c3pinxv7w8_1_1.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "Toshiba",
     category: "غسالات",
     countInStock: 20,
+    description:
+      "غسالة فوق أوتوماتيك 12 كجم صنعت للاستخدام اليومي، هادئة وسهلة الاستخدام وتحتوي على برامج متعددة.",
   },
   {
     name: "غسالة Beko 8 كجم",
     price: 13500,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/1/0/10.1_3.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "Beko",
     category: "غسالات",
     countInStock: 15,
+    description:
+      "غسالة Beko موفرة للطاقة ومصممة للأسر الصغيرة والمتوسطة مع برامج غسل سريعة وهادئة.",
   },
 
   // ثلاجات (4)
   {
     name: "ثلاجة LG 600 لتر نوفروست",
     price: 28900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/i/t/item1748850104_pjqy27jqzvqytaq8_4.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "LG",
     category: "ثلاجات",
     countInStock: 5,
+    description:
+      "ثلاجة LG كبيرة بحجم 600 لتر، تقنية نوفروست، تبريد سريع، إنفرتر موفر للطاقة.",
   },
   {
     name: "ثلاجة Samsung 500 لتر إنفرتر",
     price: 25900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/e/l/el1131161blk-2.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=240&canvas=240:300",
     brand: "Samsung",
     category: "ثلاجات",
     countInStock: 7,
+    description:
+      "ثلاجة Samsung بسعة 500 لتر، تبريد متساوٍ، إنفرتر لضمان استهلاك أقل للطاقة.",
   },
   {
     name: "ثلاجة Sharp 450 لتر",
     price: 18900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/i/t/item1650888408_egvxovx8q9agpnac_1.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "Sharp",
     category: "ثلاجات",
     countInStock: 10,
+    description:
+      "ثلاجة Sharp متينة، تبريد قوي، نظام توزيع هواء ممتاز للمحافظة على الطعام طازج.",
   },
   {
     name: "ثلاجة Whirlpool 550 لتر",
     price: 27500,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/o/r/original-1_dzvdpogamumnsyin.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=240&canvas=240:300",
     brand: "Whirlpool",
     category: "ثلاجات",
     countInStock: 6,
+    description:
+      "ثلاجة Whirlpool بسعة 550 لتر مثالية للعائلات الكبيرة مع نظام تبريد ذكي.",
   },
 
   // تكييفات (3)
   {
     name: "تكييف Unionaire سبليت 1.5 حصان بارد",
     price: 14500,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/e/l/eloptimax_53khct-24wit-2_5_14.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=240&canvas=240:300",
     brand: "Unionaire",
     category: "تكييفات",
     countInStock: 18,
+    description:
+      "تكييف Unionaire تبريد قوي، تشغيل هادئ، وضمان توفير في استهلاك الكهرباء.",
   },
   {
     name: "تكييف LG إنفرتر 2.25 حصان بارد/ساخن",
     price: 22900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/1/_/1_3dm9c8xxsmsg6vex_3.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "LG",
     category: "تكييفات",
     countInStock: 9,
+    description:
+      "تكييف LG إنفرتر بارد/ساخن يوفر تبريد سريع وهادئ ويوفر في استهلاك الكهرباء.",
   },
   {
     name: "تكييف Sharp 3 حصان",
     price: 28900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/1/-/1-5-ah-a12zse_1__4.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=300&width=300&canvas=300:300",
     brand: "Sharp",
     category: "تكييفات",
     countInStock: 4,
+    description:
+      "Sharp 3 حصان مناسب للمساحات الكبيرة، تبريد فوري، وكفاءة عالية.",
   },
 
   // خلاطات ومكانس ومكاوي (4)
   {
     name: "خلاط Kenwood 1000 وات",
     price: 1890,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/4/7/474_kymbwc8htn4id7cg.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Kenwood",
     category: "خلاطات",
     countInStock: 25,
+    description:
+      "خلاط Kenwood قوي 1000 وات، متعدد الاستخدامات، مع وعاء زجاجي متين.",
   },
   {
     name: "خلاط Braun متعدد الاستخدامات",
     price: 1590,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/4/4/44_1_6_1.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Braun",
     category: "خلاطات",
     countInStock: 30,
+    description: "خلاط Braun عملي وخفيف، مثالي للعصائر والمزج اليومي.",
   },
   {
     name: "مكنسة Bosch كيس",
     price: 4500,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/1/5/1592133220_1045767-1_lhhe8o5baewibnrc_1.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Bosch",
     category: "مكانس",
     countInStock: 14,
+    description:
+      "مكنسة Bosch ذات قوة شفط ممتازة وسعة كيس كبيرة، مناسبة لكافة أنواع الأرضيات.",
   },
   {
     name: "مكواة بخار Philips",
     price: 1290,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/e/l/el1100237grn-conf_x2e1lqnafyfwcwse.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Philips",
     category: "مكاوي",
     countInStock: 22,
+    description: "مكواة Philips بخار قوية وسهلة الانزلاق، تزيل التجاعيد بسرعة.",
   },
 
   // ميكروويف وتوستر وقهوة وغسالة أطباق (5)
   {
     name: "ميكروويف Samsung 40 لتر",
     price: 6900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/2/5/25-900-8-tmd-25se-bk_jxhxndwlvmzay8qr_1_1.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Samsung",
     category: "ميكروويف",
     countInStock: 11,
+    description:
+      "ميكروويف Samsung بحجم 40 لتر، تسخين سريع وبرامج متعددة للطهي.",
   },
   {
     name: "توستر Kenwood 4 شرائح",
     price: 890,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/1/_/1_1el0rjwhayyhauq0.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Kenwood",
     category: "توستر",
     countInStock: 28,
+    description: "توستر Kenwood لأربع شرائح مع مستويات تحميص متعددة.",
   },
   {
     name: "ماكينة قهوة Nespresso",
     price: 4900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/e/s/es187609blk-conf_0norjikjqwmakvqz.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Nespresso",
     category: "قهوة ميكرز",
     countInStock: 15,
+    description:
+      "ماكينة قهوة Nespresso بإستخراج احترافي للكبسولات وطعم قهوة ممتاز.",
   },
   {
     name: "غسالة أطباق Bosch 13 فرد",
     price: 28900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/e/l/el1065755slv-conf_fn8jzhqnzdzhwylg.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Bosch",
     category: "غسالة أطباق",
     countInStock: 5,
+    description:
+      "غسالة أطباق 13 فرد من Bosch مع برامج غسيل قوية وموفرة للطاقة.",
   },
   {
     name: "غسالة أطباق Whirlpool 12 فرد",
     price: 24900,
-    image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800",
+    image:
+      "https://www.raneen.com/media/catalog/product/a/g/agsms25ab00gblk-conf-abozied_olrbayt3xsgszsql_5.jpg?width=265&height=265&canvas=265,265&optimize=high&bg-color=255,255,255&fit=bounds",
     brand: "Whirlpool",
     category: "غسالة أطباق",
     countInStock: 8,
+    description: "غسالة أطباق Whirlpool بسعة 12 فرد مع نتائج تجفيف ممتازة.",
   },
 ];
 

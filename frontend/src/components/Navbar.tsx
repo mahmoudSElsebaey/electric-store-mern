@@ -1,3 +1,4 @@
+// src/components/Navbar.tsx
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
@@ -36,7 +37,6 @@ export default function Navbar() {
     navigate("/cart");
   };
 
-  // إغلاق الـ dropdown لما نضغط خارج منه
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -52,18 +52,17 @@ export default function Navbar() {
 
   if (isAuthenticated === null) {
     return (
-      <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-          <span className="text-white text-xl">جارٍ التحقق من تسجيل الدخول...</span>
+      <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-center items-center">
+          <span className="text-xl">جارٍ التحقق من تسجيل الدخول...</span>
         </div>
       </nav>
     );
   }
 
   return (
-    <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-        {/* اللوجو */}
         <Link
           to="/"
           className="flex items-center gap-3 hover:opacity-90 transition"
@@ -74,7 +73,6 @@ export default function Navbar() {
           </h1>
         </Link>
 
-        {/* الروابط الرئيسية */}
         <div className="hidden md:flex items-center gap-6 text-lg">
           <Link to="/" className="hover:text-yellow-300 transition">
             الرئيسية
@@ -90,13 +88,8 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* الجانب الأيمن: السلة + الحساب */}
         <div className="flex items-center gap-4 md:gap-6">
-          {/* أيقونة السلة */}
-          <button
-            onClick={handleCartClick}
-            className="relative group text-white"
-          >
+          <button onClick={handleCartClick} className="relative group">
             <span className="text-4xl group-hover:scale-110 transition-transform">
               🛒
             </span>
@@ -107,7 +100,6 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* إذا مسجل دخول */}
           {isAuthenticated ? (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -118,7 +110,8 @@ export default function Navbar() {
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-xl shadow-xl py-2 z-50">
+                <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-xl shadow-xl py-2 z-50">
+                  {/* كل المستخدمين يشوفوا البروفايل */}
                   <Link
                     to="/profile"
                     className="block px-4 py-2 hover:bg-gray-100 transition"
@@ -126,15 +119,41 @@ export default function Navbar() {
                   >
                     حسابي
                   </Link>
-                  {user?.isAdmin && (
+
+                  {/* Owner فقط يشوف Dashboard */}
+                  {user?.role === "owner" && (
                     <Link
                       to="/dashboard"
                       className="block px-4 py-2 hover:bg-gray-100 transition"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      لوحة التحكم
+                      لوحة التحكم (Owner)
                     </Link>
                   )}
+
+                  {/* Admin و Owner يشوفوا إدارة المنتجات */}
+                  {(user?.role === "admin" || user?.role === "owner") && (
+                    <Link
+                      to="/products-management"
+                      className="block px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      إدارة المنتجات
+                    </Link>
+                  )}
+
+                  {/* Owner فقط يشوف إدارة المستخدمين */}
+                  {user?.role === "owner" && (
+                    <Link
+                      to="/users-management"
+                      className="block px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      إدارة المستخدمين
+                    </Link>
+                  )}
+
+                  {/* تسجيل الخروج */}
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
@@ -145,7 +164,6 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            /* إذا مش مسجل دخول */
             <div className="flex items-center gap-4">
               <Link
                 to="/login"

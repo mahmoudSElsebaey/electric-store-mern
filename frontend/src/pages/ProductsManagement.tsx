@@ -20,7 +20,7 @@ type Brand = { _id: string; name: string };
 type Category = { _id: string; name: string };
 
 export default function ProductsManagement() {
-  const { dispatch } = useStore();
+  const { state, dispatch } = useStore();
   const { showToast } = useToast();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -207,6 +207,17 @@ export default function ProductsManagement() {
       categoryName.includes(term)
     );
   });
+
+  if (
+    !state.isAuthenticated ||
+    !["admin", "owner"].includes(state.user?.role || "")
+  ) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600 font-bold text-3xl bg-gray-100">
+        ممنوع - ليس لديك الصلاحية للوصول إلى لوحة الإدارة
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">

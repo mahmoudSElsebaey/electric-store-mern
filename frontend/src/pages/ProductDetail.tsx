@@ -41,7 +41,7 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="text-center py-40 text-3xl text-blue-600">
+      <div className="text-center py-40 text-3xl text-blue-600" dir="rtl">
         جاري تحميل المنتج...
       </div>
     );
@@ -49,20 +49,20 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="text-center py-40 text-3xl text-red-600">
+      <div className="text-center py-40 text-3xl text-red-600" dir="rtl">
         المنتج غير موجود 😔
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
+    <div className="min-h-screen bg-gray-50 py-10" dir="rtl">
       <div className="max-w-7xl mx-auto px-6">
         <Link
-          to="/"
+          to="/store"
           className="inline-block mb-8 text-blue-600 hover:underline text-lg font-medium"
         >
-          ← العودة للرئيسية
+          ← العودة للمتجر
         </Link>
 
         <div className="grid md:grid-cols-2 gap-12 bg-white rounded-3xl shadow-2xl overflow-hidden">

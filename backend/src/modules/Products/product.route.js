@@ -30,9 +30,14 @@ const productRoutes = express.Router();
 
 productRoutes.get("/", getAllProducts);
 productRoutes.get("/:id", getProductById);
-
 productRoutes.post("/", protect, admin, upload.single("image"), createProduct);
-productRoutes.put("/:id", protect, admin, upload.single("image"), updateProduct);
+productRoutes.put(
+  "/:id",
+  protect,
+  admin,
+  upload.single("image"),
+  updateProduct
+);
 productRoutes.delete("/:id", protect, admin, deleteProduct);
 
 export default productRoutes;

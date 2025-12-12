@@ -1,35 +1,28 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
-import { useEffect, useState } from "react";
 import { useToast } from "../context/ToastContext";
 
 export default function Cart() {
   const { state, dispatch } = useStore();
-  const { cart } = state;
+  const { cart, isAuthenticated } = state;
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  // حالة loading مؤقتة أثناء التحقق من تسجيل الدخول
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // تحقق من وجود token في localStorage أو session
-    const token = localStorage.getItem("token"); // افترض أنك تحفظ توكن المستخدم هنا
-    if (!token) {
-      showToast("يجب تسجيل الدخول لعرض السلة!", "error");
-      navigate("/login");
-    } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLoading(false); // المستخدم مسجل دخول
-    }
-  }, [navigate, showToast]);
-
-  if (loading) {
+  // نعتبر المستخدم في loading لو isAuthenticated === null
+  if (isAuthenticated === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <span className="text-2xl text-gray-600">جارٍ تحميل السلة...</span>
+        <span className="text-2xl text-gray-600">
+          جارٍ التحقق من تسجيل الدخول...
+        </span>
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    showToast("يجب تسجيل الدخول لعرض السلة!", "error");
+    navigate("/login");
+    return null;
   }
 
   const removeFromCart = (id: string) => {

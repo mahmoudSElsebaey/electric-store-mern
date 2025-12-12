@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
-import User from "../../models/auth.model.js";
+import User from "../../models/user.model.js";
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
+//____________________________________ Register ____________________________________
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -23,7 +24,7 @@ export const register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -31,6 +32,7 @@ export const register = async (req, res) => {
   }
 };
 
+//____________________________________ Login ____________________________________
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,7 +58,7 @@ export const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -64,7 +66,7 @@ export const login = async (req, res) => {
   }
 };
 
-// Get current user (protected)
+// ____________________________________ Get current user (protected) ____________________________________
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
@@ -74,7 +76,7 @@ export const getMe = async (req, res) => {
   }
 };
 
-// Logout
+//____________________________________ Logout ____________________________________
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -84,7 +86,7 @@ export const logout = (req, res) => {
   res.json({ success: true, message: "تم تسجيل الخروج بنجاح" });
 };
 
-// Update user profile
+//____________________________________ Update user profile ____________________________________
 export const updateProfile = async (req, res) => {
   try {
     const updates = req.body;
@@ -120,5 +122,43 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.error("Update Profile Error:", error);
     res.status(400).json({ message: error.message || "خطأ في تحديث البيانات" });
+  }
+};
+
+//  __________________________________ Get All Users by Owner ____________________________________
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//  __________________________________ Delete User by Owner ____________________________________
+export const deleteUser = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await User.findOneAndDelete({ email });
+    if (!user) return res.status(404).json({ message: "المستخدم غير موجود" });
+    res.json({ message: "تم حذف المستخدم بنجاح" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//  __________________________________ Make Admin by Owner ____________________________________
+export const makeAdmin = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOneAndUpdate(
+      { email },
+      { role: "admin" },
+      { new: true }
+    ).select("-password");
+    if (!user) return res.status(404).json({ message: "المستخدم غير موجود" });
+    res.json({ message: "تم تحويل المستخدم إلى أدمن بنجاح", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

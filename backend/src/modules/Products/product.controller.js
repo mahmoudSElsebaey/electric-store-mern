@@ -1,175 +1,3 @@
-// // src/modules/Products/product.controller.js
-// import cloudinary from "../../../config/cloudinary.js";
-// import Product from "../../models/product.model.js";
-
-// // GET: جلب كل المنتجات
-// export const getAllProducts = async (req, res) => {
-//   try {
-//     const products = await Product.find({})
-//       .populate("brand", "name -_id")
-//       .populate("category", "name -_id");
-//     res.status(200).json(products);
-//   } catch (error) {
-//     console.error("Get Products Error:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// // GET: جلب منتج واحد
-// export const getProductById = async (req, res) => {
-//   try {
-//     const product = await Product.findById(req.params.id);
-//     if (!product) return res.status(404).json({ message: "المنتج غير موجود" });
-//     res.status(200).json(product);
-//   } catch (error) {
-//     console.error("Get Product Error:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// // POST: إضافة منتج جديد
-// export const createProduct = async (req, res) => {
-//   try {
-//     if (!req.user || !req.user.isAdmin) {
-//       return res.status(403).json({ message: "غير مسموح لك" });
-//     }
- 
-//     const { name, description, price, brand, category, countInStock } =
-//       req.body;
-//     let image = "https://via.placeholder.com/800x800.png?text=No+Image";
-
-//     // لو فيه صورة → ارفعها على Cloudinary
-//     if (req.file) {
-//       console.log("Uploading to Cloudinary...", req.file.originalname);
-
-//       const result = await new Promise((resolve, reject) => {
-//         const uploadStream = cloudinary.uploader.upload_stream(
-//           {
-//             folder: "electrical-tools",
-//             transformation: [
-//               { width: 1000, height: 1000, crop: "limit" },
-//               { quality: "auto" },
-//               { fetch_format: "auto" },
-//             ],
-//           },
-//           (error, result) => {
-//             if (error) {
-//               console.error("Cloudinary Upload Error:", error);
-//               reject(error);
-//             } else {
-//               console.log("Upload Success:", result.secure_url);
-//               resolve(result);
-//             }
-//           }
-//         );
-//         uploadStream.end(req.file.buffer);
-//       });
-
-//       image = result.secure_url;
-//     }
-
-//     const product = await Product.create({
-//       name,
-//       description: description || "لا يوجد وصف",
-//       price: parseFloat(price),
-//       image,
-//       brand,
-//       category: category || "أدوات عامة",
-//       countInStock: parseInt(countInStock),
-//     });
-
-//     console.log("Product created:", product.name);
-//     res.status(201).json(product);
-//   } catch (error) {
-//     console.error("Create Product Error:", error);
-//     res.status(500).json({
-//       message: error.message || "فشل في إنشاء المنتج",
-//       error: process.env.NODE_ENV === "development" ? error : undefined,
-//     });
-//   }
-// };
-
-// // PUT: تعديل منتج
-// export const updateProduct = async (req, res) => {
-//   try {
-//     if (!req.user || !req.user.isAdmin) {
-//       return res.status(403).json({ message: "غير مسموح لك" });
-//     }
-
-//     const updates = {
-//       name: req.body.name,
-//       description: req.body.description || "لا يوجد وصف",
-//       price: parseFloat(req.body.price),
-//       brand: req.body.brand,
-//       category: req.body.category || "أدوات عامة",
-//       countInStock: parseInt(req.body.countInStock),
-//     };
-
-//     // لو فيه صورة جديدة → ارفعها
-//     if (req.file) {
-//       console.log("Updating image for:", req.params.id);
-
-//       const result = await new Promise((resolve, reject) => {
-//         const uploadStream = cloudinary.uploader.upload_stream(
-//           { folder: "electrical-tools" },
-//           (error, result) => {
-//             if (error) {
-//               console.error("Cloudinary Update Error:", error);
-//               reject(error);
-//             } else {
-//               console.log("Image updated:", result.secure_url);
-//               resolve(result);
-//             }
-//           }
-//         );
-//         uploadStream.end(req.file.buffer);
-//       });
-
-//       updates.image = result.secure_url;
-//     }
-
-//     const product = await Product.findByIdAndUpdate(req.params.id, updates, {
-//       new: true,
-//       runValidators: true,
-//     });
-
-//     if (!product) {
-//       return res.status(404).json({ message: "المنتج غير موجود" });
-//     }
-
-//     console.log("Product updated:", product.name);
-//     res.json(product);
-//   } catch (error) {
-//     console.error("Update Product Error:", error);
-//     res.status(500).json({
-//       message: error.message || "فشل في تعديل المنتج",
-//       error: process.env.NODE_ENV === "development" ? error : undefined,
-//     });
-//   }
-// };
-
-// // DELETE: حذف منتج
-// export const deleteProduct = async (req, res) => {
-//   try {
-//     if (!req.user || !req.user.isAdmin) {
-//       return res.status(403).json({ message: "غير مسموح لك" });
-//     }
-
-//     const product = await Product.findByIdAndDelete(req.params.id);
-//     if (!product) {
-//       return res.status(404).json({ message: "المنتج غير موجود" });
-//     }
-
-//     console.log("Product deleted:", product.name);
-//     res.json({ message: "تم حذف المنتج بنجاح" });
-//   } catch (error) {
-//     console.error("Delete Product Error:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-
-// src/modules/Products/product.controller.js
 import cloudinary from "../../../config/cloudinary.js";
 import Brand from "../../models/brand.model.js";
 import Category from "../../models/category.model.js";
@@ -179,12 +7,12 @@ import Product from "../../models/product.model.js";
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({})
-      .populate("brand", "name -_id")
-      .populate("category", "name -_id");
+      .populate("brand", "name")
+      .populate("category", "name");
     res.status(200).json(products);
   } catch (error) {
     console.error("Get Products Error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "فشل جلب المنتجات" });
   }
 };
 
@@ -192,44 +20,55 @@ export const getAllProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
-      .populate("brand", "name -_id")
-      .populate("category", "name -_id");
+      .populate("brand", "name")
+      .populate("category", "name");
 
     if (!product) return res.status(404).json({ message: "المنتج غير موجود" });
     res.status(200).json(product);
   } catch (error) {
     console.error("Get Product Error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "فشل جلب المنتج" });
   }
 };
 
-// POST: إضافة منتج جديد
+// POST: إضافة منتج جديد (للـ Admin و Owner فقط)
 export const createProduct = async (req, res) => {
   try {
-    if (!req.user || !req.user.isAdmin) {
-      return res.status(403).json({ message: "غير مسموح لك" });
+    // الحماية: Owner أو Admin فقط
+    if (!req.user || !["admin", "owner"].includes(req.user.role)) {
+      return res.status(403).json({ message: "ممنوع - مطلوب صلاحيات Admin أو Owner" });
     }
 
     const { name, description, price, brand, category, countInStock } = req.body;
-    let image = "https://via.placeholder.com/800x800.png?text=No+Image";
+
+    if (!name || !price || !brand || !category || !countInStock) {
+      return res.status(400).json({ message: "جميع الحقول مطلوبة" });
+    }
+
+    // التحقق من وجود الـ brand و category
+    const [foundBrand, foundCategory] = await Promise.all([
+      Brand.findById(brand),
+      Category.findById(category),
+    ]);
+
+    if (!foundBrand || !foundCategory) {
+      return res.status(400).json({ message: "الماركة أو التصنيف غير موجود" });
+    }
+
+    let image = "https://res.cloudinary.com/dw6wavb0f/image/upload/v1/electrical-tools/placeholder.jpg";
 
     if (req.file) {
       const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
+        const stream = cloudinary.uploader.upload_stream(
           { folder: "electrical-tools" },
-          (error, result) => (error ? reject(error) : resolve(result))
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
         );
-        uploadStream.end(req.file.buffer);
+        stream.end(req.file.buffer);
       });
       image = result.secure_url;
-    }
-
-    // تأكد إن الـ brand و category موجودين
-    const selectedBrand = await Brand.findById(brand);
-    const selectedCategory = await Category.findById(category);
-
-    if (!selectedBrand || !selectedCategory) {
-      return res.status(400).json({ message: "Brand أو Category غير موجود" });
     }
 
     const product = await Product.create({
@@ -237,59 +76,63 @@ export const createProduct = async (req, res) => {
       description: description || "لا يوجد وصف",
       price: parseFloat(price),
       image,
-      brand: selectedBrand._id,
-      category: selectedCategory._id,
-      countInStock: parseInt(countInStock),
+      brand: foundBrand._id,
+      category: foundCategory._id,
+      countInStock: parseInt(countInStock, 10),
     });
 
-    // اعمل populate قبل الإرسال للـ frontend
-    const productWithPopulates = await Product.findById(product._id)
-      .populate("brand", "name -_id")
-      .populate("category", "name -_id");
+    const populatedProduct = await Product.findById(product._id)
+      .populate("brand", "name")
+      .populate("category", "name");
 
-    res.status(201).json(productWithPopulates);
+    res.status(201).json(populatedProduct);
   } catch (error) {
     console.error("Create Product Error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "فشل إضافة المنتج" });
   }
 };
 
-// PUT: تعديل منتج
+// PUT: تعديل منتج (للـ Admin و Owner فقط)
 export const updateProduct = async (req, res) => {
   try {
-    if (!req.user || !req.user.isAdmin) {
-      return res.status(403).json({ message: "غير مسموح لك" });
+    if (!req.user || !["admin", "owner"].includes(req.user.role)) {
+      return res.status(403).json({ message: "ممنوع - مطلوب صلاحيات Admin أو Owner" });
     }
 
     const { name, description, price, brand, category, countInStock } = req.body;
-
-    // تأكد إن الـ brand و category موجودين في DB
-    const selectedBrand = await Brand.findById(brand);
-    const selectedCategory = await Category.findById(category);
-
-    if (!selectedBrand || !selectedCategory) {
-      return res.status(400).json({ message: "Brand أو Category غير موجود" });
-    }
 
     const updates = {
       name,
       description: description || "لا يوجد وصف",
       price: parseFloat(price),
-      brand: selectedBrand._id,
-      category: selectedCategory._id,
-      countInStock: parseInt(countInStock),
+      countInStock: parseInt(countInStock, 10),
     };
 
-    // لو فيه صورة جديدة → ارفعها على Cloudinary
+    // تحديث brand و category لو موجودين
+    if (brand) {
+      const foundBrand = await Brand.findById(brand);
+      if (!foundBrand) return res.status(400).json({ message: "الماركة غير موجودة" });
+      updates.brand = foundBrand._id;
+    }
+
+    if (category) {
+      const foundCategory = await Category.findById(category);
+      if (!foundCategory) return res.status(400).json({ message: "التصنيف غير موجود" });
+      updates.category = foundCategory._id;
+    }
+
+    // رفع صورة جديدة لو موجودة
     if (req.file) {
       const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
+        const stream = cloudinary.uploader.upload_stream(
           { folder: "electrical-tools" },
-          (error, result) => (error ? reject(error) : resolve(result))
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
         );
-        uploadStream.end(req.file.buffer);
+        stream.end(req.file.buffer);
       });
-
       updates.image = result.secure_url;
     }
 
@@ -298,8 +141,8 @@ export const updateProduct = async (req, res) => {
       updates,
       { new: true, runValidators: true }
     )
-      .populate("brand", "name -_id")
-      .populate("category", "name -_id");
+      .populate("brand", "name")
+      .populate("category", "name");
 
     if (!updatedProduct) {
       return res.status(404).json({ message: "المنتج غير موجود" });
@@ -308,15 +151,15 @@ export const updateProduct = async (req, res) => {
     res.json(updatedProduct);
   } catch (error) {
     console.error("Update Product Error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "فشل تحديث المنتج" });
   }
 };
 
-// DELETE: حذف منتج
+// DELETE: حذف منتج (للـ Admin و Owner فقط)
 export const deleteProduct = async (req, res) => {
   try {
-    if (!req.user || !req.user.isAdmin) {
-      return res.status(403).json({ message: "غير مسموح لك" });
+    if (!req.user || !["admin", "owner"].includes(req.user.role)) {
+      return res.status(403).json({ message: "ممنوع - مطلوب صلاحيات Admin أو Owner" });
     }
 
     const product = await Product.findByIdAndDelete(req.params.id);
@@ -328,6 +171,6 @@ export const deleteProduct = async (req, res) => {
     res.json({ message: "تم حذف المنتج بنجاح" });
   } catch (error) {
     console.error("Delete Product Error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "فشل حذف المنتج" });
   }
 };
