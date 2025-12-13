@@ -52,7 +52,7 @@ export default function Navbar() {
 
   if (isAuthenticated === null) {
     return (
-      <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
+      <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-5 flex justify-center items-center">
           <span className="text-xl">جارٍ التحقق من تسجيل الدخول...</span>
         </div>
@@ -61,7 +61,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
+    <nav className="bg-linear-to-r from-blue-900 via-blue-800 to-blue-700 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
         <Link
           to="/"

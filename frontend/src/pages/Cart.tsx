@@ -1,58 +1,53 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
+import { Link, useNavigate } from "react-router-dom"; // ← جديد
 
 export default function Cart() {
   const { state, dispatch } = useStore();
   const { cart, isAuthenticated } = state;
   const { showToast } = useToast();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // ← جديد
 
-  // نعتبر المستخدم في loading لو isAuthenticated === null
-  if (isAuthenticated === null) {
+  const totalPrice =
+    cart.reduce(
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+      0
+    ) + 50;
+
+  const removeFromCart = (id: string) =>
+    dispatch({ type: "REMOVE_FROM_CART", payload: id });
+  const increaseQuantity = (id: string) =>
+    dispatch({ type: "INCREASE_QTY", payload: id });
+  const decreaseQuantity = (id: string) =>
+    dispatch({ type: "DECREASE_QTY", payload: id });
+
+  // زر إتمام الشراء بيروح مباشرة لصفحة Checkout
+  const goToCheckout = () => {
+    if (cart.length === 0) {
+      showToast("السلة فارغة!", "error");
+      return;
+    }
+    navigate("/checkout");
+  };
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <span className="text-2xl text-gray-600">
-          جارٍ التحقق من تسجيل الدخول...
+          يجب تسجيل الدخول لعرض السلة
         </span>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    showToast("يجب تسجيل الدخول لعرض السلة!", "error");
-    navigate("/login");
-    return null;
-  }
-
-  const removeFromCart = (id: string) => {
-    dispatch({ type: "REMOVE_FROM_CART", payload: id });
-  };
-
-  const increaseQuantity = (id: string) => {
-    dispatch({ type: "INCREASE_QTY", payload: id });
-  };
-
-  const decreaseQuantity = (id: string) => {
-    dispatch({ type: "DECREASE_QTY", payload: id });
-  };
-
-  const totalPrice = cart.reduce(
-    (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
-    0
-  );
-
   if (!cart || cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-20 text-center">
+      <div className="w-full h-screen flex flex-col items-center justify-center  bg-gray-50 py-20 text-center">
         <h1 className="text-5xl font-bold text-gray-800 mb-8">
           السلة فارغة 🛒
         </h1>
-        <Link
-          to="/store"
-          className="text-2xl bg-blue-600 text-white px-10 py-5 rounded-xl hover:bg-blue-700 transition"
-        >
-          تصفح المنتجات
+        <Link to="/store" className="text-xl text-blue-600 hover:underline">
+          ← اذهب للتسوق الأن
         </Link>
       </div>
     );
@@ -90,7 +85,6 @@ export default function Cart() {
                 </p>
               </div>
 
-              {/* خيارات الكمية */}
               <div className="flex flex-col items-center gap-2">
                 <div className="flex items-center gap-2 text-xl">
                   <button
@@ -126,16 +120,13 @@ export default function Cart() {
 
           <div className="mt-12 text-right">
             <div className="text-4xl font-bold text-gray-800 mb-8">
-              الإجمالي:{" "}
+              الإجمالي:
               <span className="text-blue-600">
                 {totalPrice.toLocaleString()} ج.م
               </span>
             </div>
             <button
-              onClick={() => {
-                showToast("جاري توجيهك لإتمام الشراء...", "success");
-                // navigate("/checkout") لو عندك صفحة checkout
-              }}
+              onClick={goToCheckout}
               className="bg-green-600 text-white text-3xl px-16 py-6 rounded-2xl hover:bg-green-700 transition font-bold"
             >
               إتمام الشراء 💳

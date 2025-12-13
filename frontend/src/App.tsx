@@ -1,4 +1,3 @@
-// src/App.tsx
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,6 +19,11 @@ import AllProducts from "./pages/AllProducts";
 import Dashboard from "./pages/Dashboard";
 import ProductsManagement from "./pages/ProductsManagement";
 import UsersManagement from "./pages/UsersManagement";
+import Checkout from "./pages/Checkout";
+// import Payment from "./pages/payment";
+// import StripePayment from "./pages/StripePayment";
+// import PaypalPayment from "./pages/PaypalPayment";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -60,7 +64,11 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
-
+        <Route path="/checkout" element={<Checkout />} />
+        {/* <Route path="/payment" element={<Payment />} /> */}
+        {/* <Route path="/payment/stripe/:orderId" element={<StripePayment />} />
+        <Route path="/payment/paypal/:orderId" element={<PaypalPayment />} /> */}
+        <Route path="/payment-success" element={<PaymentSuccess />} />
         {/* Protected routes */}
         <Route
           path="/profile"
