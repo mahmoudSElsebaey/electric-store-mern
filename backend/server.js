@@ -15,13 +15,25 @@ dotenv.config();
 const port = process.env.PORT || 5000;
 const app = express();
 
-// مهم جدًا: دول لازم يكونوا في البداية خالص قبل أي route أو middleware تاني
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://electric-store-mern.vercel.app",
+];
+
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true, // لو عندك cookies
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
+
 app.use(cookieParser());
 app.use(express.json()); // ← ده اللي بيقرأ req.body !! لازم يكون موجود وفي المكان ده
 
