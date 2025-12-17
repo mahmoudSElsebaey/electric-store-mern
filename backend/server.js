@@ -39,6 +39,7 @@ app.use(express.json()); // ← ده اللي بيقرأ req.body !! لازم ي
 
 // لو عندك webhook لـ Stripe، حطه بعد كده بس مع raw body
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
+
 connectDB();
 
 // app.get("/", (req, res) => res.send("Hello World!"));
