@@ -4,6 +4,14 @@ import User from "../../models/user.model.js";
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,        // لازم true عشان HTTPS
+  sameSite: "none",    // لازم none عشان Cross-Site
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
+
 //____________________________________ Register ____________________________________
 export const register = async (req, res) => {
   try {
@@ -11,12 +19,7 @@ export const register = async (req, res) => {
     const user = await User.create({ name, email, password });
     const token = signToken(user._id);
 
-    res.cookie("token", token, {
-      httpOnly: true, // ← آمن ضد XSS
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 أيام
-    });
+    res.cookie("token", token, cookieOptions);
 
     res.status(201).json({
       success: true,
@@ -43,12 +46,7 @@ export const login = async (req, res) => {
 
     const token = signToken(user._id);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("token", token, cookieOptions);
 
     res.json({
       success: true,
@@ -76,11 +74,13 @@ export const getMe = async (req, res) => {
 
 //____________________________________ Logout ____________________________________
 export const logout = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: false, // لو في production خلي true
-    sameSite: "lax",
-  });
+  
+ res.clearCookie("token", {
+  ...cookieOptions,
+  maxAge: 0,
+});
+
+
   res.json({ success: true, message: "تم تسجيل الخروج بنجاح" });
 };
 
