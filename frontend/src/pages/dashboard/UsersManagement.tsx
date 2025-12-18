@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
@@ -120,7 +121,7 @@ export default function UsersManagement() {
           />
           <button
             onClick={handleMakeAdmin}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg"
+            className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white px-8 py-3 rounded-xl font-bold transition shadow-lg"
           >
             تحويل إلى أدمن
           </button>

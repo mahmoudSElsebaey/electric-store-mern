@@ -15,7 +15,10 @@ export default function Contact() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden" dir="rtl">
+      <section
+        className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden"
+        dir="rtl"
+      >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-8">
@@ -36,8 +39,7 @@ export default function Contact() {
           </div>
         </div>
 
-
-          {/* Wave decoration */}
+        {/* Wave decoration */}
         <div className="absolute -bottom-1 left-0 right-0">
           <svg viewBox="0 0 1440 120" className="w-full">
             <path
@@ -126,7 +128,7 @@ export default function Contact() {
                     <div className="bg-blue-100 p-4 rounded-full">
                       <FaPhoneAlt className="w-8 h-8 text-blue-600" />
                     </div>
-                    <div  dir="ltr">
+                    <div dir="ltr">
                       <p className="font-bold text-xl">0100 123 4567</p>
                       <p className="text-gray-600">خط ساخن - متاح 24/7</p>
                     </div>
@@ -136,7 +138,7 @@ export default function Contact() {
                     <div className="bg-green-100 p-4 rounded-full">
                       <FaWhatsapp className="w-8 h-8 text-green-600" />
                     </div>
-                    <div  dir="ltr">
+                    <div dir="ltr">
                       <p className="font-bold text-xl">0100 123 4567</p>
                       <p className="text-gray-600">دعم فوري عبر واتساب</p>
                     </div>

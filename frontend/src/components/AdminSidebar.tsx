@@ -1,5 +1,6 @@
+// src/layouts/AdminSidebar.tsx (أو src/components/AdminSidebar.tsx)
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // ← غيرنا Link إلى NavLink
 import { useStore } from "../context/StoreContext";
 
 const AdminSidebar: React.FC = () => {
@@ -12,16 +13,27 @@ const AdminSidebar: React.FC = () => {
     navigate("/login");
   };
 
+  // ستايل الـ active اللي هيظهر لما الروت نشط
+  const activeClassName =
+    "flex items-center p-3 bg-blue-600 text-white rounded-xl transition shadow-lg font-bold";
+  const inactiveClassName =
+    "flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition";
+
   return (
     <div
       className="fixed top-0 right-0 w-64 h-full bg-gray-900 text-white p-6 overflow-y-auto z-40 shadow-2xl"
       dir="rtl"
     >
-      <div className="text-2xl font-bold text-center mb-12">لوحة التحكم</div>
-      <nav className="space-y-4 pt-4">
-        <Link
+      <div className="text-2xl font-bold text-center mb-12 text-blue-400">
+        لوحة التحكم
+      </div>
+
+      <nav className="space-y-4">
+        <NavLink
           to="/admin/dashboard"
-          className="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition"
+          className={({ isActive }) =>
+            isActive ? activeClassName : inactiveClassName
+          }
         >
           <svg
             className="w-6 h-6 ml-4"
@@ -37,11 +49,13 @@ const AdminSidebar: React.FC = () => {
             />
           </svg>
           الرئيسية
-        </Link>
+        </NavLink>
 
-        <Link
+        <NavLink
           to="/admin/orders"
-          className="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition"
+          className={({ isActive }) =>
+            isActive ? activeClassName : inactiveClassName
+          }
         >
           <svg
             className="w-6 h-6 ml-4"
@@ -57,11 +71,13 @@ const AdminSidebar: React.FC = () => {
             />
           </svg>
           إدارة الطلبات
-        </Link>
+        </NavLink>
 
-        <Link
-          to="/admin/products"
-          className="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition"
+        <NavLink
+          to="/admin/products" // ← تأكد إن الروت ده صح عندك
+          className={({ isActive }) =>
+            isActive ? activeClassName : inactiveClassName
+          }
         >
           <svg
             className="w-6 h-6 ml-4"
@@ -77,11 +93,13 @@ const AdminSidebar: React.FC = () => {
             />
           </svg>
           إدارة المنتجات
-        </Link>
+        </NavLink>
 
-        <Link
+        <NavLink
           to="/admin/brands"
-          className="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition"
+          className={({ isActive }) =>
+            isActive ? activeClassName : inactiveClassName
+          }
         >
           <svg
             className="w-6 h-6 ml-4"
@@ -97,11 +115,13 @@ const AdminSidebar: React.FC = () => {
             />
           </svg>
           إدارة الماركات
-        </Link>
+        </NavLink>
 
-        <Link
+        <NavLink
           to="/admin/categories"
-          className="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition"
+          className={({ isActive }) =>
+            isActive ? activeClassName : inactiveClassName
+          }
         >
           <svg
             className="w-6 h-6 ml-4"
@@ -117,12 +137,14 @@ const AdminSidebar: React.FC = () => {
             />
           </svg>
           إدارة التصنيفات
-        </Link>
-       
+        </NavLink>
+
         {user?.role === "owner" && (
-          <Link
-            to="/admin/users"
-            className="flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition"
+          <NavLink
+            to="/admin/users" // ← تأكد من الروت الصحيح عندك
+            className={({ isActive }) =>
+              isActive ? activeClassName : inactiveClassName
+            }
           >
             <svg
               className="w-6 h-6 ml-4"
@@ -138,12 +160,12 @@ const AdminSidebar: React.FC = () => {
               />
             </svg>
             إدارة العملاء
-          </Link>
+          </NavLink>
         )}
 
         <button
           onClick={handleLogout}
-          className="flex items-center cursor-pointer p-3 bg-red-800 hover:bg-red-900 rounded-xl transition w-full text-right mt-4"
+          className="flex items-center cursor-pointer p-3 bg-red-800 hover:bg-red-900 rounded-xl transition w-full text-right mt-8 shadow-lg"
         >
           <svg
             className="w-6 h-6 ml-4"

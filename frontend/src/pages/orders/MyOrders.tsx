@@ -1,6 +1,7 @@
 import React from "react";
 import { useOrders } from "../../hooks/useOrders";
 import { Link } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 const MyOrders: React.FC = () => {
   const { orders, ordersLoading, ordersError } = useOrders();
@@ -59,6 +60,7 @@ const MyOrders: React.FC = () => {
   };
 
   return (
+    <>
     <div className="container mx-auto px-4 py-8" dir="rtl">
       <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
         طلباتي
@@ -128,6 +130,8 @@ const MyOrders: React.FC = () => {
         </div>
       )}
     </div>
+    <Footer />
+    </>
   );
 };
 

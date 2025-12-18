@@ -1,9 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect } from "react";
 import ProductCard from "../../components/ProductCard";
 import api from "../../services/api";
 import Footer from "../../components/Footer";
+import { FaShieldAlt, FaTags, FaHeadphones } from "react-icons/fa";
+import { GoZap } from "react-icons/go";
+import { FaTruckFast } from "react-icons/fa6";
 
 type Product = {
   _id: string;
@@ -14,24 +17,24 @@ type Product = {
   brand: { _id: string; name: string };
   category: { _id: string; name: string };
   countInStock: number;
+  rating?: number | null;
+  numReviews?: number;
 };
 
-const PRODUCTS_PER_PAGE = 12; // ← 12 منتج في الصفحة
+const PRODUCTS_PER_PAGE = 12;
 
-export default function Home() {
+export default function Store() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filtered, setFiltered] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  // حالات الفلاتر
   const [search, setSearch] = useState("");
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  // جلب المنتجات
   useEffect(() => {
     api
       .get("/products")
@@ -43,7 +46,6 @@ export default function Home() {
       .catch(() => setLoading(false));
   }, []);
 
-  // تطبيق الفلاتر
   useEffect(() => {
     let result = products;
 
@@ -55,27 +57,15 @@ export default function Home() {
       );
     }
 
-    if (brand) {
-      result = result.filter((p) => p.brand.name === brand);
-    }
-
-    if (category) {
-      result = result.filter((p) => p.category.name === category);
-    }
-
-    if (minPrice) {
-      result = result.filter((p) => p.price >= Number(minPrice));
-    }
-
-    if (maxPrice) {
-      result = result.filter((p) => p.price <= Number(maxPrice));
-    }
+    if (brand) result = result.filter((p) => p.brand.name === brand);
+    if (category) result = result.filter((p) => p.category.name === category);
+    if (minPrice) result = result.filter((p) => p.price >= Number(minPrice));
+    if (maxPrice) result = result.filter((p) => p.price <= Number(maxPrice));
 
     setFiltered(result);
-    setCurrentPage(1); // رجوع للصفحة الأولى عند أي تغيير في الفلاتر
+    setCurrentPage(1);
   }, [search, brand, category, minPrice, maxPrice, products]);
 
-  // حساب المنتجات الحالية في الصفحة
   const indexOfLast = currentPage * PRODUCTS_PER_PAGE;
   const indexOfFirst = indexOfLast - PRODUCTS_PER_PAGE;
   const currentProducts = filtered.slice(indexOfFirst, indexOfLast);
@@ -83,13 +73,60 @@ export default function Home() {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  // استخراج الماركات والتصنيفات الفريدة
   const brands = [...new Set(products.map((p) => p.brand.name))];
   const categories = [...new Set(products.map((p) => p.category.name))];
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 py-8" dir="rtl">
+      {/* ==================== Hero Section ==================== */}
+      <section className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+
+        <div className="relative max-w-7xl mx-auto px-6 text-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+            اكتشف أحدث الأجهزة الكهربائية
+          </h1>
+          <p className="text-xl md:text-3xl font-light max-w-4xl mx-auto leading-relaxed mb-12">
+            تشكيلة واسعة من الأجهزة المنزلية الأصلية بأفضل الأسعار وأقوى العروض
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12 text-lg">
+            <div className="flex items-center gap-3">
+              <GoZap className="w-10 h-10 text-yellow-400" />
+              <span>أسعار تنافسية</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <FaTruckFast className="w-10 h-10 text-yellow-400" />
+              <span>توصيل سريع</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <FaShieldAlt className="w-10 h-10 text-yellow-400" />
+              <span>ضمان أصلي</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <FaTags className="w-10 h-10 text-yellow-400" />
+              <span>عروض يومية</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <FaHeadphones className="w-10 h-10 text-yellow-400" />
+              <span>دعم 24/7</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Wave */}
+        <div className="absolute -bottom-1 left-0 right-0">
+          <svg viewBox="0 0 1440 120" className="w-full">
+            <path
+              fill="#f9fafb"
+              d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"
+            ></path>
+          </svg>
+        </div>
+      </section>
+
+      {/* ==================== محتوى المتجر ==================== */}
+      <div className="min-h-screen bg-gray-50 py-12" dir="rtl">
         <div className="max-w-7xl mx-auto px-6">
           {/* شريط الفلاتر */}
           <div className="bg-white rounded-2xl shadow-xl p-6 mb-10">
@@ -209,6 +246,7 @@ export default function Home() {
           )}
         </div>
       </div>
+
       <Footer />
     </>
   );

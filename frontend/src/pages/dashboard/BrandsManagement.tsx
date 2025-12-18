@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -184,7 +185,7 @@ export default function BrandsManagement() {
             <div className="md:col-span-2 flex gap-4">
               <button
                 type="submit"
-                className="bg-blue-600 text-white py-3 px-10 rounded-xl font-bold hover:bg-blue-700 transition"
+                className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 px-10 rounded-xl font-bold transition"
               >
                 {editingId ? "حفظ التعديلات" : "إضافة الماركة"}
               </button>
@@ -227,7 +228,7 @@ export default function BrandsManagement() {
                     <th className="px-6 py-4 text-right">اللوجو</th>
                     <th className="px-6 py-4 text-right">الاسم</th>
                     <th className="px-6 py-4 text-right">الوصف</th>
-                    <th className="px-6 py-4 text-center">إجراءات</th>
+                    <th className="px-16 py-4 text-center">إجراءات</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">

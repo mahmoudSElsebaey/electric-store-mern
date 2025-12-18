@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
@@ -185,7 +185,7 @@ export default function CategoriesManagement() {
             <div className="md:col-span-2 flex gap-4">
               <button
                 type="submit"
-                className="bg-blue-600 text-white py-3 px-10 rounded-xl font-bold hover:bg-blue-700 transition"
+                className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 px-10 rounded-xl font-bold transition"
               >
                 {editingId ? "حفظ التعديلات" : "إضافة التصنيف"}
               </button>

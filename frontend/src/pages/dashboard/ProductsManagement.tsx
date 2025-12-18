@@ -107,7 +107,7 @@ export default function ProductsManagement() {
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate("/admin/products/add")}
-          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg font-semibold transition flex items-center gap-2"
+          className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white px-5 py-2.5 rounded-lg font-semibold transition flex items-center gap-2"
         >
           <svg
             className="w-5 h-5"

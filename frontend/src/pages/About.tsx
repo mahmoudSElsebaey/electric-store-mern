@@ -9,33 +9,38 @@ import { Link } from "react-router-dom";
 export default function About() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative bg-linear-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent"></div>
-        </div>
+      {/* Hero Section - نفس الاستايل الجديد */}
+      <section className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden">
+        {/* طبقة سوداء شفافة */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
             متجر الأجهزة الكهربائية الرائد في مصر
           </h1>
           <p className="text-xl md:text-3xl font-light max-w-4xl mx-auto leading-relaxed">
-            وجهتك الموثوقة لأحدث وأفضل الأجهزة الكهربائية المنزلية من العلامات
-            التجارية العالمية
+            وجهتك الموثوقة لأحدث وأفضل الأجهزة الكهربائية المنزلية من العلامات التجارية العالمية
           </p>
-          <div className="mt-10 flex justify-center gap-8">
-            <div className="flex items-center gap-3 text-lg">
-              <GoZap className="w-8 h-8 text-yellow-400" />
+          <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-12 text-lg">
+            <div className="flex items-center gap-3">
+              <GoZap className="w-10 h-10 text-yellow-400" />
               <span>جودة عالمية</span>
             </div>
-            <div className="flex items-center gap-3 text-lg">
-              <FaAward className="w-8 h-8 text-yellow-400" />
+            <div className="flex items-center gap-3">
+              <FaAward className="w-10 h-10 text-yellow-400" />
               <span>ضمان أصلي</span>
             </div>
-            <div className="flex items-center gap-3 text-lg">
-              <FaTruckFast className="w-8 h-8 text-yellow-400" />
+            <div className="flex items-center gap-3">
+              <FaTruckFast className="w-10 h-10 text-yellow-400" />
               <span>توصيل سريع</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <FaShieldAlt className="w-10 h-10 text-yellow-400" />
+              <span>خدمة 24/7</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <HiWrenchScrewdriver className="w-10 h-10 text-yellow-400" />
+              <span>تركيب مجاني</span>
             </div>
           </div>
         </div>
@@ -43,15 +48,12 @@ export default function About() {
         {/* Wave decoration */}
         <div className="absolute -bottom-1 left-0 right-0">
           <svg viewBox="0 0 1440 120" className="w-full">
-            <path
-              fill="#f9fafb"
-              d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"
-            ></path>
+            <path fill="#f9fafb" d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"></path>
           </svg>
         </div>
       </section>
 
-      {/* About Content */}
+      {/* باقي الصفحة زي ما هي */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -69,7 +71,7 @@ export default function About() {
               </p>
               <p className="text-xl text-gray-700 leading-relaxed mb-8">
                 نعمل مع أكبر العلامات التجارية العالمية مثل <strong>LG</strong>,{" "}
-                <strong>Samsung</strong>,<strong> Bosch</strong>,{" "}
+                <strong>Samsung</strong>, <strong>Bosch</strong>,{" "}
                 <strong>Toshiba</strong>, <strong>Whirlpool</strong> وغيرها،
                 لنقدم لكم تشكيلة واسعة من الثلاجات، الغسالات، التكييفات،
                 البوتاجازات، والأجهزة الصغيرة.
@@ -195,17 +197,7 @@ export default function About() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-linear-to-b from-blue-900 via-blue-800  to-indigo-900 text-white relative">
-        {/* Wave decoration */}
-        <div className="absolute -top-25 left-0 right-0">
-          <svg viewBox="0 0 1440 120" className="w-full ">
-            <path
-              fill="#1c398e"
-              d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"
-            ></path>
-          </svg>
-        </div>
-
+      <section className="py-20 bg-linear-to-b from-blue-900 via-blue-800 to-indigo-900 text-white relative">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-8">
             جاهز لتجربة تسوق مختلفة؟
@@ -215,7 +207,7 @@ export default function About() {
           </p>
           <Link
             to="/store"
-            className="bg-yellow-500  px-12 py-5 rounded-full text-2xl font-bold hover:bg-yellow-600 transition transform hover:scale-105 shadow-2xl"
+            className="bg-yellow-500 px-12 py-5 rounded-full text-2xl font-bold hover:bg-yellow-600 transition transform hover:scale-105 shadow-2xl"
           >
             تسوق الآن
           </Link>
