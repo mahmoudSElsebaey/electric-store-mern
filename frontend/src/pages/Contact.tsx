@@ -15,7 +15,7 @@ export default function Contact() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden" dir="rtl">
+      <section className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden" dir="rtl">
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-8">
@@ -34,6 +34,17 @@ export default function Contact() {
               <span>خط ساخن 24/7</span>
             </div>
           </div>
+        </div>
+
+
+          {/* Wave decoration */}
+        <div className="absolute -bottom-1 left-0 right-0">
+          <svg viewBox="0 0 1440 120" className="w-full">
+            <path
+              fill="#f9fafb"
+              d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"
+            ></path>
+          </svg>
         </div>
       </section>
 
@@ -96,7 +107,7 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 shadow-2xl"
+                  className="w-full bg-linear-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 shadow-2xl"
                 >
                   إرسال الرسالة
                 </button>
@@ -184,7 +195,7 @@ export default function Contact() {
                     </a>
                     <a
                       href="#"
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 rounded-full hover:from-purple-700 hover:to-pink-700 hover:-translate-y-2 transition shadow-lg"
+                      className="bg-linear-to-r from-purple-600 to-pink-600 p-4 rounded-full hover:from-purple-700 hover:to-pink-700 hover:-translate-y-2 transition shadow-lg"
                     >
                       <FaInstagram />
                     </a>

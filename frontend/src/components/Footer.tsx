@@ -13,7 +13,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white py-16 mt-auto" dir="rtl">
+    <footer className="bg-linear-to-r from-gray-900 via-black to-gray-900 text-white py-16 mt-auto" dir="rtl">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
 
@@ -121,7 +121,7 @@ export default function Footer() {
               </a>
               <a 
                 href="#" 
-                className="w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center hover:from-purple-700 hover:to-pink-700 hover:-translate-y-2 transition-all duration-300 shadow-lg"
+                className="w-14 h-14 bg-linear-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center hover:from-purple-700 hover:to-pink-700 hover:-translate-y-2 transition-all duration-300 shadow-lg"
                 aria-label="Instagram"
               >
                 <FaInstagram />

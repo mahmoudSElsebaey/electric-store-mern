@@ -15,6 +15,7 @@ import {
   FaEnvelope,
   FaBars,
   FaTimes,
+  FaHeart,
 } from "react-icons/fa";
 
 export default function Navbar() {
@@ -154,6 +155,14 @@ export default function Navbar() {
               </span>
             )}
           </button>
+          <Link to="/wishlist" className="relative">
+            <FaHeart className="w-6 h-6" />
+            {state.wishlist.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {state.wishlist.length}
+              </span>
+            )}
+          </Link>
 
           {/* حساب المستخدم أو تسجيل الدخول */}
           {isAuthenticated ? (
@@ -182,7 +191,7 @@ export default function Navbar() {
                       onClick={() => setDropdownOpen(false)}
                     >
                       <FaUser />
-                      حسابي الشخصي 
+                      حسابي الشخصي
                     </Link>
 
                     <Link
@@ -191,7 +200,7 @@ export default function Navbar() {
                       onClick={() => setDropdownOpen(false)}
                     >
                       <FaShoppingCart />
-                      طلباتي 
+                      طلباتي
                     </Link>
 
                     {["admin", "owner"].includes(user?.role || "") && (
@@ -203,7 +212,7 @@ export default function Navbar() {
                           onClick={() => setDropdownOpen(false)}
                         >
                           <FaUserCog />
-                          لوحة التحكم 
+                          لوحة التحكم
                         </Link>
                       </>
                     )}
@@ -214,7 +223,7 @@ export default function Navbar() {
                       className="flex items-center justify-start gap-3 w-full px-6 py-3 hover:bg-red-50 text-red-600 transition font-semibold cursor-pointer"
                     >
                       <FaSignOutAlt />
-                      تسجيل الخروج 
+                      تسجيل الخروج
                     </button>
                   </div>
                 </div>

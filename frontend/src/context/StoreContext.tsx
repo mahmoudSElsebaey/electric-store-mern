@@ -16,6 +16,8 @@ export type Product = {
   category: Category;
   countInStock: number;
   quantity?: number;
+  rating?: number | null;
+  numReviews?: number;
 };
 
 export type User = {
@@ -51,6 +53,8 @@ export type Order = {
 type State = {
   products: Product[];
   cart: Product[];
+  wishlist: Product[];
+  wishlistLoading: boolean;
   user: User | null;
   isAuthenticated: boolean | null;
   loading: boolean;
@@ -70,11 +74,17 @@ type Action =
   | { type: "FETCH_MY_ORDERS_SUCCESS"; payload: Order[] }
   | { type: "FETCH_MY_ORDERS_FAIL"; payload: string }
   | { type: "LOGOUT" }
-  | { type: "LOAD_CART"; payload: Product[] };
+  | { type: "LOAD_CART"; payload: Product[] }
+  | { type: "WISHLIST_FETCH_START" }
+  | { type: "WISHLIST_FETCH_SUCCESS"; payload: Product[] }
+  | { type: "WISHLIST_ADD"; payload: Product }
+  | { type: "WISHLIST_REMOVE"; payload: string };
 
 const initialState: State = {
   products: [],
   cart: [],
+  wishlist: [],
+  wishlistLoading: false,
   user: null,
   isAuthenticated: null,
   loading: true,
@@ -92,7 +102,6 @@ function reducer(state: State, action: Action): State {
       const product = action.payload;
       const exist = state.cart.find((item) => item._id === product._id);
 
-      // لو المنتج مش متوفر أصلاً → مفيش إضافة
       if (product.countInStock <= 0) {
         return state;
       }
@@ -101,7 +110,6 @@ function reducer(state: State, action: Action): State {
 
       if (exist) {
         const newQty = (exist.quantity || 1) + 1;
-        // لو الزيادة هتخلي الكمية أكتر من المتاح → مفيش تغيير
         if (newQty > product.countInStock) {
           return state;
         }
@@ -109,7 +117,6 @@ function reducer(state: State, action: Action): State {
           item._id === product._id ? { ...item, quantity: newQty } : item
         );
       } else {
-        // إضافة جديدة → الكمية 1 (وهي أكيد <= countInStock لأن فوق تحققنا)
         newCart = [...state.cart, { ...product, quantity: 1 }];
       }
 
@@ -127,9 +134,8 @@ function reducer(state: State, action: Action): State {
       const newCart = state.cart.map((item) => {
         if (item._id === action.payload) {
           const newQty = (item.quantity || 1) + 1;
-          // منع الزيادة لو وصل الحد الأقصى
           if (newQty > item.countInStock) {
-            return item; // مفيش تغيير
+            return item;
           }
           return { ...item, quantity: newQty };
         }
@@ -154,6 +160,24 @@ function reducer(state: State, action: Action): State {
     case "LOAD_CART":
       return { ...state, cart: action.payload };
 
+    case "WISHLIST_FETCH_START":
+      return { ...state, wishlistLoading: true };
+
+    case "WISHLIST_FETCH_SUCCESS":
+      return { ...state, wishlistLoading: false, wishlist: action.payload };
+
+    case "WISHLIST_ADD": {
+      const newWishlist = [...state.wishlist, action.payload];
+      localStorage.setItem("wishlist", JSON.stringify(newWishlist.map(p => p._id)));
+      return { ...state, wishlist: newWishlist };
+    }
+
+    case "WISHLIST_REMOVE": {
+      const newWishlist = state.wishlist.filter(p => p._id !== action.payload);
+      localStorage.setItem("wishlist", JSON.stringify(newWishlist.map(p => p._id)));
+      return { ...state, wishlist: newWishlist };
+    }
+
     case "FETCH_MY_ORDERS_START":
       return { ...state, ordersLoading: true, ordersError: null };
 
@@ -169,7 +193,8 @@ function reducer(state: State, action: Action): State {
     case "LOGOUT":
       localStorage.removeItem("token");
       localStorage.removeItem("cart");
-      return { ...state, user: null, isAuthenticated: false, cart: [] };
+      localStorage.removeItem("wishlist");
+      return { ...state, user: null, isAuthenticated: false, cart: [], wishlist: [] };
 
     default:
       return state;
@@ -203,6 +228,30 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
     }
   }, []);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!state.isAuthenticated) {
+        const saved = localStorage.getItem("wishlist");
+        if (saved) {
+          const ids = JSON.parse(saved);
+          const products = state.products.filter(p => ids.includes(p._id));
+          dispatch({ type: "WISHLIST_FETCH_SUCCESS", payload: products });
+        }
+        return;
+      }
+
+      try {
+        dispatch({ type: "WISHLIST_FETCH_START" });
+        const res = await api.get("/wishlist");
+        dispatch({ type: "WISHLIST_FETCH_SUCCESS", payload: res.data });
+      } catch (err) {
+        console.error("فشل جلب المفضلة");
+      }
+    };
+
+    fetchWishlist();
+  }, [state.isAuthenticated, state.products]);
 
   useEffect(() => {
     const checkAuth = async () => {

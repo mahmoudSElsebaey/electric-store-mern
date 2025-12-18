@@ -1,13 +1,7 @@
 // src/modules/Products/product.route.js
 import express from "express";
 import multer from "multer";
-import {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} from "./product.controller.js";
+import * as productController from "./product.controller.js";
 import { admin, protect } from "../../middlewares/authMiddleware.js";
 
 // الحل السحري: استخدم memoryStorage + filter
@@ -28,16 +22,31 @@ const upload = multer({
 
 const productRoutes = express.Router();
 
-productRoutes.get("/", getAllProducts);
-productRoutes.get("/:id", getProductById);
-productRoutes.post("/", protect, admin, upload.single("image"), createProduct);
+productRoutes.get("/", productController.getAllProducts);
+productRoutes.get("/:id", productController.getProductById);
+productRoutes.post(
+  "/",
+  protect,
+  admin,
+  upload.single("image"),
+  productController.createProduct
+);
 productRoutes.put(
   "/:id",
   protect,
   admin,
   upload.single("image"),
-  updateProduct
+  productController.updateProduct
 );
-productRoutes.delete("/:id", protect, admin, deleteProduct);
+productRoutes.delete("/:id", protect, admin, productController.deleteProduct);
+
+//_________________________________ Reviews Routes _________________________________
+productRoutes.post("/:id/reviews", protect, productController.addReview);
+productRoutes.delete(
+  "/:id/reviews/:reviewId",
+  protect,
+  admin,
+  productController.deleteReview
+);
 
 export default productRoutes;

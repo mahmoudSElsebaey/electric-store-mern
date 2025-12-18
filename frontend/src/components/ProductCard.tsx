@@ -1,6 +1,9 @@
+// src/components/ProductCard.tsx
 import { Link, useNavigate } from "react-router-dom";
 import { useStore, type Product } from "../context/StoreContext";
 import { useToast } from "../context/ToastContext";
+import StarRating from "./Reviews/StarRating";
+import WishlistButton from "./wishlist/WishlistButton";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { state, dispatch } = useStore();
@@ -28,6 +31,10 @@ export default function ProductCard({ product }: { product: Product }) {
 
   const isOutOfStock = product.countInStock === 0;
 
+  // حماية من null
+  const displayRating = product.rating ?? 0;
+  const reviewCount = product.numReviews || 0;
+
   return (
     <div className="group relative h-full" dir="rtl">
       <Link to={`/product/${product._id}`} className="block h-full">
@@ -41,7 +48,6 @@ export default function ProductCard({ product }: { product: Product }) {
               loading="lazy"
             />
 
-            {/* Overlay نفد المخزون */}
             {isOutOfStock && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                 <div className="bg-red-600 text-white px-8 py-4 rounded-2xl text-2xl font-bold tracking-wider shadow-2xl">
@@ -50,44 +56,54 @@ export default function ProductCard({ product }: { product: Product }) {
               </div>
             )}
 
-            {/* السعر في الأعلى يمين */}
             <div className="absolute top-1 right-1 bg-white border-2 border-yellow-500 text-yellow-500 px-3 py-1 rounded-2xl text-md font-bold shadow-xl">
               <span className="text-2xl">{product.price.toLocaleString()}</span>
               <span className="text-lg font-bold pr-1">ج.م</span>
             </div>
           </div>
 
-          {/* المحتوى (يتمدد ويملأ المساحة المتبقية) */}
+          {/* المحتوى */}
           <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
-            <div className="space-y-2">
-              {/* الماركة والتصنيف */}
+            <WishlistButton productId={product._id} size="md" />
+            <div className="space-y-3">
               <div
-                className="flex items-center justify-between  gap-3 text-[12px] text-gray-500"
+                className="flex items-center justify-between gap-3 text-[12px] text-gray-500"
                 dir="ltr"
               >
-                <span
-                  className="font-medium text-gray-700 bg-amber-200 py-1 px-15 rounded-2 -rotate-45 -mt-140
-                0 -ml-15"
-                >
+                <span className="font-medium text-gray-700 bg-amber-200 py-1 px-4 rounded-full">
                   {product.brand?.name}
                 </span>
-                {/* <span>•</span> */}
                 <span>{product.category?.name}</span>
               </div>
 
-              {/* اسم المنتج (سطرين فقط + ...) */}
-              <h3 className="font-bold text-md text-gray-900 line-clamp-1 leading-relaxed group-hover:text-blue-600 transition-colors">
+              <h3 className="font-bold text-lg text-gray-900 line-clamp-2 leading-relaxed group-hover:text-blue-600 transition-colors">
                 {product.name}
               </h3>
 
-              {/* الوصف (سطرين فقط + ...) */}
-              <p className="text-[12px] text-gray-600 line-clamp-2  ">
+              {/* التقييم */}
+              <div className="flex items-center gap-2">
+                <StarRating
+                  rating={reviewCount > 0 ? displayRating : 0}
+                  size="sm"
+                />
+                <span className="text-sm text-gray-600 font-medium">
+                  {reviewCount > 0 ? (
+                    <span className="text-yellow-600 font-bold">
+                      ({reviewCount})
+                    </span>
+                  ) : (
+                    "لا توجد تقييمات بعد"
+                  )}
+                </span>
+              </div>
+
+              <p className="text-[13px] text-gray-600 line-clamp-2">
                 {product.description || "لا يوجد وصف"}
               </p>
             </div>
           </div>
-          
-          {/* زر أضف للسلة (يطلع من تحت عند الهوفر) */}
+
+          {/* زر أضف للسلة */}
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
             <button
               onClick={addToCart}

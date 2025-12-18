@@ -10,10 +10,10 @@ export default function About() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-32 overflow-hidden">
+      <section className="relative bg-linear-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-32 overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-40"></div>
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -104,7 +104,7 @@ export default function About() {
 
             <div className="order-1 md:order-2">
               <div className="relative">
-                <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl p-8 shadow-2xl">
+                <div className="bg-linear-to-br from-blue-100 to-indigo-100 rounded-3xl p-8 shadow-2xl">
                   <img
                     src="/api/placeholder/600/700"
                     alt="متجر الأجهزة الكهربائية"
@@ -195,7 +195,17 @@ export default function About() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white border-2 border-red-500">
+      <section className="py-20 bg-linear-to-b from-blue-900 via-blue-800  to-indigo-900 text-white relative">
+        {/* Wave decoration */}
+        <div className="absolute -top-25 left-0 right-0">
+          <svg viewBox="0 0 1440 120" className="w-full ">
+            <path
+              fill="#1c398e"
+              d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"
+            ></path>
+          </svg>
+        </div>
+
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-8">
             جاهز لتجربة تسوق مختلفة؟
@@ -203,7 +213,10 @@ export default function About() {
           <p className="text-xl mb-10">
             تصفح تشكيلتنا الواسعة الآن واستمتع بأفضل العروض والخدمات
           </p>
-          <Link to="/store" className="bg-white text-blue-600 px-12 py-5 rounded-full text-2xl font-bold hover:bg-gray-100 transition transform hover:scale-105 shadow-2xl">
+          <Link
+            to="/store"
+            className="bg-yellow-500  px-12 py-5 rounded-full text-2xl font-bold hover:bg-yellow-600 transition transform hover:scale-105 shadow-2xl"
+          >
             تسوق الآن
           </Link>
         </div>

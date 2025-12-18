@@ -88,7 +88,7 @@ export default function HeroSection() {
                   </p>
                   <Link
                     to="/store"
-                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl text-xl md:text-2xl font-bold transition transform hover:scale-110 shadow-2xl"
+                    className="inline-block bg-yellow-600 hover:bg-yellow-500 text-shadow-black text-white px-10 py-5 rounded-2xl text-xl md:text-2xl font-bold transition transform hover:scale-110 shadow-2xl"
                   >
                     {slide.btnText}
                   </Link>

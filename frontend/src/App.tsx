@@ -27,6 +27,7 @@ import Checkout from "./pages/payment/Checkout";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import BrandsManagement from "./pages/dashboard/BrandsManagement";
 import CategoriesManagement from "./pages/dashboard/CategoriesManagement";
+import Wishlist from "./components/wishlist/Wishlist";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -70,6 +71,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/wishlist" element={<Wishlist />} />
 
         {/* Admin & Owner Routes - لازم تيجي قبل /order/:id */}
         <Route
