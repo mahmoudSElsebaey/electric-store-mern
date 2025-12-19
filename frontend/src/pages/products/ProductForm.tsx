@@ -3,19 +3,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import api from "../../services/api";
-// import { useStore } from "../../context/StoreContext";
 import { useToast } from "../../context/ToastContext";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 type Brand = { _id: string; name: string };
 type Category = { _id: string; name: string };
 
 export default function ProductForm() {
-//   const { state } = useStore();
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const navigate = useNavigate();
-  const { id } = useParams<{ id?: string }>(); // لو في id يبقى تعديل
+  const { id } = useParams<{ id?: string }>();
+  const isEdit = !!id;
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -30,8 +31,6 @@ export default function ProductForm() {
     description: "",
     category: "",
   });
-
-  const isEdit = !!id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +56,7 @@ export default function ProductForm() {
           });
         }
       } catch (err) {
-        showToast("فشل تحميل البيانات", "error");
+        showToast(t("admin_products.error_load"), "error");
       }
     };
     fetchData();
@@ -81,23 +80,30 @@ export default function ProductForm() {
         await api.put(`/products/${id}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        showToast("تم تحديث المنتج بنجاح", "success");
+        showToast(t("admin_products.edit_success"), "success");
       } else {
         await api.post("/products", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        showToast("تم إضافة المنتج بنجاح", "success");
+        showToast(t("admin_products.add_success"), "success");
       }
       navigate("/products-management");
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل في الحفظ", "error");
+      showToast(
+        err.response?.data?.message || t("admin_products.save_error"),
+        "error"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AdminLayout title={isEdit ? "تعديل المنتج" : "إضافة منتج جديد"}>
+    <AdminLayout
+      title={
+        isEdit ? t("admin_products.edit_title") : t("admin_products.add_title")
+      }
+    >
       <div className="max-w-4xl mx-auto">
         <form
           onSubmit={handleSubmit}
@@ -106,7 +112,9 @@ export default function ProductForm() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block mb-2 font-semibold">اسم المنتج</label>
+              <label className="block mb-2 font-semibold">
+                {t("admin_products.product_name")}
+              </label>
               <input
                 type="text"
                 required
@@ -118,7 +126,9 @@ export default function ProductForm() {
               />
             </div>
             <div>
-              <label className="block mb-2 font-semibold">السعر</label>
+              <label className="block mb-2 font-semibold">
+                {t("admin_products.price_label")}
+              </label>
               <input
                 type="number"
                 required
@@ -130,7 +140,9 @@ export default function ProductForm() {
               />
             </div>
             <div>
-              <label className="block mb-2 font-semibold">الكمية المتاحة</label>
+              <label className="block mb-2 font-semibold">
+                {t("admin_products.stock_label")}
+              </label>
               <input
                 type="number"
                 required
@@ -142,7 +154,9 @@ export default function ProductForm() {
               />
             </div>
             <div>
-              <label className="block mb-2 font-semibold">الماركة</label>
+              <label className="block mb-2 font-semibold">
+                {t("admin_products.brand_label")}
+              </label>
               <select
                 required
                 value={formData.brand}
@@ -151,7 +165,7 @@ export default function ProductForm() {
                 }
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">اختر الماركة</option>
+                <option value="">{t("admin_products.select_brand")}</option>
                 {brands.map((b) => (
                   <option key={b._id} value={b._id}>
                     {b.name}
@@ -160,7 +174,9 @@ export default function ProductForm() {
               </select>
             </div>
             <div>
-              <label className="block mb-2 font-semibold">التصنيف</label>
+              <label className="block mb-2 font-semibold">
+                {t("admin_products.category_label")}
+              </label>
               <select
                 required
                 value={formData.category}
@@ -169,7 +185,7 @@ export default function ProductForm() {
                 }
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">اختر التصنيف</option>
+                <option value="">{t("admin_products.select_category")}</option>
                 {categories.map((c) => (
                   <option key={c._id} value={c._id}>
                     {c.name}
@@ -179,7 +195,8 @@ export default function ProductForm() {
             </div>
             <div className="md:col-span-2">
               <label className="block mb-2 font-semibold">
-                صورة المنتج {isEdit ? "(اختياري)" : ""}
+                {t("admin_products.image_label")}{" "}
+                {isEdit ? `(${t("admin_products.image_optional")})` : ""}
               </label>
               <input
                 type="file"
@@ -191,7 +208,9 @@ export default function ProductForm() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block mb-2 font-semibold">وصف المنتج</label>
+              <label className="block mb-2 font-semibold">
+                {t("admin_products.description_label")}
+              </label>
               <textarea
                 required
                 rows={6}
@@ -211,17 +230,17 @@ export default function ProductForm() {
               className="flex-1 bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 rounded-lg font-bold transition disabled:opacity-60"
             >
               {loading
-                ? "جاري الحفظ..."
+                ? t("admin_products.saving")
                 : isEdit
-                ? "حفظ التعديلات"
-                : "إضافة المنتج"}
+                ? t("admin_products.save_changes")
+                : t("admin_products.add_product")}
             </button>
             <button
               type="button"
               onClick={() => navigate("/products-management")}
               className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-bold"
             >
-              إلغاء
+              {t("admin_products.cancel")}
             </button>
           </div>
         </form>

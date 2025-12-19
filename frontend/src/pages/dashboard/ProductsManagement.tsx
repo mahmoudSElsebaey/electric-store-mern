@@ -7,6 +7,8 @@ import { useStore } from "../../context/StoreContext";
 import { useToast } from "../../context/ToastContext";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { formatPrice } from "../../utils/formatPrice";
 
 type Product = {
   _id: string;
@@ -20,6 +22,9 @@ type Product = {
 };
 
 export default function ProductsManagement() {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+
   const { state } = useStore();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -28,16 +33,15 @@ export default function ProductsManagement() {
   const [loadingPage, setLoadingPage] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10; // عدد المنتجات في الصفحة
+  const productsPerPage = 10;
 
   const fetchProducts = async () => {
     try {
       const res = await api.get("/products");
       setProducts(res.data);
     } catch (err) {
-      showToast("فشل جلب المنتجات", "error");
+      showToast(t("admin_products.error_load"), "error");
     } finally {
       setLoadingPage(false);
     }
@@ -47,7 +51,6 @@ export default function ProductsManagement() {
     fetchProducts();
   }, []);
 
-  // تصفية المنتجات حسب البحث
   const filteredProducts = products.filter((p) => {
     const term = searchTerm.toLowerCase();
     const brandName =
@@ -65,7 +68,6 @@ export default function ProductsManagement() {
     );
   });
 
-  // حساب الـ pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -77,17 +79,19 @@ export default function ProductsManagement() {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("متأكد إنك عايز تحذف المنتج؟")) return;
+    if (!confirm(t("admin_products.confirm_delete"))) return;
     try {
       await api.delete(`/products/${id}`);
-      showToast("تم حذف المنتج بنجاح", "success");
+      showToast(t("admin_products.delete_success"), "success");
       await fetchProducts();
-      // لو الصفحة بقت فاضية بعد الحذف، نرجع لصفحة أقل
       if (currentProducts.length === 1 && currentPage > 1) {
         setCurrentPage(currentPage - 1);
       }
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل حذف المنتج", "error");
+      showToast(
+        err.response?.data?.message || t("admin_products.delete_error"),
+        "error"
+      );
     }
   };
 
@@ -97,14 +101,14 @@ export default function ProductsManagement() {
   ) {
     return (
       <div className="min-h-screen flex items-center justify-center text-red-600 font-bold text-3xl bg-gray-100">
-        ممنوع - ليس لديك الصلاحية
+        {t("admin_products.access_denied")}
       </div>
     );
   }
 
   return (
-    <AdminLayout title="إدارة المنتجات">
-      <div className="flex justify-between items-center mb-6">
+    <AdminLayout title={t("admin_products.title")}>
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4 px-5">
         <button
           onClick={() => navigate("/admin/products/add")}
           className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white px-5 py-2.5 rounded-lg font-semibold transition flex items-center gap-2"
@@ -122,16 +126,16 @@ export default function ProductsManagement() {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          إضافة منتج جديد
+          {t("admin_products.add_new")}
         </button>
 
         <input
           type="text"
-          placeholder="ابحث بالاسم أو الماركة أو التصنيف..."
+          placeholder={t("admin_products.search_placeholder")}
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
-            setCurrentPage(1); // رجوع للصفحة الأولى عند البحث
+            setCurrentPage(1);
           }}
           className="w-full max-w-sm px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
         />
@@ -140,21 +144,35 @@ export default function ProductsManagement() {
       {loadingPage ? (
         <div className="text-center py-16">
           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">جاري تحميل المنتجات...</p>
+          <p className="mt-4 text-gray-600">{t("admin_products.loading")}</p>
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden mx-5">
             <table className="w-full text-sm">
               <thead className="bg-gray-800 text-white">
                 <tr>
-                  <th className="px-4 py-3 text-right">الصورة</th>
-                  <th className="px-4 py-3 text-right">الاسم</th>
-                  <th className="px-4 py-3 text-right">الماركة</th>
-                  <th className="px-4 py-3 text-right">التصنيف</th>
-                  <th className="px-4 py-3 text-right">السعر</th>
-                  <th className="px-4 py-3 text-right">المخزون</th>
-                  <th className="px-4 py-3 text-center">إجراءات</th>
+                  <th className="px-4 py-3 text-right">
+                    {t("admin_products.image")}
+                  </th>
+                  <th className="px-4 py-3 text-right">
+                    {t("admin_products.name")}
+                  </th>
+                  <th className="px-4 py-3 text-right">
+                    {t("admin_products.brand")}
+                  </th>
+                  <th className="px-4 py-3 text-right">
+                    {t("admin_products.category")}
+                  </th>
+                  <th className="px-4 py-3 text-right">
+                    {t("admin_products.price")}
+                  </th>
+                  <th className="px-4 py-3 text-right">
+                    {t("admin_products.stock")}
+                  </th>
+                  <th className="px-4 py-3 text-center">
+                    {t("admin_products.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -179,7 +197,7 @@ export default function ProductsManagement() {
                         : p.category?.name}
                     </td>
                     <td className="px-4 py-3 text-right font-semibold text-blue-600">
-                      {p.price.toLocaleString()} ج.م
+                      {formatPrice(p.price, lang)}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span
@@ -198,7 +216,7 @@ export default function ProductsManagement() {
                           navigate(`/admin/products/edit/${p._id}`)
                         }
                         className="text-yellow-600 hover:text-yellow-800 transition"
-                        title="تعديل"
+                        title={t("admin_products.edit")}
                       >
                         <svg
                           className="w-5 h-5"
@@ -217,7 +235,7 @@ export default function ProductsManagement() {
                       <button
                         onClick={() => handleDelete(p._id)}
                         className="text-red-600 hover:text-red-800 transition"
-                        title="حذف"
+                        title={t("admin_products.delete")}
                       >
                         <svg
                           className="w-5 h-5"
@@ -239,7 +257,7 @@ export default function ProductsManagement() {
                 {currentProducts.length === 0 && (
                   <tr>
                     <td colSpan={7} className="text-center py-12 text-gray-500">
-                      لا توجد منتجات مطابقة
+                      {t("admin_products.no_products")}
                     </td>
                   </tr>
                 )}
@@ -255,7 +273,7 @@ export default function ProductsManagement() {
                 disabled={currentPage === 1}
                 className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                السابق
+                {t("admin_products.previous")}
               </button>
 
               {[...Array(totalPages)].map((_, i) => (
@@ -277,15 +295,17 @@ export default function ProductsManagement() {
                 disabled={currentPage === totalPages}
                 className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                التالي
+                {t("admin_products.next")}
               </button>
             </div>
           )}
 
           <p className="text-center mt-4 text-gray-600">
-            عرض {indexOfFirstProduct + 1} -{" "}
-            {Math.min(indexOfLastProduct, filteredProducts.length)} من{" "}
-            {filteredProducts.length} منتج
+            {t("admin_products.showing", {
+              from: indexOfFirstProduct + 1,
+              to: Math.min(indexOfLastProduct, filteredProducts.length),
+              total: filteredProducts.length,
+            })}
           </p>
         </>
       )}

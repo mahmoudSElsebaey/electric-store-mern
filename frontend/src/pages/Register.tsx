@@ -6,11 +6,15 @@ import api from "../services/api";
 import { useToast } from "../context/ToastContext";
 import { FiEye } from "react-icons/fi";
 import { FaRegEyeSlash } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { dispatch } = useStore();
   const { showToast } = useToast();
+
+  const isRTL = i18n.language === "ar";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,12 +31,12 @@ export default function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      showToast("كلمتا المرور غير متطابقتين!", "error");
+      showToast(t("auth.errors.password_mismatch"), "error");
       return;
     }
 
     if (formData.password.length < 6) {
-      showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل", "error");
+      showToast(t("auth.errors.password_short"), "error");
       return;
     }
 
@@ -48,10 +52,11 @@ export default function Register() {
       localStorage.setItem("token", res.data.token);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
-      showToast("تم إنشاء الحساب بنجاح! 🎉", "success");
+      showToast(t("auth.success.register"), "success");
       navigate("/");
     } catch (err: any) {
-      const message = err.response?.data?.message || "حدث خطأ أثناء التسجيل";
+      const message =
+        err.response?.data?.message || t("auth.errors.register_failed");
       showToast(message, "error");
     } finally {
       setLoading(false);
@@ -59,110 +64,132 @@ export default function Register() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4">
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4"
+    >
       <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-        {/* الهيدر */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-12 text-center">
+        {/* Header */}
+        <div className="bg-linear-to-r from-blue-600 to-indigo-700 p-12 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            إنشاء حساب جديد
+            {t("auth.register.title")}
           </h1>
           <p className="text-blue-100 text-xl font-medium">
-            انضم إلينا واستمتع بتجربة تسوق مميزة ⚡
+            {t("auth.register.subtitle")}
           </p>
         </div>
 
-        {/* الفورم */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="p-10 space-y-8">
-          {/* الاسم */}
+          {/* Name */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-3">
-              الاسم الكامل
+              {t("auth.register.name")}
             </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
-              placeholder="محمد أحمد"
+              placeholder={t("auth.register.name_placeholder")}
             />
           </div>
 
-          {/* البريد */}
+          {/* Email */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-3">
-              البريد الإلكتروني
+              {t("auth.register.email")}
             </label>
             <input
               type="email"
               required
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
-              placeholder="example@domain.com"
+              placeholder={t("auth.register.email_placeholder")}
             />
           </div>
 
-          {/* كلمة المرور */}
+          {/* Password */}
           <div className="relative">
             <label className="block text-lg font-semibold text-gray-700 mb-3">
-              كلمة المرور
+              {t("auth.register.password")}
             </label>
             <input
               type={showPassword ? "text" : "password"}
               required
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-6 py-5 pr-14 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
-              placeholder="••••••••"
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className={`w-full px-6 py-5 ${
+                isRTL ? "pr-14" : "pl-14"
+              } rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg`}
+              placeholder={t("auth.register.password_placeholder")}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-[58px] left-6 text-2xl text-gray-600 hover:text-blue-600 transition"
+              className={`absolute top-[58px] ${
+                isRTL ? "left-6" : "right-6"
+              } text-2xl text-gray-600 hover:text-blue-600 transition`}
             >
               {showPassword ? <FaRegEyeSlash /> : <FiEye />}
             </button>
           </div>
 
-          {/* تأكيد كلمة المرور */}
+          {/* Confirm Password */}
           <div className="relative">
             <label className="block text-lg font-semibold text-gray-700 mb-3">
-              تأكيد كلمة المرور
+              {t("auth.register.confirm_password")}
             </label>
             <input
               type={showConfirm ? "text" : "password"}
               required
               value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full px-6 py-5 pr-14 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
-              placeholder="••••••••"
+              onChange={(e) =>
+                setFormData({ ...formData, confirmPassword: e.target.value })
+              }
+              className={`w-full px-6 py-5 ${
+                isRTL ? "pr-14" : "pl-14"
+              } rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg`}
+              placeholder={t("auth.register.confirm_placeholder")}
             />
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute top-[58px] left-6 text-2xl text-gray-600 hover:text-blue-600 transition"
+              className={`absolute top-[58px] ${
+                isRTL ? "left-6" : "right-6"
+              } text-2xl text-gray-600 hover:text-blue-600 transition`}
             >
               {showConfirm ? <FaRegEyeSlash /> : <FiEye />}
             </button>
           </div>
 
-          {/* زر التسجيل */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed shadow-2xl"
+            className="w-full bg-linear-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed shadow-2xl"
           >
-            {loading ? "جاري إنشاء الحساب..." : "إنشاء الحساب"}
+            {loading ? t("auth.register.loading") : t("auth.register.submit")}
           </button>
         </form>
 
-        {/* الفوتر */}
+        {/* Footer */}
         <div className="bg-gray-50 p-8 text-center">
           <p className="text-gray-700 text-lg">
-            لديك حساب بالفعل؟
-            <Link to="/login" className="text-blue-600 font-bold hover:underline transition">
-              تسجيل الدخول
+            {t("auth.register.has_account")}{" "}
+            <Link
+              to="/login"
+              className="text-blue-600 font-bold hover:underline transition"
+            >
+              {t("auth.register.login_link")}
             </Link>
           </p>
         </div>

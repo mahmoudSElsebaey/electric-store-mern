@@ -6,11 +6,15 @@ import api from "../services/api";
 import { useToast } from "../context/ToastContext";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { dispatch } = useStore();
   const { showToast } = useToast();
+
+  const isRTL = i18n.language === "ar";
 
   const [formData, setFormData] = useState({
     email: "",
@@ -30,10 +34,10 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
-      showToast("تم تسجيل الدخول بنجاح ⚡", "success");
+      showToast(t("auth.success.login"), "success");
       navigate("/");
     } catch (err: any) {
-      const message = err.response?.data?.message || "بيانات الدخول غير صحيحة";
+      const message = err.response?.data?.message || t("auth.errors.login_failed");
       showToast(message, "error");
     } finally {
       setLoading(false);
@@ -42,82 +46,78 @@ export default function Login() {
 
   return (
     <div
-      dir="rtl"
-      className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center justify-center py-12 px-4"
+      dir={isRTL ? "rtl" : "ltr"}
+      className="min-h-screen bg-linear-to-br from-indigo-50 to-purple-100 flex items-center justify-center py-12 px-4"
     >
       <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-        {/* الهيدر */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-700 p-12 text-center">
+        {/* Header */}
+        <div className="bg-linear-to-r from-indigo-600 to-purple-700 p-12 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            مرحباً بعودتك!
+            {t("auth.login.title")}
           </h1>
           <p className="text-indigo-100 text-xl font-medium">
-            سجل دخولك واستمتع بتجربة تسوق مميزة ⚡
+            {t("auth.login.subtitle")}
           </p>
         </div>
 
-        {/* الفورم */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="p-10 space-y-8">
-          {/* البريد */}
+          {/* Email */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-3">
-              البريد الإلكتروني
+              {t("auth.login.email")}
             </label>
             <input
               type="email"
               required
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition text-lg"
-              placeholder="example@domain.com"
+              placeholder={t("auth.login.email_placeholder")}
             />
           </div>
 
-          {/* كلمة المرور */}
+          {/* Password */}
           <div className="relative">
             <label className="block text-lg font-semibold text-gray-700 mb-3">
-              كلمة المرور
+              {t("auth.login.password")}
             </label>
             <input
               type={showPassword ? "text" : "password"}
               required
               value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className="w-full px-6 py-5 pr-14 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition text-lg"
-              placeholder="••••••••"
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className={`w-full px-6 py-5 ${isRTL ? "pr-14" : "pl-14"} rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition text-lg`}
+              placeholder={t("auth.login.password_placeholder")}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-[58px] left-6 text-2xl text-gray-600 hover:text-indigo-600 transition"
+              className={`absolute top-[58px] ${isRTL ? "left-6" : "right-6"} text-2xl text-gray-600 hover:text-indigo-600 transition`}
             >
               {showPassword ? <FaRegEyeSlash /> : <FiEye />}
             </button>
           </div>
 
-          {/* زر تسجيل الدخول */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-indigo-700 hover:to-purple-800 transition transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed shadow-2xl"
+            className="w-full bg-linear-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-indigo-700 hover:to-purple-800 transition transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed shadow-2xl"
           >
-            {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+            {loading ? t("auth.login.loading") : t("auth.login.submit")}
           </button>
         </form>
 
-        {/* الفوتر */}
+        {/* Footer */}
         <div className="bg-gray-50 p-8 text-center">
           <p className="text-gray-700 text-lg">
-            ليس لديك حساب؟{" "}
+            {t("auth.login.no_account")}{" "}
             <Link
               to="/register"
               className="text-indigo-600 font-bold hover:underline transition"
             >
-              إنشاء حساب جديد
+              {t("auth.login.create_account")}
             </Link>
           </p>
         </div>

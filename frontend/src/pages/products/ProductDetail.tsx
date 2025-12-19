@@ -10,6 +10,8 @@ import { useToast } from "../../context/ToastContext";
 import StarRating from "../../components/Reviews/StarRating";
 import ReviewCard from "../../components/Reviews/ReviewCard";
 import WishlistButton from "../../components/wishlist/WishlistButton";
+import { useTranslation } from "react-i18next";
+import { formatPrice } from "../../utils/formatPrice";
 
 type Review = {
   _id: string;
@@ -21,11 +23,14 @@ type Review = {
 
 type ProductWithReviews = Product & {
   reviews: Review[];
-  rating: number | null; // ← مهم: ممكن يكون null
+  rating: number | null;
   numReviews: number;
 };
 
 export default function ProductDetail() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  const lang = i18n.language;
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useStore();
@@ -39,7 +44,7 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     if (!id) {
-      setError("معرف المنتج غير موجود");
+      setError(t("product_detail.not_found"));
       setLoading(false);
       return;
     }
@@ -48,11 +53,9 @@ export default function ProductDetail() {
       setLoading(true);
       setError(null);
       const res = await api.get(`/products/${id}`);
-      console.log("بيانات المنتج:", res.data);
       setProduct(res.data);
     } catch (err: any) {
-      console.error("خطأ جلب المنتج:", err);
-      const message = err.response?.data?.message || "فشل تحميل المنتج";
+      const message = err.response?.data?.message || t("product_detail.error");
       showToast(message, "error");
       setError(message);
     } finally {
@@ -68,18 +71,18 @@ export default function ProductDetail() {
     if (!product) return;
 
     if (!state.isAuthenticated) {
-      showToast("يجب تسجيل الدخول أولاً", "error");
+      showToast(t("product_detail.must_login"), "error");
       navigate("/login");
       return;
     }
 
     if (product.countInStock <= 0) {
-      showToast("نفد المخزون", "error");
+      showToast(t("product_detail.out_of_stock"), "error");
       return;
     }
 
     dispatch({ type: "ADD_TO_CART", payload: product });
-    showToast("تم إضافة المنتج إلى السلة 🛒", "success");
+    showToast(t("store.add_to_cart"), "success");
   };
 
   const handleAddReview = async (e: React.FormEvent) => {
@@ -103,7 +106,6 @@ export default function ProductDetail() {
       setReviewForm({ rating: 0, comment: "" });
       await fetchProduct();
     } catch (err: any) {
-      console.error("خطأ إضافة تقييم:", err);
       const message = err.response?.data?.message || "فشل إضافة التقييم";
       showToast(message, "error");
     } finally {
@@ -112,12 +114,13 @@ export default function ProductDetail() {
   };
 
   const isOutOfStock = product?.countInStock === 0;
+  const displayRating = product?.rating ?? 0;
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-3xl text-blue-600 animate-pulse">
-          جاري تحميل المنتج...
+          {t("product_detail.loading")}
         </div>
       </div>
     );
@@ -127,36 +130,34 @@ export default function ProductDetail() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <p className="text-3xl text-red-600 mb-6">حدث خطأ 😔</p>
+          <p className="text-3xl text-red-600 mb-6">
+            {t("product_detail.error")}
+          </p>
           <p className="text-xl text-gray-600 mb-8">
-            {error || "المنتج غير موجود"}
+            {error || t("product_detail.not_found")}
           </p>
           <Link
             to="/store"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl text-lg font-bold"
           >
-            العودة إلى المتجر
+            {t("product_detail.back_to_store")}
           </Link>
         </div>
       </div>
     );
   }
 
-  // الحل هنا: لو rating null → حط 0
-  const displayRating = product.rating ?? 0;
-
   return (
-    <div className="min-h-screen bg-gray-50 py-12" dir="rtl">
+    <div className="min-h-screen bg-gray-50 py-12" dir={isRTL ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-6">
         <Link
           to="/store"
           className="inline-flex items-center text-blue-600 hover:text-blue-800 text-lg font-medium mb-10"
         >
-          ← العودة إلى المتجر
+          {t("product_detail.back_to_store")}
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-12 bg-white rounded-3xl shadow-2xl overflow-hidden">
-          {/* الصورة */}
           <div className="relative group">
             <div className="aspect-square overflow-hidden bg-gray-100">
               <img
@@ -165,18 +166,16 @@ export default function ProductDetail() {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <WishlistButton productId={product._id} size="lg" />
-
             </div>
             {isOutOfStock && (
               <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                 <div className="bg-red-600 text-white px-12 py-6 rounded-3xl text-4xl font-extrabold">
-                  نفد المخزون
+                  {t("product_detail.out_of_stock")}
                 </div>
               </div>
             )}
           </div>
 
-          {/* التفاصيل */}
           <div className="p-10 lg:p-16 space-y-8">
             <div className="space-y-6">
               <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900">
@@ -184,43 +183,51 @@ export default function ProductDetail() {
               </h1>
               <div className="flex flex-wrap items-center gap-6 text-lg text-gray-600">
                 <span>
-                  الماركة:
+                  {t("store.brand")}:{" "}
                   <strong className="text-blue-600">
                     {product.brand.name}
                   </strong>
                 </span>
                 <span>
-                  التصنيف:
+                  {t("store.category")}:{" "}
                   <strong className="text-green-600">
                     {product.category.name}
                   </strong>
                 </span>
               </div>
 
-              {/* التقييم العام - مع الحماية من null */}
               <div className="flex items-center gap-4">
                 <StarRating rating={displayRating} size="xl" />
                 <div>
                   <p className="text-3xl font-bold text-gray-900">
                     {displayRating.toFixed(1)}
                   </p>
-                  <p className="text-gray-600">({product.numReviews} تقييم)</p>
+                  <p className="text-gray-600">
+                    {t("store.reviews_count", { count: product.numReviews })}
+                  </p>
                 </div>
               </div>
 
               <div className="border-t border-b border-gray-200 py-6">
-                <div className="flex items-end gap-3">
+                {/* <div className="flex items-end gap-3">
                   <span className="text-5xl lg:text-6xl font-extrabold text-blue-600">
                     {product.price.toLocaleString()}
                   </span>
                   <span className="text-3xl font-bold text-gray-700 mb-2">
                     ج.م
                   </span>
-                </div>
+                </div> */}
+                <div className="flex items-end gap-3">
+      <span className="text-5xl lg:text-6xl font-extrabold text-blue-600">
+        {formatPrice(product.price, lang)}
+      </span>
+    </div>
               </div>
 
               <div className="flex items-center gap-3 text-xl">
-                <span className="text-gray-600">المتاح:</span>
+                <span className="text-gray-600">
+                  {t("product_detail.stock")}:
+                </span>
                 <span
                   className={isOutOfStock ? "text-red-600" : "text-green-600"}
                 >
@@ -230,10 +237,10 @@ export default function ProductDetail() {
 
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                  وصف المنتج
+                  {t("product_detail.description_title")}
                 </h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  {product.description || "لا يوجد وصف"}
+                  {product.description || t("product_detail.no_description")}
                 </p>
               </div>
             </div>
@@ -247,24 +254,27 @@ export default function ProductDetail() {
                   : "bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-2xl"
               }`}
             >
-              {isOutOfStock ? "نفد المخزون" : "أضف إلى السلة 🛒"}
+              {isOutOfStock
+                ? t("product_detail.out_of_stock")
+                : t("store.add_to_cart")}
             </button>
           </div>
         </div>
 
-        {/* قسم التقييمات */}
         <div className="mt-16 max-w-5xl mx-auto">
           <h2 className="text-4xl font-extrabold text-center mb-12">
-            تقييمات العملاء
+            {t("product_detail.reviews_title")}
           </h2>
 
           {state.isAuthenticated ? (
             <div className="bg-white rounded-2xl shadow-xl p-8 mb-12">
-              <h3 className="text-2xl font-bold mb-6">شارك رأيك</h3>
+              <h3 className="text-2xl font-bold mb-6">
+                {t("product_detail.add_review")}
+              </h3>
               <form onSubmit={handleAddReview} className="space-y-8">
                 <div>
                   <label className="block text-lg font-semibold mb-4">
-                    تقييمك
+                    {t("product_detail.your_rating")}
                   </label>
                   <StarRating
                     rating={reviewForm.rating}
@@ -277,7 +287,7 @@ export default function ProductDetail() {
                 </div>
                 <div>
                   <label className="block text-lg font-semibold mb-4">
-                    تعليقك
+                    {t("product_detail.your_comment")}
                   </label>
                   <textarea
                     rows={5}
@@ -286,7 +296,7 @@ export default function ProductDetail() {
                       setReviewForm({ ...reviewForm, comment: e.target.value })
                     }
                     className="w-full p-4 border rounded-xl focus:ring-4 focus:ring-blue-300"
-                    placeholder="اكتب تجربتك..."
+                    placeholder={t("product_detail.comment_placeholder")}
                   />
                 </div>
                 <button
@@ -294,7 +304,9 @@ export default function ProductDetail() {
                   disabled={submittingReview || reviewForm.rating === 0}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-xl font-bold text-xl disabled:opacity-60"
                 >
-                  {submittingReview ? "جاري الإرسال..." : "إرسال التقييم"}
+                  {submittingReview
+                    ? "جاري الإرسال..."
+                    : t("product_detail.submit_review")}
                 </button>
               </form>
             </div>
@@ -305,9 +317,8 @@ export default function ProductDetail() {
                   to="/login"
                   className="text-blue-600 font-bold hover:underline"
                 >
-                  سجل الدخول
+                  {t("product_detail.login_to_review")}
                 </Link>
-                عشان تقيّم
               </p>
             </div>
           )}
@@ -325,7 +336,7 @@ export default function ProductDetail() {
             ) : (
               <div className="text-center py-20 bg-white rounded-2xl shadow-xl">
                 <p className="text-2xl text-gray-500">
-                  لا توجد تقييمات بعد... كن الأول! ⭐
+                  {t("product_detail.no_reviews_yet")}
                 </p>
               </div>
             )}

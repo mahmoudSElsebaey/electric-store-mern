@@ -10,31 +10,35 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import Footer from "../components/Footer";
+import { useTranslation } from "react-i18next";
 
 export default function Contact() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   return (
     <>
       {/* Hero Section */}
       <section
         className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden"
-        dir="rtl"
+        dir={isRTL ? "rtl" : "ltr"}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-8">
-            تواصل معنا
+            {t("contact.hero.title")}
           </h1>
           <p className="text-xl md:text-3xl font-light max-w-4xl mx-auto leading-relaxed">
-            فريقنا جاهز للرد على استفساراتك في أي وقت – نحن هنا لمساعدتك!
+            {t("contact.hero.subtitle")}
           </p>
-          <div className="mt-12 flex justify-center gap-25 text-2xl">
+          <div className="mt-12 flex justify-center gap-25 text-2xl flex-wrap">
             <div className="flex items-center gap-3">
               <FaWhatsapp className="w-10 h-10 text-green-400" />
-              <span>واتساب مباشر</span>
+              <span>{t("contact.hero.whatsapp")}</span>
             </div>
             <div className="flex items-center gap-3">
               <FaPhoneAlt className="w-10 h-10 text-yellow-400" />
-              <span>خط ساخن 24/7</span>
+              <span>{t("contact.hero.hotline")}</span>
             </div>
           </div>
         </div>
@@ -51,22 +55,27 @@ export default function Contact() {
       </section>
 
       {/* Main Content */}
-      <section className="py-20 bg-gray-50" dir="rtl">
+      <section className="py-20 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <div
+            className={`grid lg:grid-cols-2 gap-16 items-start ${
+              !isRTL &&
+              "lg:grid-cols-2 lg:[&>div:nth-child(1)]:order-2 lg:[&>div:nth-child(2)]:order-1"
+            }`}
+          >
             {/* Contact Form */}
             <div className="bg-white rounded-3xl shadow-2xl p-10 lg:p-12">
               <h2 className="text-4xl font-bold text-gray-800 mb-8">
-                أرسل لنا رسالة
+                {t("contact.form.title")}
               </h2>
               <form className="space-y-8">
                 <div>
                   <label className="block text-lg font-semibold text-gray-700 mb-3">
-                    اسمك الكريم
+                    {t("contact.form.name")}
                   </label>
                   <input
                     type="text"
-                    placeholder="أدخل اسمك"
+                    placeholder={t("contact.form.name_placeholder")}
                     className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
                     required
                   />
@@ -74,11 +83,11 @@ export default function Contact() {
 
                 <div>
                   <label className="block text-lg font-semibold text-gray-700 mb-3">
-                    بريدك الإلكتروني
+                    {t("contact.form.email")}
                   </label>
                   <input
                     type="email"
-                    placeholder="example@domain.com"
+                    placeholder={t("contact.form.email_placeholder")}
                     className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
                     required
                   />
@@ -86,21 +95,21 @@ export default function Contact() {
 
                 <div>
                   <label className="block text-lg font-semibold text-gray-700 mb-3">
-                    رقم الهاتف (اختياري)
+                    {t("contact.form.phone")}
                   </label>
                   <input
                     type="tel"
-                    placeholder="0100 123 4567"
+                    placeholder={t("contact.form.phone_placeholder")}
                     className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
                   />
                 </div>
 
                 <div>
                   <label className="block text-lg font-semibold text-gray-700 mb-3">
-                    رسالتك
+                    {t("contact.form.message")}
                   </label>
                   <textarea
-                    placeholder="اكتب رسالتك هنا..."
+                    placeholder={t("contact.form.message_placeholder")}
                     rows={7}
                     className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg resize-none"
                     required
@@ -111,17 +120,17 @@ export default function Contact() {
                   type="submit"
                   className="w-full bg-linear-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 shadow-2xl"
                 >
-                  إرسال الرسالة
+                  {t("contact.form.submit")}
                 </button>
               </form>
             </div>
 
-            {/* Contact Info + Map Placeholder */}
+            {/* Contact Info + Map */}
             <div className="space-y-12">
               {/* معلومات التواصل */}
               <div className="bg-white rounded-3xl shadow-2xl p-10">
                 <h3 className="text-3xl font-bold text-gray-800 mb-10">
-                  معلومات التواصل
+                  {t("contact.info.title")}
                 </h3>
                 <div className="space-y-8 text-lg">
                   <div className="flex items-start gap-6">
@@ -130,7 +139,7 @@ export default function Contact() {
                     </div>
                     <div dir="ltr">
                       <p className="font-bold text-xl">0100 123 4567</p>
-                      <p className="text-gray-600">خط ساخن - متاح 24/7</p>
+                      <p className="text-gray-600">{t("contact.info.phone")}</p>
                     </div>
                   </div>
 
@@ -140,7 +149,9 @@ export default function Contact() {
                     </div>
                     <div dir="ltr">
                       <p className="font-bold text-xl">0100 123 4567</p>
-                      <p className="text-gray-600">دعم فوري عبر واتساب</p>
+                      <p className="text-gray-600">
+                        {t("contact.info.whatsapp")}
+                      </p>
                     </div>
                   </div>
 
@@ -148,11 +159,11 @@ export default function Contact() {
                     <div className="bg-red-100 p-4 rounded-full">
                       <FaEnvelope className="w-8 h-8 text-red-600" />
                     </div>
-                    <div>
+                    <div dir="ltr">
                       <p className="font-bold text-xl">
                         support@electrostore.eg
                       </p>
-                      <p className="text-gray-600">البريد الإلكتروني للدعم</p>
+                      <p className="text-gray-600">{t("contact.info.email")}</p>
                     </div>
                   </div>
 
@@ -161,9 +172,11 @@ export default function Contact() {
                       <FaMapMarkerAlt className="w-8 h-8 text-purple-600" />
                     </div>
                     <div>
-                      <p className="font-bold text-xl">القاهرة - مدينة نصر</p>
+                      <p className="font-bold text-xl">
+                        {isRTL ? "القاهرة - مدينة نصر" : "Cairo - Nasr City"}
+                      </p>
                       <p className="text-gray-600">
-                        الفرع الرئيسي + 15 فرع آخر في المحافظات
+                        {t("contact.info.address")}
                       </p>
                     </div>
                   </div>
@@ -174,11 +187,9 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-bold text-xl">
-                        من 9 صباحًا إلى 11 مساءً
+                        {isRTL ? "من 9 صباحًا إلى 11 مساءً" : "9 AM to 11 PM"}
                       </p>
-                      <p className="text-gray-600">
-                        يوميًا - الجمعة من 2 ظهرًا
-                      </p>
+                      <p className="text-gray-600">{t("contact.info.hours")}</p>
                     </div>
                   </div>
                 </div>
@@ -186,7 +197,7 @@ export default function Contact() {
                 {/* Social Media */}
                 <div className="mt-12">
                   <h4 className="text-2xl font-bold text-gray-800 mb-6">
-                    تابعنا على
+                    {t("contact.info.social_title")}
                   </h4>
                   <div className="flex gap-6 text-4xl text-white">
                     <a
@@ -220,7 +231,7 @@ export default function Contact() {
               {/* Map Placeholder */}
               <div className="bg-gray-200 border-2 border-dashed rounded-3xl w-full h-96 flex items-center justify-center">
                 <p className="text-3xl text-gray-500">
-                  خريطة الموقع (Google Maps)
+                  {t("contact.info.map")}
                 </p>
               </div>
             </div>

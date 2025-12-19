@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -5,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useToast } from "../../context/ToastContext";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../utils/formatNumber"; // لتحويل أرقام الـ pagination
 
 type Category = {
   _id: string;
@@ -16,12 +19,17 @@ type Category = {
 const CATEGORIES_PER_PAGE = 10;
 
 export default function CategoriesManagement() {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const isRTL = lang === "ar";
+
+  const { showToast } = useToast();
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { showToast } = useToast();
 
   // Form states
   const [name, setName] = useState("");
@@ -47,7 +55,10 @@ export default function CategoriesManagement() {
       const res = await api.get("/categories");
       setCategories(res.data.categories || res.data);
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل جلب التصنيفات", "error");
+      showToast(
+        t("admin_categories.error_load", { defaultValue: "فشل جلب التصنيفات" }),
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -65,15 +76,19 @@ export default function CategoriesManagement() {
     try {
       if (editingId) {
         await api.put(`/categories/${editingId}`, formData);
-        showToast("تم تعديل التصنيف بنجاح", "success");
+        showToast(t("admin_categories.edit_success"), "success");
       } else {
         await api.post("/categories", formData);
-        showToast("تم إضافة التصنيف بنجاح", "success");
+        showToast(t("admin_categories.add_success"), "success");
       }
       resetForm();
       fetchCategories();
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل في الحفظ", "error");
+      showToast(
+        err.response?.data?.message ||
+          t("admin_categories.save_error", { defaultValue: "فشل في الحفظ" }),
+        "error"
+      );
     }
   };
 
@@ -94,13 +109,17 @@ export default function CategoriesManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("متأكد من الحذف؟")) return;
+    if (!confirm(t("admin_categories.confirm_delete"))) return;
     try {
       await api.delete(`/categories/${id}`);
-      showToast("تم حذف التصنيف بنجاح", "success");
+      showToast(t("admin_categories.delete_success"), "success");
       fetchCategories();
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل الحذف", "error");
+      showToast(
+        err.response?.data?.message ||
+          t("admin_categories.delete_error", { defaultValue: "فشل الحذف" }),
+        "error"
+      );
     }
   };
 
@@ -122,18 +141,20 @@ export default function CategoriesManagement() {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <AdminLayout title="إدارة التصنيفات">
-      <div className="max-w-7xl mx-auto p-6">
+    <AdminLayout title={t("admin_categories.title")}>
+      <div className="max-w-7xl mx-auto p-6" dir={isRTL ? "rtl" : "ltr"}>
         {/* Form */}
         <div className="bg-white p-8 rounded-2xl shadow-xl mb-10">
           <h2 className="text-3xl font-bold mb-8 text-gray-800">
-            {editingId ? "تعديل تصنيف" : "إضافة تصنيف جديد"}
+            {editingId
+              ? t("admin_categories.edit_title")
+              : t("admin_categories.add_title")}
           </h2>
 
           <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
             <div>
               <label className="block text-lg font-semibold mb-3">
-                اسم التصنيف
+                {t("admin_categories.name")}
               </label>
               <input
                 type="text"
@@ -146,7 +167,7 @@ export default function CategoriesManagement() {
 
             <div>
               <label className="block text-lg font-semibold mb-3">
-                صورة التصنيف
+                {t("admin_categories.image")}
               </label>
               {(preview ||
                 (editingId &&
@@ -172,7 +193,7 @@ export default function CategoriesManagement() {
 
             <div className="md:col-span-2">
               <label className="block text-lg font-semibold mb-3">
-                وصف (اختياري)
+                {t("admin_categories.description")}
               </label>
               <textarea
                 value={description}
@@ -187,7 +208,9 @@ export default function CategoriesManagement() {
                 type="submit"
                 className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 px-10 rounded-xl font-bold transition"
               >
-                {editingId ? "حفظ التعديلات" : "إضافة التصنيف"}
+                {editingId
+                  ? t("admin_categories.save")
+                  : t("admin_categories.add")}
               </button>
               {editingId && (
                 <button
@@ -195,7 +218,7 @@ export default function CategoriesManagement() {
                   onClick={resetForm}
                   className="bg-gray-600 text-white py-3 px-10 rounded-xl font-bold"
                 >
-                  إلغاء
+                  {t("admin_categories.cancel")}
                 </button>
               )}
             </div>
@@ -206,10 +229,10 @@ export default function CategoriesManagement() {
         <div className="mb-6 flex justify-end">
           <input
             type="text"
-            placeholder="ابحث بالاسم..."
+            placeholder={t("admin_categories.search")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-md px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300 text-right"
+            className="w-full max-w-md px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300"
           />
         </div>
 
@@ -218,7 +241,9 @@ export default function CategoriesManagement() {
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
             <p className="mt-6 text-xl text-gray-600">
-              جاري تحميل التصنيفات...
+              {t("admin_categories.loading", {
+                defaultValue: "جاري تحميل التصنيفات...",
+              })}
             </p>
           </div>
         ) : (
@@ -227,10 +252,18 @@ export default function CategoriesManagement() {
               <table className="w-full">
                 <thead className="bg-gray-800 text-white">
                   <tr>
-                    <th className="px-6 py-4 text-right">الصورة</th>
-                    <th className="px-6 py-4 text-right">الاسم</th>
-                    <th className="px-6 py-4 text-right">الوصف</th>
-                    <th className="px-6 py-4 text-center">إجراءات</th>
+                    <th className="px-6 py-4 text-right">
+                      {t("admin_categories.cat_image")}
+                    </th>
+                    <th className="px-6 py-4 text-right">
+                      {t("admin_categories.cat_name")}
+                    </th>
+                    <th className="px-6 py-4 text-right">
+                      {t("admin_categories.cat_desc")}
+                    </th>
+                    <th className="px-6 py-4 text-center">
+                      {t("admin_categories.actions")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -248,7 +281,7 @@ export default function CategoriesManagement() {
                           />
                         ) : (
                           <div className="w-20 h-20 bg-gray-200 rounded-lg mx-auto flex items-center justify-center text-gray-500 text-sm">
-                            لا توجد صورة
+                            {t("admin_categories.no_image")}
                           </div>
                         )}
                       </td>
@@ -256,13 +289,13 @@ export default function CategoriesManagement() {
                         {category.name}
                       </td>
                       <td className="px-6 py-4 text-right text-gray-600">
-                        {category.description || "لا يوجد وصف"}
+                        {category.description || t("admin_categories.no_desc")}
                       </td>
                       <td className="px-6 py-4 text-center space-x-4">
                         <button
                           onClick={() => handleEdit(category)}
                           className="text-yellow-600 hover:text-yellow-800 transition"
-                          title="تعديل"
+                          title={t("admin_categories.edit")}
                         >
                           <svg
                             className="w-6 h-6"
@@ -281,7 +314,7 @@ export default function CategoriesManagement() {
                         <button
                           onClick={() => handleDelete(category._id)}
                           className="text-red-600 hover:text-red-800 transition"
-                          title="حذف"
+                          title={t("admin_categories.delete")}
                         >
                           <svg
                             className="w-6 h-6"
@@ -306,7 +339,7 @@ export default function CategoriesManagement() {
                         colSpan={4}
                         className="text-center py-16 text-gray-500 text-xl"
                       >
-                        لا توجد تصنيفات مطابقة للبحث
+                        {t("admin_categories.no_categories")}
                       </td>
                     </tr>
                   )}
@@ -322,7 +355,7 @@ export default function CategoriesManagement() {
                   disabled={currentPage === 1}
                   className="px-5 py-3 bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition"
                 >
-                  السابق
+                  {t("admin_categories.previous")}
                 </button>
 
                 {[...Array(totalPages)].map((_, i) => (
@@ -335,7 +368,7 @@ export default function CategoriesManagement() {
                         : "bg-gray-200 hover:bg-gray-300"
                     }`}
                   >
-                    {i + 1}
+                    {formatNumber(i + 1, lang)}
                   </button>
                 ))}
 
@@ -344,15 +377,17 @@ export default function CategoriesManagement() {
                   disabled={currentPage === totalPages}
                   className="px-5 py-3 bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition"
                 >
-                  التالي
+                  {t("admin_categories.next")}
                 </button>
               </div>
             )}
 
             <p className="text-center mt-6 text-gray-600">
-              عرض {indexOfFirst + 1} -{" "}
-              {Math.min(indexOfLast, filteredCategories.length)} من{" "}
-              {filteredCategories.length} تصنيف
+              {t("admin_categories.showing", {
+                from: indexOfFirst + 1,
+                to: Math.min(indexOfLast, filteredCategories.length),
+                total: filteredCategories.length,
+              })}
             </p>
           </>
         )}

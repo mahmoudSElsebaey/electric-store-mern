@@ -1,14 +1,11 @@
+
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
-
-// Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-
-// Swiper CSS (بدون navigation و pagination)
 import "swiper/css";
-import { IoStar } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 type Brand = {
   _id: string;
@@ -17,6 +14,9 @@ type Brand = {
 };
 
 export default function BrandsCarousel() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +24,7 @@ export default function BrandsCarousel() {
     const fetchBrands = async () => {
       try {
         const res = await api.get("/brands");
-        setBrands(res.data);
+        setBrands(res.data.brands || res.data || []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -36,40 +36,36 @@ export default function BrandsCarousel() {
 
   if (loading) {
     return (
-      <div className="py-16 text-center text-xl">جاري تحميل الماركات...</div>
+      <div className="py-16 text-center text-xl">
+        {t("brands.loading", { defaultValue: "جاري تحميل الماركات..." })}
+      </div>
     );
   }
 
-  // نكرر الماركات عشان الـ loop يبقى سلس أكتر (اختياري بس مفيد)
-  const loopedBrands = [...brands, ...brands];
+  if (brands.length === 0) {
+    return null; // أو رسالة إذا أردت
+  }
+
+  // تكرار الماركات للحركة السلسة
+  const loopedBrands = [...brands, ...brands, ...brands];
 
   return (
-    <section className="py-12  overflow-hidden">
+    <section
+      className="py-12 overflow-hidden bg-white"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <div className="max-w-7xl mx-auto px-6">
-        {/* <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">
-          تسوق حسب الماركة
-        </h2> */}
-
-        <h2 className="text-4xl font-bold text-gray-800 flex justify-center items-center gap-2 mb-12">
-          <IoStar className="inline-block text-[10px] text-yellow-500" />
-          <IoStar className="inline-block text-[20px] text-yellow-500" />
-          <IoStar className="inline-block text-[40px] text-yellow-500" />
-          الماركات
-          <IoStar className="inline-block text-[40px] text-yellow-500" />
-          <IoStar className="inline-block text-[20px] text-yellow-500" />
-          <IoStar className="inline-block text-[10px] text-yellow-500" />
-        </h2>
-
         <Swiper
+          key={i18n.language}
           modules={[Autoplay]}
-          spaceBetween={160}
+          spaceBetween={100}
           slidesPerView={2}
           autoplay={{
-            delay: 0, // مهم جدًا: 0 عشان يبقى حركة مستمرة بدون توقف
+            delay: 0,
             disableOnInteraction: false,
-            reverseDirection: false, // لو عايز يمشي من اليمين للشمال غير لـ true
+            reverseDirection: isRTL, // في العربي يمشي من اليمين للشمال
           }}
-          speed={5000} // سرعة الحركة (كل ما أكبر = أبطأ وأنعم)
+          speed={6000} // حركة بطيئة وأنيقة
           loop={true}
           allowTouchMove={true} // يمنع السحب اليدوي
           breakpoints={{
@@ -82,9 +78,8 @@ export default function BrandsCarousel() {
         >
           {loopedBrands.map((brand, index) => (
             <SwiperSlide key={`${brand._id}-${index}`}>
-              {/* <Link to={`/store?brand=${brand._id}`} className="block text-center"> */}
               <Link to={`/store`} className="block text-center">
-                <div className="w-44 h-32 mx-auto flex items-center justify-center hover:shadow-2xl transition-all duration-500 grayscale hover:grayscale-0 hover:scale-110">
+                <div className="w-44 h-32 mx-auto flex items-center justify-center  transition-all duration-600 grayscale hover:grayscale-0 hover:scale-115 rounded-2xl ">
                   <img
                     src={
                       brand.logo ||
@@ -94,9 +89,6 @@ export default function BrandsCarousel() {
                     className="max-w-full max-h-full object-contain p-6"
                   />
                 </div>
-                {/* <p className="mt-4 text-lg font-semibold text-gray-700">
-                  {brand.name}
-                </p> */}
               </Link>
             </SwiperSlide>
           ))}

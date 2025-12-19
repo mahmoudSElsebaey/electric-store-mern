@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
-import React, { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
-import { useToast } from "../../context/ToastContext"; // لو عندك ToastContext، لو مش موجود استخدم alert
+import { useToast } from "../../context/ToastContext";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "../../utils/formatNumber"; // لو عايز تحول أرقام الـ pagination
 
 type Brand = {
   _id: string;
@@ -17,6 +18,10 @@ type Brand = {
 const BRANDS_PER_PAGE = 10;
 
 export default function BrandsManagement() {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const isRTL = lang === "ar";
+
   const { showToast } = useToast();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
@@ -24,7 +29,6 @@ export default function BrandsManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Form states
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -40,7 +44,7 @@ export default function BrandsManagement() {
       b.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredBrands(filtered);
-    setCurrentPage(1); // رجوع للصفحة الأولى عند البحث
+    setCurrentPage(1);
   }, [brands, searchTerm]);
 
   const fetchBrands = async () => {
@@ -48,7 +52,10 @@ export default function BrandsManagement() {
       const res = await api.get("/brands");
       setBrands(res.data.brands || res.data);
     } catch (err: any) {
-      showToast("فشل جلب الماركات", "error");
+      showToast(
+        t("admin_brands.error_load", { defaultValue: "فشل جلب الماركات" }),
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -66,15 +73,19 @@ export default function BrandsManagement() {
     try {
       if (editingId) {
         await api.put(`/brands/${editingId}`, formData);
-        showToast("تم تعديل الماركة بنجاح", "success");
+        showToast(t("admin_brands.edit_success"), "success");
       } else {
         await api.post("/brands", formData);
-        showToast("تم إضافة الماركة بنجاح", "success");
+        showToast(t("admin_brands.add_success"), "success");
       }
       resetForm();
       fetchBrands();
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل في الحفظ", "error");
+      showToast(
+        err.response?.data?.message ||
+          t("admin_brands.save_error", { defaultValue: "فشل في الحفظ" }),
+        "error"
+      );
     }
   };
 
@@ -95,13 +106,17 @@ export default function BrandsManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("متأكد من الحذف؟")) return;
+    if (!confirm(t("admin_brands.confirm_delete"))) return;
     try {
       await api.delete(`/brands/${id}`);
-      showToast("تم حذف الماركة بنجاح", "success");
+      showToast(t("admin_brands.delete_success"), "success");
       fetchBrands();
     } catch (err: any) {
-      showToast(err.response?.data?.message || "فشل الحذف", "error");
+      showToast(
+        err.response?.data?.message ||
+          t("admin_brands.delete_error", { defaultValue: "فشل الحذف" }),
+        "error"
+      );
     }
   };
 
@@ -115,26 +130,27 @@ export default function BrandsManagement() {
     }
   };
 
-  // Pagination
   const indexOfLast = currentPage * BRANDS_PER_PAGE;
   const indexOfFirst = indexOfLast - BRANDS_PER_PAGE;
   const currentBrands = filteredBrands.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredBrands.length / BRANDS_PER_PAGE);
+
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <AdminLayout title="إدارة الماركات">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Form */}
+    <AdminLayout title={t("admin_brands.title")}>
+      <div className="max-w-7xl mx-auto p-6" dir={isRTL ? "rtl" : "ltr"}>
         <div className="bg-white p-8 rounded-2xl shadow-xl mb-10">
           <h2 className="text-3xl font-bold mb-8 text-gray-800">
-            {editingId ? "تعديل ماركة" : "إضافة ماركة جديدة"}
+            {editingId
+              ? t("admin_brands.edit_title")
+              : t("admin_brands.add_title")}
           </h2>
 
           <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
             <div>
               <label className="block text-lg font-semibold mb-3">
-                اسم الماركة
+                {t("admin_brands.name")}
               </label>
               <input
                 type="text"
@@ -147,7 +163,7 @@ export default function BrandsManagement() {
 
             <div>
               <label className="block text-lg font-semibold mb-3">
-                لوجو الماركة
+                {t("admin_brands.logo")}
               </label>
               {(preview ||
                 (editingId &&
@@ -172,7 +188,7 @@ export default function BrandsManagement() {
 
             <div className="md:col-span-2">
               <label className="block text-lg font-semibold mb-3">
-                وصف (اختياري)
+                {t("admin_brands.description")}
               </label>
               <textarea
                 value={description}
@@ -187,7 +203,7 @@ export default function BrandsManagement() {
                 type="submit"
                 className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 px-10 rounded-xl font-bold transition"
               >
-                {editingId ? "حفظ التعديلات" : "إضافة الماركة"}
+                {editingId ? t("admin_brands.save") : t("admin_brands.add")}
               </button>
               {editingId && (
                 <button
@@ -195,29 +211,31 @@ export default function BrandsManagement() {
                   onClick={resetForm}
                   className="bg-gray-600 text-white py-3 px-10 rounded-xl font-bold"
                 >
-                  إلغاء
+                  {t("admin_brands.cancel")}
                 </button>
               )}
             </div>
           </form>
         </div>
 
-        {/* Search */}
         <div className="mb-6 flex justify-end">
           <input
             type="text"
-            placeholder="ابحث بالاسم..."
+            placeholder={t("admin_brands.search")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-md px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300 text-right"
+            className="w-full max-w-md px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300"
           />
         </div>
 
-        {/* Table */}
         {loading ? (
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-            <p className="mt-6 text-xl text-gray-600">جاري تحميل الماركات...</p>
+            <p className="mt-6 text-xl text-gray-600">
+              {t("admin_brands.loading", {
+                defaultValue: "جاري تحميل الماركات...",
+              })}
+            </p>
           </div>
         ) : (
           <>
@@ -225,10 +243,18 @@ export default function BrandsManagement() {
               <table className="w-full">
                 <thead className="bg-gray-800 text-white">
                   <tr>
-                    <th className="px-6 py-4 text-right">اللوجو</th>
-                    <th className="px-6 py-4 text-right">الاسم</th>
-                    <th className="px-6 py-4 text-right">الوصف</th>
-                    <th className="px-16 py-4 text-center">إجراءات</th>
+                    <th className="px-6 py-4 text-right">
+                      {t("admin_brands.image")}
+                    </th>
+                    <th className="px-6 py-4 text-right">
+                      {t("admin_brands.brand_name")}
+                    </th>
+                    <th className="px-6 py-4 text-right">
+                      {t("admin_brands.brand_desc")}
+                    </th>
+                    <th className="px-16 py-4 text-center">
+                      {t("admin_brands.actions")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -243,7 +269,7 @@ export default function BrandsManagement() {
                           />
                         ) : (
                           <div className="w-20 h-20 bg-gray-200 rounded-lg mx-auto flex items-center justify-center text-gray-500 text-sm">
-                            لا يوجد لوجو
+                            {t("admin_brands.no_logo")}
                           </div>
                         )}
                       </td>
@@ -251,13 +277,13 @@ export default function BrandsManagement() {
                         {brand.name}
                       </td>
                       <td className="px-6 py-4 text-right text-gray-600">
-                        {brand.description || "لا يوجد وصف"}
+                        {brand.description || t("admin_brands.no_desc")}
                       </td>
                       <td className="px-6 py-4 text-center space-x-4">
                         <button
                           onClick={() => handleEdit(brand)}
                           className="text-yellow-600 hover:text-yellow-800 transition"
-                          title="تعديل"
+                          title={t("admin_brands.edit")}
                         >
                           <svg
                             className="w-6 h-6"
@@ -276,7 +302,7 @@ export default function BrandsManagement() {
                         <button
                           onClick={() => handleDelete(brand._id)}
                           className="text-red-600 hover:text-red-800 transition"
-                          title="حذف"
+                          title={t("admin_brands.delete")}
                         >
                           <svg
                             className="w-6 h-6"
@@ -301,7 +327,7 @@ export default function BrandsManagement() {
                         colSpan={4}
                         className="text-center py-16 text-gray-500 text-xl"
                       >
-                        لا توجد ماركات مطابقة للبحث
+                        {t("admin_brands.no_brands")}
                       </td>
                     </tr>
                   )}
@@ -309,7 +335,6 @@ export default function BrandsManagement() {
               </table>
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center mt-10 gap-3">
                 <button
@@ -317,7 +342,7 @@ export default function BrandsManagement() {
                   disabled={currentPage === 1}
                   className="px-5 py-3 bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition"
                 >
-                  السابق
+                  {t("admin_brands.previous")}
                 </button>
 
                 {[...Array(totalPages)].map((_, i) => (
@@ -330,7 +355,7 @@ export default function BrandsManagement() {
                         : "bg-gray-200 hover:bg-gray-300"
                     }`}
                   >
-                    {i + 1}
+                    {formatNumber(i + 1, lang)}
                   </button>
                 ))}
 
@@ -339,15 +364,17 @@ export default function BrandsManagement() {
                   disabled={currentPage === totalPages}
                   className="px-5 py-3 bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition"
                 >
-                  التالي
+                  {t("admin_brands.next")}
                 </button>
               </div>
             )}
 
             <p className="text-center mt-6 text-gray-600">
-              عرض {indexOfFirst + 1} -{" "}
-              {Math.min(indexOfLast, filteredBrands.length)} من{" "}
-              {filteredBrands.length} ماركة
+              {t("admin_brands.showing", {
+                from: indexOfFirst + 1,
+                to: Math.min(indexOfLast, filteredBrands.length),
+                total: filteredBrands.length,
+              })}
             </p>
           </>
         )}

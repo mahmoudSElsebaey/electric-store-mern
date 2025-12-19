@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
-import { IoStar } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 type Category = {
   _id: string;
   name: string;
   description?: string;
-  image?: string; // جديد: url الصورة من Cloudinary
+  image?: string;
 };
 
 export default function CategoriesGrid() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,26 +34,16 @@ export default function CategoriesGrid() {
   if (loading) {
     return (
       <div className="py-20 text-center text-2xl text-gray-600">
-        جاري تحميل التصنيفات...
+        {t("home.loading_categories", {
+          defaultValue: "جاري تحميل التصنيفات...",
+        })}
       </div>
     );
   }
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white" dir={isRTL ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-6">
-        {/* <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">
-          تسوق حسب التصنيف
-        </h2> */}
-        <h2 className="text-4xl font-bold text-gray-800 flex justify-center items-center gap-2 mb-12">
-          <IoStar className="inline-block text-[10px] text-yellow-500" />
-          <IoStar className="inline-block text-[20px] text-yellow-500" />
-          <IoStar className="inline-block text-[40px] text-yellow-500" />
-          التصنيفات
-          <IoStar className="inline-block text-[40px] text-yellow-500" />
-          <IoStar className="inline-block text-[20px] text-yellow-500" />
-          <IoStar className="inline-block text-[10px] text-yellow-500" />
-        </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {categories.map((category) => (
             <Link
@@ -65,7 +58,7 @@ export default function CategoriesGrid() {
                     "https://via.placeholder.com/300x300?text=No+Icon"
                   }
                   alt={category.name}
-                  className="w-full h-full  "
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-blue-600/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

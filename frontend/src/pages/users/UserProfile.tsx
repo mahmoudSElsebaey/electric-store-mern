@@ -5,8 +5,13 @@ import { useStore } from "../../context/StoreContext";
 import { useToast } from "../../context/ToastContext";
 import api from "../../services/api";
 import Footer from "../../components/Footer";
+import { useTranslation } from "react-i18next";
 
 export default function UserProfile() {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const isRTL = lang === "ar";
+
   const { state, dispatch } = useStore();
   const { showToast } = useToast();
 
@@ -61,10 +66,12 @@ export default function UserProfile() {
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
 
       setIsEditing(false);
-      showToast("تم تحديث البيانات بنجاح! 🎉", "success");
+      showToast(t("profile.update_success"), "success");
     } catch (err: any) {
       showToast(
-        "خطأ: " + (err.response?.data?.message || "فشل في التحديث"),
+        t("profile.update_error", {
+          msg: err.response?.data?.message || t("profile.save_failed"),
+        }),
         "error"
       );
     } finally {
@@ -91,17 +98,20 @@ export default function UserProfile() {
 
   return (
     <>
-      <div dir="rtl" className="min-h-screen bg-gray-50 py-16">
+      <div
+        dir={isRTL ? "rtl" : "ltr"}
+        className="min-h-screen bg-gray-50 py-16"
+      >
         <div className="max-w-4xl mx-auto px-6">
           <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-16 text-gray-800">
-            حسابي الشخصي
+            {t("profile.title")}
           </h1>
 
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
             {/* Header */}
             <div className="bg-linear-to-r from-blue-600 to-indigo-700 text-white py-10 px-12 text-center">
               <div className="w-32 h-32 mx-auto bg-white rounded-full shadow-2xl flex items-center justify-center text-6xl text-blue-600 font-bold">
-                {formData.name.charAt(0).toUpperCase()}
+                {formData.name.charAt(0).toUpperCase() || "?"}
               </div>
               <h2 className="text-3xl font-bold mt-6">{formData.name}</h2>
               <p className="text-xl opacity-90">{formData.email}</p>
@@ -114,7 +124,7 @@ export default function UserProfile() {
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
                       <label className="block text-lg font-semibold mb-3 text-gray-700">
-                        الاسم الكامل
+                        {t("profile.full_name")}
                       </label>
                       <input
                         type="text"
@@ -129,7 +139,7 @@ export default function UserProfile() {
 
                     <div>
                       <label className="block text-lg font-semibold mb-3 text-gray-700">
-                        البريد الإلكتروني
+                        {t("profile.email")}
                       </label>
                       <input
                         type="email"
@@ -144,7 +154,7 @@ export default function UserProfile() {
 
                     <div>
                       <label className="block text-lg font-semibold mb-3 text-gray-700">
-                        رقم الهاتف
+                        {t("profile.phone")}
                       </label>
                       <input
                         type="tel"
@@ -152,14 +162,14 @@ export default function UserProfile() {
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        placeholder="مثال: 0100 123 4567"
+                        placeholder={t("profile.phone_placeholder")}
                         className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
                       />
                     </div>
 
                     <div>
                       <label className="block text-lg font-semibold mb-3 text-gray-700">
-                        تاريخ الميلاد
+                        {t("profile.birthdate")}
                       </label>
                       <input
                         type="date"
@@ -177,7 +187,7 @@ export default function UserProfile() {
 
                   <div>
                     <label className="block text-lg font-semibold mb-3 text-gray-700">
-                      العنوان الكامل
+                      {t("profile.address")}
                     </label>
                     <input
                       type="text"
@@ -185,7 +195,7 @@ export default function UserProfile() {
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
                       }
-                      placeholder="شارع، حي، مدينة، محافظة"
+                      placeholder={t("profile.address_placeholder")}
                       className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
                     />
                   </div>
@@ -193,7 +203,7 @@ export default function UserProfile() {
                   {/* الحقول الإضافية */}
                   <div className="border-t-2 border-gray-200 pt-10">
                     <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                      معلومات إضافية
+                      {t("profile.additional_info")}
                     </h3>
 
                     {Object.entries(additionalFields).map(([key, value]) => (
@@ -205,7 +215,7 @@ export default function UserProfile() {
                           type="text"
                           value={key}
                           disabled
-                          className="flex-1 px-5 py-4 bg-gray-200 rounded-xl text-lg font-medium text-right"
+                          className="flex-1 px-5 py-4 bg-gray-200 rounded-xl text-lg font-medium"
                         />
                         <input
                           type="text"
@@ -216,14 +226,14 @@ export default function UserProfile() {
                               [key]: e.target.value,
                             })
                           }
-                          className="flex-1 px-5 py-4 border border-gray-300 rounded-xl text-lg focus:ring-4 focus:ring-blue-100 transition text-right"
+                          className="flex-1 px-5 py-4 border border-gray-300 rounded-xl text-lg focus:ring-4 focus:ring-blue-100 transition"
                         />
                         <button
                           type="button"
                           onClick={() => removeAdditionalField(key)}
                           className="bg-red-600 hover:bg-red-700 text-white px-6 py-4 rounded-xl transition shadow-md"
                         >
-                          حذف
+                          {t("profile.delete")}
                         </button>
                       </div>
                     ))}
@@ -233,22 +243,22 @@ export default function UserProfile() {
                         type="text"
                         value={newFieldKey}
                         onChange={(e) => setNewFieldKey(e.target.value)}
-                        placeholder="اسم الحقل (مثال: الوظيفة)"
-                        className="flex-1 px-5 py-4 border border-gray-300 rounded-xl text-lg focus:ring-4 focus:ring-blue-100 transition text-right"
+                        placeholder={t("profile.field_name_placeholder")}
+                        className="flex-1 px-5 py-4 border border-gray-300 rounded-xl text-lg focus:ring-4 focus:ring-blue-100 transition"
                       />
                       <input
                         type="text"
                         value={newFieldValue}
                         onChange={(e) => setNewFieldValue(e.target.value)}
-                        placeholder="القيمة (مثال: مهندس مبيعات)"
-                        className="flex-1 px-5 py-4 border border-gray-300 rounded-xl text-lg focus:ring-4 focus:ring-blue-100 transition text-right"
+                        placeholder={t("profile.field_value_placeholder")}
+                        className="flex-1 px-5 py-4 border border-gray-300 rounded-xl text-lg focus:ring-4 focus:ring-blue-100 transition"
                       />
                       <button
                         type="button"
                         onClick={addAdditionalField}
                         className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl transition shadow-md font-semibold"
                       >
-                        إضافة
+                        {t("profile.add")}
                       </button>
                     </div>
                   </div>
@@ -259,14 +269,16 @@ export default function UserProfile() {
                       disabled={loading}
                       className="flex-1 bg-linear-to-r from-blue-600 to-indigo-700 text-white py-5 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 shadow-2xl disabled:opacity-70"
                     >
-                      {loading ? "جاري الحفظ..." : "حفظ التغييرات"}
+                      {loading
+                        ? t("profile.saving")
+                        : t("profile.save_changes")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setIsEditing(false)}
                       className="px-12 py-5 bg-gray-600 text-white rounded-xl text-xl font-bold hover:bg-gray-700 transition"
                     >
-                      إلغاء
+                      {t("profile.cancel")}
                     </button>
                   </div>
                 </form>
@@ -276,32 +288,38 @@ export default function UserProfile() {
                   <div className="grid md:grid-cols-2 gap-10">
                     <div className="bg-gray-50 p-6 rounded-2xl">
                       <p className="font-bold text-gray-600 mb-2">
-                        الاسم الكامل
+                        {t("profile.full_name")}
                       </p>
                       <p className="text-xl">{formData.name}</p>
                     </div>
                     <div className="bg-gray-50 p-6 rounded-2xl">
                       <p className="font-bold text-gray-600 mb-2">
-                        البريد الإلكتروني
+                        {t("profile.email")}
                       </p>
                       <p className="text-xl">{formData.email}</p>
                     </div>
                     <div className="bg-gray-50 p-6 rounded-2xl">
-                      <p className="font-bold text-gray-600 mb-2">رقم الهاتف</p>
-                      <p className="text-xl">{formData.phone || "غير محدد"}</p>
-                    </div>
-                    <div className="bg-gray-50 p-6 rounded-2xl">
-                      <p className="font-bold text-gray-600 mb-2">العنوان</p>
+                      <p className="font-bold text-gray-600 mb-2">
+                        {t("profile.phone")}
+                      </p>
                       <p className="text-xl">
-                        {formData.address || "غير محدد"}
+                        {formData.phone || t("profile.not_specified")}
                       </p>
                     </div>
                     <div className="bg-gray-50 p-6 rounded-2xl">
                       <p className="font-bold text-gray-600 mb-2">
-                        تاريخ الميلاد
+                        {t("profile.address")}
                       </p>
                       <p className="text-xl">
-                        {formData.birthdate || "غير محدد"}
+                        {formData.address || t("profile.not_specified")}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-6 rounded-2xl">
+                      <p className="font-bold text-gray-600 mb-2">
+                        {t("profile.birthdate")}
+                      </p>
+                      <p className="text-xl">
+                        {formData.birthdate || t("profile.not_specified")}
                       </p>
                     </div>
                   </div>
@@ -310,7 +328,7 @@ export default function UserProfile() {
                   {Object.keys(additionalFields).length > 0 && (
                     <div>
                       <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                        معلومات إضافية
+                        {t("profile.additional_info")}
                       </h3>
                       <div className="grid md:grid-cols-2 gap-6">
                         {Object.entries(additionalFields).map(
@@ -334,7 +352,7 @@ export default function UserProfile() {
                     onClick={() => setIsEditing(true)}
                     className="w-full bg-linear-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 shadow-2xl"
                   >
-                    تعديل البيانات
+                    {t("profile.edit_profile")}
                   </button>
                 </div>
               )}
