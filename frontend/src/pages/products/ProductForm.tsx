@@ -87,7 +87,7 @@ export default function ProductForm() {
         });
         showToast(t("admin_products.add_success"), "success");
       }
-      navigate("/products-management");
+      navigate("/admin/products");
     } catch (err: any) {
       showToast(
         err.response?.data?.message || t("admin_products.save_error"),
@@ -237,7 +237,7 @@ export default function ProductForm() {
             </button>
             <button
               type="button"
-              onClick={() => navigate("/products-management")}
+              onClick={() => navigate("/admin/products")}
               className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-bold"
             >
               {t("admin_products.cancel")}

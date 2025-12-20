@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../context/StoreContext";
 import api from "../services/api";
@@ -7,46 +8,35 @@ import { useToast } from "../context/ToastContext";
 import { FiEye } from "react-icons/fi";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { useRegisterSchema, type RegisterFormData } from "../validation/authSchemas";
+import { useState } from "react";
 
 export default function Register() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { dispatch } = useStore();
   const { showToast } = useToast();
-
   const isRTL = i18n.language === "ar";
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const schema = useRegisterSchema(); // الـ schema الديناميكي حسب اللغة
 
-    if (formData.password !== formData.confirmPassword) {
-      showToast(t("auth.errors.password_mismatch"), "error");
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(schema),
+  });
 
-    if (formData.password.length < 6) {
-      showToast(t("auth.errors.password_short"), "error");
-      return;
-    }
-
-    setLoading(true);
-
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       const res = await api.post("/auth/register", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
+        name: data.name,
+        email: data.email,
+        password: data.password,
       });
 
       localStorage.setItem("token", res.data.token);
@@ -58,8 +48,6 @@ export default function Register() {
       const message =
         err.response?.data?.message || t("auth.errors.register_failed");
       showToast(message, "error");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -80,22 +68,21 @@ export default function Register() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-10 space-y-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-10 space-y-6">
           {/* Name */}
           <div>
             <label className="block text-lg font-semibold text-gray-700 mb-3">
               {t("auth.register.name")}
             </label>
             <input
+              {...register("name")}
               type="text"
-              required
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
               className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
               placeholder={t("auth.register.name_placeholder")}
             />
+            {errors.name && (
+              <p className="text-red-600 text-sm mt-2">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -104,15 +91,16 @@ export default function Register() {
               {t("auth.register.email")}
             </label>
             <input
+              {...register("email")}
               type="email"
-              required
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
               className="w-full px-6 py-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg"
               placeholder={t("auth.register.email_placeholder")}
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-2">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password */}
@@ -121,12 +109,8 @@ export default function Register() {
               {t("auth.register.password")}
             </label>
             <input
+              {...register("password")}
               type={showPassword ? "text" : "password"}
-              required
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
               className={`w-full px-6 py-5 ${
                 isRTL ? "pr-14" : "pl-14"
               } rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg`}
@@ -141,6 +125,11 @@ export default function Register() {
             >
               {showPassword ? <FaRegEyeSlash /> : <FiEye />}
             </button>
+            {errors.password && (
+              <p className="text-red-600 text-sm mt-2">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -149,12 +138,8 @@ export default function Register() {
               {t("auth.register.confirm_password")}
             </label>
             <input
+              {...register("confirmPassword")}
               type={showConfirm ? "text" : "password"}
-              required
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
-              }
               className={`w-full px-6 py-5 ${
                 isRTL ? "pr-14" : "pl-14"
               } rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition text-lg`}
@@ -169,15 +154,22 @@ export default function Register() {
             >
               {showConfirm ? <FaRegEyeSlash /> : <FiEye />}
             </button>
+            {errors.confirmPassword && (
+              <p className="text-red-600 text-sm mt-2">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full bg-linear-to-r from-blue-600 to-indigo-700 text-white py-6 rounded-xl text-2xl font-bold hover:from-blue-700 hover:to-indigo-800 transition transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed shadow-2xl"
           >
-            {loading ? t("auth.register.loading") : t("auth.register.submit")}
+            {isSubmitting
+              ? t("auth.register.loading")
+              : t("auth.register.submit")}
           </button>
         </form>
 

@@ -6,11 +6,10 @@ const signToken = (id) =>
 
 const cookieOptions = {
   httpOnly: true,
-  secure: true,        // لازم true عشان HTTPS
-  sameSite: "none",    // لازم none عشان Cross-Site
+  secure: true, // لازم true عشان HTTPS
+  sameSite: "none", // لازم none عشان Cross-Site
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
-
 
 //____________________________________ Register ____________________________________
 export const register = async (req, res) => {
@@ -31,8 +30,13 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    let message = "حدث خطأ أثناء التسجيل";
+    ddsfsfsf;
   }
+
+  console.error("Register Error:", error); // للـ debug
+
+  res.status(400).json({ message });
 };
 
 //____________________________________ Login ____________________________________
@@ -74,12 +78,10 @@ export const getMe = async (req, res) => {
 
 //____________________________________ Logout ____________________________________
 export const logout = (req, res) => {
-  
- res.clearCookie("token", {
-  ...cookieOptions,
-  maxAge: 0,
-});
-
+  res.clearCookie("token", {
+    ...cookieOptions,
+    maxAge: 0,
+  });
 
   res.json({ success: true, message: "تم تسجيل الخروج بنجاح" });
 };

@@ -544,5 +544,25 @@
     },
     "brands": {
         "loading": "Loading brands..."
+    },
+    "validation": {
+        "common": {
+            "required": "This field is required"
+        },
+        "name": {
+            "min": "Name must be at least 3 characters",
+            "max": "Name cannot exceed 50 characters"
+        },
+        "email": {
+            "invalid": "Invalid email address",
+            "max": "Email is too long"
+        },
+        "password": {
+            "required": "Password is required",
+            "min": "Password must be at least 6 characters",
+            "max": "Password is too long",
+            "regex": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+            "mismatch": "Passwords do not match"
+        }
     }
 }

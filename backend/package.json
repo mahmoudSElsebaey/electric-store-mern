@@ -26,6 +26,7 @@
     "mongoose": "^9.0.0",
     "multer": "^2.0.2",
     "paypal-rest-sdk": "^1.8.1",
-    "stripe": "^20.0.0"
+    "stripe": "^20.0.0",
+    "zod": "^4.2.1"
   }
 }
