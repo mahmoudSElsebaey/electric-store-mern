@@ -1,12 +1,18 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useEffect } from "react";
-import api from "../../services/api";
-import { useToast } from "../../context/ToastContext";
-import AdminLayout from "../../layouts/AdminLayout";
-import { useNavigate, useParams } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
+import { useToast } from "../../context/ToastContext";
+import api from "../../services/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import AdminLayout from "../../layouts/AdminLayout";
+import {
+  useProductSchema,
+  type ProductFormData,
+} from "../../validation/productSchemas";
 
 type Brand = { _id: string; name: string };
 type Category = { _id: string; name: string };
@@ -21,78 +27,107 @@ export default function ProductForm() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    price: 0,
-    brand: "",
-    countInStock: 0,
-    description: "",
-    category: "",
+  const schema = useProductSchema();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+
+    watch,
+    reset,
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      description: "",
+      price: 0,
+      countInStock: 0,
+      brand: "",
+      category: "",
+      image: undefined,
+    },
   });
 
+  const watchedImage = watch("image");
+
+  // جلب Brands و Categories + بيانات المنتج لو edit
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [brandsRes, categoriesRes] = await Promise.all([
+        const [brandsRes, catsRes] = await Promise.all([
           api.get("/brands"),
           api.get("/categories"),
         ]);
         setBrands(brandsRes.data);
-        setCategories(categoriesRes.data);
+        setCategories(catsRes.data);
 
         if (isEdit) {
           const res = await api.get(`/products/${id}`);
-          const p = res.data;
-          setFormData({
-            name: p.name,
-            price: p.price,
-            brand: typeof p.brand === "string" ? p.brand : p.brand._id,
-            countInStock: p.countInStock,
-            description: p.description,
+          const product = res.data;
+          reset({
+            name: product.name,
+            description: product.description || "",
+            price: product.price,
+            countInStock: product.countInStock,
+            brand:
+              typeof product.brand === "string"
+                ? product.brand
+                : product.brand._id,
             category:
-              typeof p.category === "string" ? p.category : p.category._id,
+              typeof product.category === "string"
+                ? product.category
+                : product.category._id,
           });
+          setPreview(product.image);
         }
       } catch (err) {
         showToast(t("admin_products.error_load"), "error");
       }
     };
     fetchData();
-  }, [id, isEdit]);
+  }, [id, isEdit, reset, t]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // معاينة الصورة
+  useEffect(() => {
+    if (watchedImage && watchedImage.length > 0) {
+      const file = watchedImage[0];
+      setPreview(URL.createObjectURL(file));
+    }
+  }, [watchedImage]);
+
+  const onSubmit = async (data: ProductFormData) => {
     setLoading(true);
-
     try {
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("price", String(formData.price));
-      data.append("brand", formData.brand);
-      data.append("countInStock", String(formData.countInStock));
-      data.append("description", formData.description);
-      data.append("category", formData.category);
-      if (imageFile) data.append("image", imageFile);
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description || "");
+      formData.append("price", data.price.toString());
+      formData.append("countInStock", data.countInStock.toString());
+      formData.append("brand", data.brand);
+      formData.append("category", data.category);
+      if (data.image && data.image.length > 0) {
+        formData.append("image", data.image[0]);
+      }
 
       if (isEdit) {
-        await api.put(`/products/${id}`, data, {
+        await api.put(`/products/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         showToast(t("admin_products.edit_success"), "success");
       } else {
-        await api.post("/products", data, {
+        await api.post("/products", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         showToast(t("admin_products.add_success"), "success");
       }
       navigate("/admin/products");
     } catch (err: any) {
-      showToast(
-        err.response?.data?.message || t("admin_products.save_error"),
-        "error"
-      );
+      const message =
+        err.response?.data?.message || t("admin_products.save_error");
+      showToast(message, "error");
     } finally {
       setLoading(false);
     }
@@ -106,63 +141,70 @@ export default function ProductForm() {
     >
       <div className="max-w-4xl mx-auto">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-2xl shadow-xl p-8"
-          dir="rtl"
+          dir={t("dir") === "rtl" ? "rtl" : "ltr"}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Name */}
             <div>
               <label className="block mb-2 font-semibold">
                 {t("admin_products.product_name")}
               </label>
               <input
+                {...register("name")}
                 type="text"
-                required
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+              {errors.name && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
+
+            {/* Price */}
             <div>
               <label className="block mb-2 font-semibold">
                 {t("admin_products.price_label")}
               </label>
               <input
+                {...register("price", { valueAsNumber: true })}
                 type="number"
-                required
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData({ ...formData, price: +e.target.value })
-                }
+                step="0.01"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+              {errors.price && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.price.message}
+                </p>
+              )}
             </div>
+
+            {/* Stock */}
             <div>
               <label className="block mb-2 font-semibold">
                 {t("admin_products.stock_label")}
               </label>
               <input
+                {...register("countInStock", { valueAsNumber: true })}
                 type="number"
-                required
-                value={formData.countInStock}
-                onChange={(e) =>
-                  setFormData({ ...formData, countInStock: +e.target.value })
-                }
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+              {errors.countInStock && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.countInStock.message}
+                </p>
+              )}
             </div>
+
+            {/* Brand */}
             <div>
               <label className="block mb-2 font-semibold">
                 {t("admin_products.brand_label")}
               </label>
               <select
-                required
-                value={formData.brand}
-                onChange={(e) =>
-                  setFormData({ ...formData, brand: e.target.value })
-                }
+                {...register("brand")}
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">{t("admin_products.select_brand")}</option>
@@ -172,17 +214,20 @@ export default function ProductForm() {
                   </option>
                 ))}
               </select>
+              {errors.brand && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.brand.message}
+                </p>
+              )}
             </div>
+
+            {/* Category */}
             <div>
               <label className="block mb-2 font-semibold">
                 {t("admin_products.category_label")}
               </label>
               <select
-                required
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
+                {...register("category")}
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">{t("admin_products.select_category")}</option>
@@ -192,53 +237,76 @@ export default function ProductForm() {
                   </option>
                 ))}
               </select>
+              {errors.category && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.category.message}
+                </p>
+              )}
             </div>
+
+            {/* Image Upload */}
             <div className="md:col-span-2">
               <label className="block mb-2 font-semibold">
                 {t("admin_products.image_label")}{" "}
                 {isEdit ? `(${t("admin_products.image_optional")})` : ""}
               </label>
               <input
+                {...register("image")}
                 type="file"
                 accept="image/*"
-                onChange={(e) =>
-                  e.target.files && setImageFile(e.target.files[0])
-                }
                 className="w-full p-3 border rounded-lg"
               />
+              {errors.image && (
+                <p className="text-red-600 text-sm mt-1">
+                  {(errors.image as any)?.message}
+                </p>
+              )}
+
+              {preview && (
+                <div className="mt-6">
+                  <p className="text-lg font-medium mb-3">
+                    {t("admin_products.preview")}:
+                  </p>
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="max-w-md rounded-xl shadow-lg"
+                  />
+                </div>
+              )}
             </div>
+
+            {/* Description */}
             <div className="md:col-span-2">
               <label className="block mb-2 font-semibold">
                 {t("admin_products.description_label")}
               </label>
               <textarea
-                required
+                {...register("description")}
                 rows={6}
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-4 mt-8">
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting || loading}
               className="flex-1 bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 rounded-lg font-bold transition disabled:opacity-60"
             >
-              {loading
+              {loading || isSubmitting
                 ? t("admin_products.saving")
                 : isEdit
                 ? t("admin_products.save_changes")
                 : t("admin_products.add_product")}
             </button>
+
             <button
               type="button"
               onClick={() => navigate("/admin/products")}
-              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-bold"
+              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-bold transition"
             >
               {t("admin_products.cancel")}
             </button>

@@ -1,8 +1,9 @@
 {
+    "dir": "ltr",
     "home": {
         "featured_products": "Featured Products",
-        "categories": "Categories",
-        "favorite_brands": "Favorite Brands"
+        "categories": "You can shop by category",
+        "favorite_brands": "Top international brands available"
     },
     "home_sections": {
         "hero": {
@@ -276,7 +277,8 @@
         "address": "Detailed Address",
         "city": "City",
         "card_payment": "Pay with Card",
-        "processing": "Processing..."
+        "processing": "Processing...",
+        "fill_all_fields_correctly": "Please fill in all the fields correctly"
     },
     "payment_success": {
         "title": "Payment Successful! 🎉",
@@ -287,6 +289,7 @@
         "home": "← Home Page"
     },
     "dashboard": {
+          "dashboard_title": "Owner Dashboard",
         "welcome": "Welcome, {{name}} 👋",
         "owner": "Main Owner",
         "admin": "System Admin",
@@ -349,7 +352,9 @@
         "price_label": "Price",
         "stock_label": "Available Quantity",
         "brand_label": "Brand",
+        "select_brand": "Select Brand",
         "category_label": "Category",
+        "select_category": "Select Category",
         "image_label": "Product Image",
         "image_optional": "(Optional)",
         "description_label": "Product Description",
@@ -381,6 +386,8 @@
         "delivered": "Delivered",
         "cancelled": "Cancelled",
         "updating": "Updating...",
+        "update_success": "Order updated successfully",
+        "update_error": "Error updating order",
         "view_details": "View Details",
         "no_orders": "No orders yet",
         "no_matching": "No matching orders found",
@@ -495,7 +502,18 @@
         "make_admin_success": "User converted to admin successfully!"
     },
     "common": {
-        "view_all": "View All"
+        "view_all": "View All",
+        "cancel": "Cancel",
+        "save": "Save",
+        "add": "Add",
+        "edit": "Edit",
+        "delete": "Delete",
+        "yes": "Yes",
+        "no": "No",
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "success": "Success",
+        "warning": "Warning"
     },
     "my_orders": {
         "title": "My Orders",
@@ -563,6 +581,49 @@
             "max": "Password is too long",
             "regex": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
             "mismatch": "Passwords do not match"
+        },
+        "product": {
+            "name": {
+                "min": "Product name must be at least 3 characters",
+                "max": "Product name cannot exceed 100 characters"
+            },
+            "price": {
+                "invalid": "Price must be a number",
+                "positive": "Price must be positive",
+                "min": "Price must be greater than 0"
+            },
+            "stock": {
+                "invalid": "Stock must be a number",
+                "int": "Stock must be an integer",
+                "min": "Stock cannot be negative"
+            },
+            "brand": {
+                "required": "Please select a brand"
+            },
+            "category": {
+                "required": "Please select a category"
+            },
+            "image": {
+                "size": "Image size must not exceed 5MB",
+                "type": "Image must be JPG, PNG or WebP format"
+            }
+        },
+        "checkout": {
+            "name": {
+                "min": "Full name must be at least 3 characters",
+                "max": "Full name is too long"
+            },
+            "phone": {
+                "invalid": "Invalid phone number (must be 8-15 digits)"
+            },
+            "address": {
+                "min": "Address must be at least 5 characters",
+                "max": "Address is too long"
+            },
+            "city": {
+                "min": "City must be at least 2 characters",
+                "max": "City name is too long"
+            }
         }
     }
 }

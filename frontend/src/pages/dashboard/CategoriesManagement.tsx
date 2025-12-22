@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useState } from "react";
@@ -7,7 +7,6 @@ import api from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
 import { useToast } from "../../context/ToastContext";
 import { useTranslation } from "react-i18next";
-import { formatNumber } from "../../utils/formatNumber"; // لتحويل أرقام الـ pagination
 
 type Category = {
   _id: string;
@@ -133,40 +132,43 @@ export default function CategoriesManagement() {
     }
   };
 
-  // Pagination
   const indexOfLast = currentPage * CATEGORIES_PER_PAGE;
   const indexOfFirst = indexOfLast - CATEGORIES_PER_PAGE;
   const currentCategories = filteredCategories.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredCategories.length / CATEGORIES_PER_PAGE);
+
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <AdminLayout title={t("admin_categories.title")}>
-      <div className="max-w-7xl mx-auto p-6" dir={isRTL ? "rtl" : "ltr"}>
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         {/* Form */}
-        <div className="bg-white p-8 rounded-2xl shadow-xl mb-10">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">
+        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">
             {editingId
               ? t("admin_categories.edit_title")
               : t("admin_categories.add_title")}
           </h2>
 
-          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-lg font-semibold mb-3">
+              <label className="block text-lg font-semibold mb-2">
                 {t("admin_categories.name")}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-lg font-semibold mb-3">
+              <label className="block text-lg font-semibold mb-2">
                 {t("admin_categories.image")}
               </label>
               {(preview ||
@@ -179,7 +181,7 @@ export default function CategoriesManagement() {
                       categories.find((c) => c._id === editingId)?.image
                     }
                     alt="preview"
-                    className="w-40 h-40 object-cover rounded-xl shadow-lg bg-gray-50"
+                    className="w-32 h-32 object-cover rounded-xl shadow-md"
                   />
                 </div>
               )}
@@ -187,26 +189,26 @@ export default function CategoriesManagement() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="w-full p-3 border border-gray-300 rounded-xl"
+                className="w-full p-2 border border-gray-300 rounded-xl"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-lg font-semibold mb-3">
+              <label className="block text-lg font-semibold mb-2">
                 {t("admin_categories.description")}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-4 border border-gray-300 rounded-xl"
+                className="w-full p-3 border border-gray-300 rounded-xl"
                 rows={4}
               />
             </div>
 
-            <div className="md:col-span-2 flex gap-4">
+            <div className="md:col-span-2 flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
-                className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white py-3 px-10 rounded-xl font-bold transition"
+                className="bg-purple-600 hover:bg-purple-700 text-white py-3 px-8 rounded-xl font-bold transition flex-1 sm:flex-none"
               >
                 {editingId
                   ? t("admin_categories.save")
@@ -216,7 +218,7 @@ export default function CategoriesManagement() {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="bg-gray-600 text-white py-3 px-10 rounded-xl font-bold"
+                  className="bg-gray-600 text-white py-3 px-8 rounded-xl font-bold flex-1 sm:flex-none"
                 >
                   {t("admin_categories.cancel")}
                 </button>
@@ -226,31 +228,26 @@ export default function CategoriesManagement() {
         </div>
 
         {/* Search */}
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6">
           <input
             type="text"
             placeholder={t("admin_categories.search")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-md px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-300"
+            className="w-full max-w-md px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-300"
           />
         </div>
 
-        {/* Table */}
         {loading ? (
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-            <p className="mt-6 text-xl text-gray-600">
-              {t("admin_categories.loading", {
-                defaultValue: "جاري تحميل التصنيفات...",
-              })}
-            </p>
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
           </div>
         ) : (
           <>
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            {/* الجدول - شاشات كبيرة */}
+            <div className="hidden lg:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
               <table className="w-full">
-                <thead className="bg-gray-800 text-white">
+                <thead className="bg-gray-900 text-white">
                   <tr>
                     <th className="px-6 py-4 text-right">
                       {t("admin_categories.cat_image")}
@@ -277,7 +274,7 @@ export default function CategoriesManagement() {
                           <img
                             src={category.image}
                             alt={category.name}
-                            className="w-20 h-20 object-cover rounded-lg mx-auto bg-gray-100"
+                            className="w-20 h-20 object-cover rounded-lg mx-auto"
                           />
                         ) : (
                           <div className="w-20 h-20 bg-gray-200 rounded-lg mx-auto flex items-center justify-center text-gray-500 text-sm">
@@ -285,17 +282,16 @@ export default function CategoriesManagement() {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-right font-semibold">
+                      <td className="px-6 py-4 font-semibold">
                         {category.name}
                       </td>
-                      <td className="px-6 py-4 text-right text-gray-600">
+                      <td className="px-6 py-4 text-gray-600">
                         {category.description || t("admin_categories.no_desc")}
                       </td>
                       <td className="px-6 py-4 text-center space-x-4">
                         <button
                           onClick={() => handleEdit(category)}
-                          className="text-yellow-600 hover:text-yellow-800 transition"
-                          title={t("admin_categories.edit")}
+                          className="text-yellow-600 hover:text-yellow-800"
                         >
                           <svg
                             className="w-6 h-6"
@@ -313,8 +309,7 @@ export default function CategoriesManagement() {
                         </button>
                         <button
                           onClick={() => handleDelete(category._id)}
-                          className="text-red-600 hover:text-red-800 transition"
-                          title={t("admin_categories.delete")}
+                          className="text-red-600 hover:text-red-800"
                         >
                           <svg
                             className="w-6 h-6"
@@ -333,27 +328,62 @@ export default function CategoriesManagement() {
                       </td>
                     </tr>
                   ))}
-                  {currentCategories.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center py-16 text-gray-500 text-xl"
-                      >
-                        {t("admin_categories.no_categories")}
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>
 
+            {/* البطاقات - شاشات صغيرة */}
+            <div className="lg:hidden space-y-5">
+              {currentCategories.map((category) => (
+                <div
+                  key={category._id}
+                  className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 hover:shadow-md transition"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    {category.image ? (
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-20 h-20 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-sm">
+                        {t("admin_categories.no_image")}
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg">{category.name}</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {category.description || t("admin_categories.no_desc")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handleEdit(category)}
+                      className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2.5 rounded-lg transition"
+                    >
+                      {t("admin_categories.edit")}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(category._id)}
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg transition"
+                    >
+                      {t("admin_categories.delete")}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center mt-10 gap-3">
+              <div className="flex flex-wrap justify-center items-center mt-10 gap-2">
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-5 py-3 bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition"
+                  className="px-5 py-2.5 bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition"
                 >
                   {t("admin_categories.previous")}
                 </button>
@@ -362,20 +392,20 @@ export default function CategoriesManagement() {
                   <button
                     key={i + 1}
                     onClick={() => paginate(i + 1)}
-                    className={`px-5 py-3 rounded-lg transition ${
+                    className={`px-4 py-2.5 rounded-lg transition min-w-10 ${
                       currentPage === i + 1
                         ? "bg-blue-600 text-white"
                         : "bg-gray-200 hover:bg-gray-300"
                     }`}
                   >
-                    {formatNumber(i + 1, lang)}
+                    {i + 1}
                   </button>
                 ))}
 
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-5 py-3 bg-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition"
+                  className="px-5 py-2.5 bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition"
                 >
                   {t("admin_categories.next")}
                 </button>

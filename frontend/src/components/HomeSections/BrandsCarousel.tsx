@@ -51,10 +51,10 @@ export default function BrandsCarousel() {
 
   return (
     <section
-      className="py-12 overflow-hidden bg-white"
+      className="py-12 mb-10 md:mb-25 overflow-hidden   bg-white"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6  ">
         <Swiper
           key={i18n.language}
           modules={[Autoplay]}

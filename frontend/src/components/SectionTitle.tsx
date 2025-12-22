@@ -1,6 +1,13 @@
 // src/components/SectionTitle.tsx
 import { Link } from "react-router-dom";
-import { FaBolt, FaTools, FaTag, FaStar } from "react-icons/fa";
+import {
+  FaBolt,
+  FaTools,
+  FaTag,
+  FaStar,
+  FaLongArrowAltLeft,
+  FaLongArrowAltRight,
+} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
 type SectionTitleProps = {
@@ -10,7 +17,7 @@ type SectionTitleProps = {
 };
 
 export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
-  const { t,i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
   const getIcon = () => {
@@ -41,7 +48,7 @@ export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
   return (
     <div
       className="relative container mx-auto px-6 py-12 overflow-hidden"
-      dir={isRTL ? "rtl" : "ltr"}
+      dir={isRTL ? "ltr" : ""}
     >
       {/* خلفية متدرجة خفيفة */}
       <div className="absolute inset-0 bg-linear-to-r from-indigo-50 via-purple-50 to-pink-50 opacity-70 -z-10"></div>
@@ -72,16 +79,12 @@ export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
         {link && (
           <Link
             to={link}
-            className="group flex items-center gap-3 bg-linear-to-r from-indigo-600 to-purple-700 text-white px-4 py-2 md:px-6 md:py-2 lg:px-8 lg:py-4 rounded-xl text-sm md:text-xl font-bold hover:from-indigo-700 hover:to-purple-800 transition transform hover:scale-105 shadow-lg"
+            className="group flex items-center gap-2 text-sm md:text-[16px] font-bold   transition transform hover:scale-105 text-blue-600 hover:text-blue-800"
           >
-            <span
-              className={`group-hover:${
-                isRTL ? "-translate-x-2" : "translate-x-2"
-              } text-sm md:text-lg transition-transform`}
-            >
-              {isRTL ? "➜" : ""}
-            </span>
+            {isRTL && <FaLongArrowAltLeft className="group-hover:animate-pulse" />}
             {t("common.view_all", { defaultValue: "عرض الكل" })}
+            {!isRTL && <FaLongArrowAltRight  className="group-hover:animate-pulse" />}
+            
           </Link>
         )}
       </div>
