@@ -16,17 +16,35 @@ export const useProductSchema = () => {
       .string()
       .trim()
       .optional()
-      .or(z.literal("")), // يسمح بفارغ
+      .or(z.literal("")),
 
     price: z
-      .number({ invalid_type_error: t("validation.product.price.invalid") })
-      .positive(t("validation.product.price.positive"))
-      .min(0.01, t("validation.product.price.min")),
+      .any()
+      .refine(
+        (val) => val !== "" && !isNaN(Number(val)),
+        t("validation.product.price.invalid")
+      )
+      .transform((val) => Number(val))
+      .refine(
+        (val) => val > 0,
+        t("validation.product.price.positive")
+      )
+      .refine(
+        (val) => val >= 0.01,
+        t("validation.product.price.min")
+      ),
 
     countInStock: z
-      .number({ invalid_type_error: t("validation.product.stock.invalid") })
-      .int(t("validation.product.stock.int"))
-      .min(0, t("validation.product.stock.min")),
+      .any()
+      .refine(
+        (val) => val !== "" && Number.isInteger(Number(val)),
+        t("validation.product.stock.invalid")
+      )
+      .transform((val) => Number(val))
+      .refine(
+        (val) => val >= 0,
+        t("validation.product.stock.min")
+      ),
 
     brand: z
       .string()
@@ -40,14 +58,22 @@ export const useProductSchema = () => {
       .instanceof(FileList)
       .optional()
       .refine(
-        (files) => !files || files.length === 0 || files[0].size <= 5 * 1024 * 1024,
+        (files) =>
+          !files ||
+          files.length === 0 ||
+          files[0].size <= 5 * 1024 * 1024,
         t("validation.product.image.size")
       )
       .refine(
-        (files) => !files || files.length === 0 || /^image\/(jpeg|png|webp|jpg)$/.test(files[0].type),
+        (files) =>
+          !files ||
+          files.length === 0 ||
+          /^image\/(jpeg|png|webp|jpg)$/.test(files[0].type),
         t("validation.product.image.type")
       ),
   });
 };
 
-export type ProductFormData = z.infer<ReturnType<typeof useProductSchema>>;
+export type ProductFormData = z.infer<
+  ReturnType<typeof useProductSchema>
+>;
