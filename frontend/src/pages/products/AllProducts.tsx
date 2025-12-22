@@ -84,38 +84,38 @@ export default function Store() {
     <>
       {/* Hero Section */}
       <section
-        className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-32 overflow-hidden"
+        className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-20 sm:py-28 md:py-32 lg:py-40 overflow-hidden"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
 
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
             {t("store.hero.title")}
           </h1>
-          <p className="text-xl md:text-3xl font-light max-w-4xl mx-auto leading-relaxed mb-12">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light max-w-4xl mx-auto leading-relaxed mb-10 sm:mb-12">
             {t("store.hero.subtitle")}
           </p>
 
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12 text-lg">
-            <div className="flex items-center gap-3">
-              <GoZap className="w-10 h-10 text-yellow-400" />
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 text-base sm:text-lg">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <GoZap className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
               <span>{t("store.hero.price")}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <FaTruckFast className="w-10 h-10 text-yellow-400" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <FaTruckFast className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
               <span>{t("store.hero.delivery")}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <FaShieldAlt className="w-10 h-10 text-yellow-400" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <FaShieldAlt className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
               <span>{t("store.hero.warranty")}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <FaTags className="w-10 h-10 text-yellow-400" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <FaTags className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
               <span>{t("store.hero.offers")}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <FaHeadphones className="w-10 h-10 text-yellow-400" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <FaHeadphones className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
               <span>{t("store.hero.support")}</span>
             </div>
           </div>
@@ -133,24 +133,25 @@ export default function Store() {
 
       {/* Store Content */}
       <div
-        className="min-h-screen bg-gray-50 py-12"
+        className="min-h-screen bg-gray-50 py-10 sm:py-12 md:py-16"
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Filters */}
           <div className="bg-white rounded-2xl shadow-xl p-6 mb-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               <input
                 type="text"
                 placeholder={t("store.filters.search")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg focus:ring-4 focus:ring-blue-300"
+                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"
               />
 
               <select
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg focus:ring-4 focus:ring-blue-300"
+                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"
               >
                 <option value="">{t("store.filters.all_brands")}</option>
                 {brands.map((b) => (
@@ -163,7 +164,7 @@ export default function Store() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg focus:ring-4 focus:ring-blue-300"
+                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"
               >
                 <option value="">{t("store.filters.all_categories")}</option>
                 {categories.map((c) => (
@@ -178,7 +179,7 @@ export default function Store() {
                 placeholder={t("store.filters.price_from")}
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg focus:ring-4 focus:ring-blue-300"
+                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"
               />
 
               <input
@@ -186,13 +187,11 @@ export default function Store() {
                 placeholder={t("store.filters.price_to")}
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="px-6 py-4 rounded-xl border text-lg focus:ring-4 focus:ring-blue-300"
+                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"
               />
             </div>
 
-            <p
-              className={`mt-6 text-xl text-gray-600 ${!isRTL && "text-left"}`}
-            >
+            <p className="mt-6 text-base sm:text-lg text-gray-600 text-center sm:text-left">
               {t("store.filters.showing", {
                 from: indexOfFirst + 1,
                 to: Math.min(indexOfLast, filtered.length),
@@ -204,28 +203,30 @@ export default function Store() {
           {loading ? (
             <div className="text-center py-32">
               <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
-              <p className="mt-6 text-2xl text-gray-600">
+              <p className="mt-6 text-xl sm:text-2xl text-gray-600">
                 {t("store.loading")}
               </p>
             </div>
           ) : currentProducts.length === 0 ? (
-            <div className="text-center py-32 text-3xl text-gray-500">
+            <div className="text-center py-32 text-xl sm:text-3xl text-gray-500">
               {t("store.no_products")}
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {/* Products Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-3">
                 {currentProducts.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
               </div>
 
+              {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center items-center mt-16 gap-3 flex-wrap">
+                <div className="flex flex-wrap justify-center items-center mt-12 sm:mt-16 gap-2 sm:gap-3">
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-6 py-3 bg-gray-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition font-semibold"
+                    className="px-5 py-2.5 sm:px-6 sm:py-3 bg-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition font-medium text-sm sm:text-base"
                   >
                     {t("store.previous")}
                   </button>
@@ -234,7 +235,7 @@ export default function Store() {
                     <button
                       key={i + 1}
                       onClick={() => paginate(i + 1)}
-                      className={`px-6 py-3 rounded-xl font-semibold transition ${
+                      className={`px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-medium transition text-sm sm:text-base min-w-10 ${
                         currentPage === i + 1
                           ? "bg-blue-600 text-white"
                           : "bg-gray-200 hover:bg-gray-300"
@@ -247,7 +248,7 @@ export default function Store() {
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-6 py-3 bg-gray-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition font-semibold"
+                    className="px-5 py-2.5 sm:px-6 sm:py-3 bg-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition font-medium text-sm sm:text-base"
                   >
                     {t("store.next")}
                   </button>

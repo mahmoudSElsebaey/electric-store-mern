@@ -25,7 +25,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative h-[60vh] md:h-[80vh] overflow-hidden"
+      className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[90vh] overflow-hidden"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <Swiper
@@ -34,7 +34,7 @@ export default function HeroSection() {
         effect="fade"
         slidesPerView={1}
         loop
-        speed={1000}
+        speed={1200}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         navigation
@@ -47,24 +47,25 @@ export default function HeroSection() {
               <img
                 src={slide.image}
                 alt={t(`home_sections.hero.${slide.key}.title`)}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover brightness-75"
+                loading="lazy"
               />
 
-              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
 
-              <div className="absolute inset-0 flex items-center justify-center text-center text-white px-4">
-                <div className="max-w-4xl">
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+              <div className="absolute inset-0 flex items-center justify-center text-center text-white px-4 sm:px-8">
+                <div className="max-w-4xl w-full">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 md:mb-6 leading-tight drop-shadow-2xl">
                     {t(`home_sections.hero.${slide.key}.title`)}
                   </h1>
 
-                  <p className="text-xl md:text-3xl mb-10">
+                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-10 drop-shadow-xl">
                     {t(`home_sections.hero.${slide.key}.subtitle`)}
                   </p>
 
                   <Link
                     to="/store"
-                    className="inline-block bg-yellow-600 hover:bg-yellow-500 px-10 py-5 rounded-2xl text-xl md:text-2xl font-bold transition hover:scale-110"
+                    className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-8 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 rounded-full text-lg sm:text-xl md:text-2xl transition transform hover:scale-105 shadow-2xl"
                   >
                     {t(`home_sections.hero.${slide.key}.btn`)}
                   </Link>

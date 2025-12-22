@@ -38,10 +38,17 @@ export default function ProductCard({ product }: { product: Product }) {
   const reviewCount = product.numReviews || 0;
 
   return (
-    <div className="group relative h-full" dir={isRTL ? "rtl" : "ltr"}>
-      <Link to={`/product/${product._id}`} className="block h-full">
-        <div className="relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-3 border border-gray-100 h-full flex flex-col">
-          <div className="aspect-square relative overflow-hidden bg-linear-to-br from-gray-50 to-gray-100">
+    <div
+      className="group relative h-full w-full"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <Link
+        to={`/product/${product._id}`}
+        className="block h-full w-full transition-transform duration-300 hover:scale-[1.02]"
+      >
+        <div className="relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 h-full flex flex-col">
+          {/* صورة المنتج */}
+          <div className="relative aspect-square overflow-hidden bg-linear-to-br from-gray-50 to-gray-100">
             <img
               src={product.image}
               alt={product.name}
@@ -51,71 +58,74 @@ export default function ProductCard({ product }: { product: Product }) {
 
             {isOutOfStock && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <div className="bg-red-600 text-white px-8 py-4 rounded-2xl text-2xl font-bold tracking-wider shadow-2xl">
+                <div className="bg-red-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl text-base sm:text-xl font-bold tracking-wide shadow-xl">
                   {t("store.out_of_stock")}
                 </div>
               </div>
             )}
 
-            {/* <div className="absolute top-1 right-1 bg-white border-2 border-yellow-500 text-yellow-500 px-3 py-1 rounded-2xl text-md font-bold shadow-xl">
-              <span className="text-2xl">{product.price.toLocaleString()}</span>
-              <span className="text-lg font-bold pr-1">ج.م</span>
-            </div> */}
-            <div className="absolute top-1 right-1 bg-white border-2 border-yellow-500 text-yellow-500 px-3 py-1 rounded-2xl text-md font-bold shadow-xl">
-              <span className="text-2xl">
-                {formatPrice(product.price, lang)}
-              </span>
+            {/* السعر */}
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/95 backdrop-blur-sm border border-yellow-400 text-yellow-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base font-bold shadow-md">
+              {formatPrice(product.price, lang)}
             </div>
           </div>
 
-          <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
-            <WishlistButton productId={product._id} size="md" />
-            <div className="space-y-3">
+          {/* المحتوى */}
+          <div className="p-4 sm:p-5 flex-1 flex flex-col">
+            {/* Wishlist */}
+            <div className="self-end -mt-10 -mr-2 sm:-mt-12 sm:-mr-3 z-10">
+              <WishlistButton productId={product._id} size="md" />
+            </div>
+
+            {/* معلومات المنتج */}
+            <div className="space-y-2.5 sm:space-y-3 flex-1">
+              {/* Brand & Category */}
               <div
-                className="flex items-center justify-between gap-3 text-[12px] text-gray-500"
+                className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500"
                 dir="ltr"
               >
-                <span className="font-medium text-gray-700 bg-amber-200 py-1 px-4 rounded-full">
+                <span className="font-medium bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">
                   {product.brand?.name}
                 </span>
-                <span>{product.category?.name}</span>
+                <span className="text-gray-600">
+                  {product.category?.name}
+                </span>
               </div>
 
-              <h3 className="font-bold text-lg h-7 text-gray-900 line-clamp-2 leading-relaxed group-hover:text-blue-600 transition-colors">
+              {/* الاسم */}
+              <h3 className="font-bold text-base sm:text-lg text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
                 {product.name}
               </h3>
 
+              {/* التقييم */}
               <div className="flex items-center gap-2">
                 <StarRating
                   rating={reviewCount > 0 ? displayRating : 0}
                   size="sm"
                 />
-                {/* <span className="text-sm text-gray-600 font-medium">
-                  {reviewCount > 0
-                    ? t("store.reviews_count", { count: reviewCount })
-                    : t("store.no_reviews")}
-                </span> */}
-                <span className="text-sm text-gray-600 font-medium">
+                <span className="text-xs sm:text-sm text-gray-600 font-medium">
                   {reviewCount > 0
                     ? t("store.reviews_count", { count: reviewCount })
                     : t("store.no_reviews")}
                 </span>
               </div>
 
-              <p className="text-[13px] text-gray-600 line-clamp-2">
+              {/* الوصف */}
+              <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
                 {product.description || t("product_detail.no_description")}
               </p>
             </div>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+          {/* زر أضف للسلة */}
+          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
             <button
               onClick={addToCart}
               disabled={isOutOfStock}
-              className={`w-full py-4 font-bold text-lg rounded-b-xl transition-all duration-300 cursor-pointer ${
+              className={`w-full py-3 sm:py-4 font-semibold text-sm sm:text-base transition-all duration-300 cursor-pointer shadow-xl ${
                 isOutOfStock
                   ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                  : "bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-2xl"
+                  : "bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800"
               }`}
             >
               {isOutOfStock ? t("store.out_of_stock") : t("store.add_to_cart")}

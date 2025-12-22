@@ -1,3 +1,13 @@
 @import "tailwindcss";
 
- 
+.swiper-button-prev,
+.swiper-button-next {
+  /* border: 1px solid red; */
+  color: rgba(128, 128, 128, 0.5) !important;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  color: gray !important;
+}
+
