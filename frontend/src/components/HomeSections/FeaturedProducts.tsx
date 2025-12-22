@@ -50,7 +50,7 @@ export default function FeaturedProducts() {
 
   if (loading) {
     return (
-      <div className="py-16 sm:py-20 text-center text-xl sm:text-2xl text-gray-600">
+      <div className="py-20 text-center text-2xl text-gray-600">
         {t("featured.loading", {
           defaultValue: "جاري تحميل المنتجات المميزة...",
         })}
@@ -58,9 +58,10 @@ export default function FeaturedProducts() {
     );
   }
 
+  // لو مفيش منتجات كافية (أقل من 8)
   if (products.length === 0) {
     return (
-      <div className="py-16 sm:py-20 text-center text-xl sm:text-2xl text-gray-600">
+      <div className="py-20 text-center text-2xl text-gray-600">
         {t("featured.no_products", {
           defaultValue: "لا توجد منتجات متاحة حاليًا",
         })}
@@ -69,33 +70,28 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <section className="py-12 sm:py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8 sm:mb-12">
-          {t("home_sections.featured.title")}
-        </h2>
-
+    <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="max-w-7xl mx-auto px-6">
         <Swiper
           key={i18n.language}
           modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={16}
-          slidesPerView={1.2}
-          centeredSlides={true}
+          spaceBetween={-15}
+          slidesPerView={1}
           navigation
           pagination={{ clickable: true }}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
           loop={products.length > 4}
+          allowTouchMove={true}
           breakpoints={{
-            640: { slidesPerView: 2.2, spaceBetween: 20 },
-            768: { slidesPerView: 3, spaceBetween: 24 },
-            1024: { slidesPerView: 4, spaceBetween: 28 },
-            1280: { slidesPerView: 5, spaceBetween: 32 },
+            640: { slidesPerView: 2 },
+            768: { slidesPerView: 3 },
+            1024: { slidesPerView: 4 },
           }}
           className="mySwiper"
         >
           {products.map((product) => (
-            <SwiperSlide key={product._id} className="h-auto! pb-10">
-              <div className="px-2 sm:px-3 h-full">
+            <SwiperSlide key={product._id} className=" h-full my-10 pb-6">
+              <div className="px-4 h-full">
                 <ProductCard product={product} />
               </div>
             </SwiperSlide>
