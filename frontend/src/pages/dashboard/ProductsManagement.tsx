@@ -192,15 +192,15 @@ export default function ProductsManagement() {
                         />
                       </td>
                       <td className="px-6 py-4 font-medium">{p.name}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-left">
                         {typeof p.brand === "string" ? p.brand : p.brand?.name}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-right">
                         {typeof p.category === "string"
                           ? p.category
                           : p.category?.name}
                       </td>
-                      <td className="px-6 py-4 font-semibold text-blue-600">
+                      <td className="px-4 py-4 font-semibold text-blue-600 min-w-30 ">
                         {formatPrice(p.price, lang)}
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -214,11 +214,12 @@ export default function ProductsManagement() {
                           {p.countInStock}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center space-x-4">
+                      <td className="px-6 py-4 lg:my-7 text-center space-x-4 flex items-center justify-center gap-2">
                         <button
                           onClick={() =>
                             navigate(`/admin/products/edit/${p._id}`)
                           }
+                        
                           className="text-yellow-600 hover:text-yellow-800"
                         >
                           <svg
@@ -276,7 +277,8 @@ export default function ProductsManagement() {
                     <div className="flex-1">
                       <h3 className="font-bold text-lg">{p.name}</h3>
                       <p className="text-sm text-gray-600 mt-1">
-                        {typeof p.brand === "string" ? p.brand : p.brand?.name} •{" "}
+                        {typeof p.brand === "string" ? p.brand : p.brand?.name}{" "}
+                        •{" "}
                         {typeof p.category === "string"
                           ? p.category
                           : p.category?.name}
@@ -286,7 +288,9 @@ export default function ProductsManagement() {
 
                   <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                     <div>
-                      <p className="text-gray-500">{t("admin_products.price")}</p>
+                      <p className="text-gray-500">
+                        {t("admin_products.price")}
+                      </p>
                       <p className="font-bold text-blue-600">
                         {formatPrice(p.price, lang)}
                       </p>

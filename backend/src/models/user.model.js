@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     birthdate: { type: Date },
     additionalInfo: { type: Map, of: String, default: {} }, // جديد (للحقول الإضافية اللي المستخدم يضيفها بنفسه)
     role: { type: String, default: "user", enum: ["user", "admin", "owner"] },
+    googleId: { type: String, sparse: true, unique: true },
   },
   { timestamps: true }
 );

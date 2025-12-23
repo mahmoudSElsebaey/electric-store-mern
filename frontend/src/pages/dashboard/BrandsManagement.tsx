@@ -279,7 +279,7 @@ export default function BrandsManagement() {
                       <td className="px-6 py-4 text-gray-600">
                         {brand.description || t("admin_brands.no_desc")}
                       </td>
-                      <td className="px-6 py-4 text-center space-x-4">
+                      <td className="p-4 lg:my-7 text-center space-x-4  flex items-center justify-center gap-2 h-full  ">
                         <button
                           onClick={() => handleEdit(brand)}
                           className="text-yellow-600 hover:text-yellow-800"

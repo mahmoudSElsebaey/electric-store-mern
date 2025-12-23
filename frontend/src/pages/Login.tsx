@@ -10,6 +10,7 @@ import { FiEye } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { useLoginSchema, type LoginFormData } from "../validation/authSchemas";
 import { useState } from "react";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
   const { t, i18n } = useTranslation();
@@ -20,7 +21,7 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const schema = useLoginSchema(); // الـ schema الديناميكي حسب اللغة
+  const schema = useLoginSchema();
 
   const {
     register,
@@ -46,12 +47,37 @@ export default function Login() {
     }
   };
 
+  // Google Login Handler
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const res = await api.post("/auth/google", {
+        credential: credentialResponse.credential,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
+
+      showToast(t("auth.success.google_login"), "success");
+      navigate("/");
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message ||
+        t("auth.errors.google_login_failed") ||
+        "فشل تسجيل الدخول بحساب جوجل";
+      showToast(message, "error");
+    }
+  };
+
+  const handleGoogleError = () => {
+    showToast(t("auth.errors.google_error") || "حدث خطأ مع جوجل", "error");
+  };
+
   return (
     <div
       dir={isRTL ? "rtl" : "ltr"}
-      className="min-h-screen bg-linear-to-br from-indigo-50 to-purple-100 flex items-center justify-center py-12 px-4"
+      className="min-h-screenbg-linear-to-br from-indigo-50 to-purple-100 flex items-center justify-center py-12 px-4"
     >
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div className="max-w-xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="bg-linear-to-r from-indigo-600 to-purple-700 p-12 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
@@ -119,6 +145,24 @@ export default function Login() {
           >
             {isSubmitting ? t("auth.login.loading") : t("auth.login.submit")}
           </button>
+
+          {/* Google Login Button */}
+          <div className="mt-6">
+            <GoogleOAuthProvider
+              clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+            >
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                text="continue_with"
+                shape="rectangular"
+                size="large"
+                width="100%"
+                // locale={isRTL ? "ar" : "en"}
+                theme="outline"
+              />
+            </GoogleOAuthProvider>
+          </div>
         </form>
 
         {/* Footer */}

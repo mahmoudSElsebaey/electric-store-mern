@@ -25,7 +25,7 @@ export default function PaymentSuccess() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="bg-white p-12 rounded-3xl shadow-2xl max-w-lg">
+      <div className="bg-white p-12 rounded-3xl shadow-2xl max-w-xl">
         <h1 className="text-5xl font-bold text-green-600 mb-8">{t("payment_success.title")}</h1>
         <p className="text-2xl text-gray-700 mb-4">
           {t("payment_success.thanks")} <span className="font-bold text-blue-600">{t("footer.store_name")}</span>

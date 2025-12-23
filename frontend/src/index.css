@@ -11,3 +11,6 @@
   color: gray !important;
 }
 
+button:hover {
+  cursor: pointer;
+}

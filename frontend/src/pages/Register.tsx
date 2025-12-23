@@ -8,7 +8,10 @@ import { useToast } from "../context/ToastContext";
 import { FiEye } from "react-icons/fi";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { useRegisterSchema, type RegisterFormData } from "../validation/authSchemas";
+import {
+  useRegisterSchema,
+  type RegisterFormData,
+} from "../validation/authSchemas";
 import { useState } from "react";
 
 export default function Register() {
@@ -21,7 +24,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const schema = useRegisterSchema(); // الـ schema الديناميكي حسب اللغة
+  const schema = useRegisterSchema();
 
   const {
     register,
@@ -56,7 +59,7 @@ export default function Register() {
       dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4"
     >
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div className="max-w-xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="bg-linear-to-r from-blue-600 to-indigo-700 p-12 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">

@@ -288,7 +288,7 @@ export default function CategoriesManagement() {
                       <td className="px-6 py-4 text-gray-600">
                         {category.description || t("admin_categories.no_desc")}
                       </td>
-                      <td className="px-6 py-4 text-center space-x-4">
+                      <td className="px-6 py-4 text-center space-x-4 ">
                         <button
                           onClick={() => handleEdit(category)}
                           className="text-yellow-600 hover:text-yellow-800"
