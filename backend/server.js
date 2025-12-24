@@ -52,3 +52,5 @@ app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 app.use("/api/wishlist", wishlistRoutes);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+ 
+export default app;
