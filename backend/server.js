@@ -54,6 +54,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
+app.get('/', (req, res) => res.send('Hello World!'))
 
 // __________________________________ Error Handler _________________________________
 app.use((err, req, res, next) => {
