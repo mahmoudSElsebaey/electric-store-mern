@@ -1,6 +1,7 @@
+import cloudinary from "../../../config/cloudinary.js";
 import Brand from "../../models/brand.model.js";
 import Product from "../../models/product.model.js";
-import cloudinary from "../../utils/cloudinary.js";
+
 
 // ================= Helper: Upload to Cloudinary =================
 const uploadToCloudinary = (buffer) => {

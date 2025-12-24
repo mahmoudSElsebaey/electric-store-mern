@@ -1,6 +1,7 @@
+import cloudinary from "../../../config/cloudinary.js";
 import Category from "../../models/category.model.js";
 import Product from "../../models/product.model.js";
-import cloudinary from "../../utils/cloudinary.js";
+ 
 
 // ================= Helper: Upload to Cloudinary =================
 const uploadToCloudinary = (buffer) => {
