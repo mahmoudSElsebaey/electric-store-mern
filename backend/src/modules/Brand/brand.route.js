@@ -8,12 +8,14 @@ import {
 } from "./brand.controller.js";
 import multer from "multer";
 
-const upload = multer({ dest: "uploads/" });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 const router = express.Router();
 
 router.get("/", getAllBrands);
-router.post("/", protect, admin, upload.single("logo"), createBrand); // جديد: upload logo
-router.put("/:id", protect, admin, upload.single("logo"), updateBrand); // جديد
+router.post("/", protect, admin, upload.single("logo"), createBrand);
+router.put("/:id", protect, admin, upload.single("logo"), updateBrand);
 router.delete("/:id", protect, admin, deleteBrand);
 
 export default router;

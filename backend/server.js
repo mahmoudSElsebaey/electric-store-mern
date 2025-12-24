@@ -37,6 +37,10 @@ app.use(
 );
 
 app.use(cookieParser());
+
+//   لازم يكون قبل express.json
+app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
+
 app.use(express.json()); // ← ده اللي بيقرأ req.body !! لازم يكون موجود وفي المكان ده
 
 connectDB();
@@ -48,9 +52,18 @@ app.use("/api/brands", brandRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 app.use("/api/wishlist", wishlistRoutes);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+// __________________________________ Error Handler _________________________________
+app.use((err, req, res, next) => {
+  console.error("🔥 ERROR:", err.message);
+  res.status(500).json({
+    message: err.message || "Internal Server Error",
+  });
+});
+
+
+// app.listen(port, () => console.log(`Example app listening on port ${port}!`));
  
 export default app;

@@ -8,12 +8,12 @@ import {
   updateCategory,
 } from "./category.controller.js";
 
-const upload = multer({ dest: "uploads/" }); 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const router = express.Router();
 
 router.get("/", getAllCategories);
-
 router.post("/", protect, admin, upload.single("image"), createCategory);
 router.put("/:id", protect, admin, upload.single("image"), updateCategory);
 router.delete("/:id", protect, admin, deleteCategory);
