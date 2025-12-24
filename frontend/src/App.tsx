@@ -9,7 +9,6 @@ import ProductDetail from "./pages/products/ProductDetail";
 import Cart from "./pages/products/Cart";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-// import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import UserProfile from "./pages/users/UserProfile";
 import { useStore } from "./context/StoreContext";
