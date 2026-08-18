@@ -28,6 +28,7 @@ import BrandsManagement from "./pages/dashboard/BrandsManagement";
 import CategoriesManagement from "./pages/dashboard/CategoriesManagement";
 import Wishlist from "./components/wishlist/Wishlist";
 import ScrollToTop from "./components/ScrollToTop";
+import Loading from "./components/Loading";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -37,12 +38,7 @@ type ProtectedRouteProps = {
 const ProtectedRoute = ({ children, roles }: ProtectedRouteProps) => {
   const { state } = useStore();
   if (state.isAuthenticated === null) {
-    return (
-      <div className="p-10 text-center text-slate-500 flex items-center justify-center gap-2">
-        <div className="w-5 h-5 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" />
-        جارٍ التحقق من تسجيل الدخول...
-      </div>
-    );
+    return <Loading message="جارٍ التحقق من تسجيل الدخول..." />;
   }
 
   if (!state.isAuthenticated) return <Navigate to="/login" />;
@@ -63,7 +59,6 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        {/* الصفحات العادية */}
         <Route path="/" element={<Home />} />
         <Route path="/store" element={<AllProducts />} />
         <Route path="/about" element={<About />} />
@@ -74,7 +69,6 @@ function App() {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/wishlist" element={<Wishlist />} />
 
-        {/* Admin & Owner Routes */}
         <Route
           path="/admin/dashboard"
           element={
@@ -140,7 +134,6 @@ function App() {
           }
         />
 
-        {/* Protected User Routes */}
         <Route
           path="/profile"
           element={
@@ -167,11 +160,9 @@ function App() {
           }
         />
 
-        {/* Public */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-      {/* <Footer /> */}
       <ScrollToTop />
     </Router>
   );
