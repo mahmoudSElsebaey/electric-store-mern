@@ -51,7 +51,7 @@ export default function HeroSection() {
                 loading="lazy"
               />
 
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
               <div className="absolute inset-0 flex items-center justify-center text-center text-white px-4 sm:px-8">
                 <div className="max-w-4xl w-full">
@@ -65,7 +65,7 @@ export default function HeroSection() {
 
                   <Link
                     to="/store"
-                    className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-8 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 rounded-full text-lg sm:text-xl md:text-2xl transition transform hover:scale-105 shadow-2xl"
+                    className="inline-block bg-amber-400 hover:bg-amber-300 text-black font-bold px-8 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 rounded-full text-lg sm:text-xl md:text-2xl transition transform hover:scale-105 shadow-2xl"
                   >
                     {t(`home_sections.hero.${slide.key}.btn`)}
                   </Link>
