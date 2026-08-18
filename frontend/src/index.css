@@ -1,16 +1,35 @@
 @import "tailwindcss";
 
+:root {
+  --color-primary: #0f766e;
+  --color-primary-dark: #134e4a;
+  --color-accent: #fbbf24;
+  --color-accent-dark: #f59e0b;
+  --color-bg: #f8fafc;
+  --color-text: #1e293b;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Cairo", system-ui, sans-serif;
+}
+
 .swiper-button-prev,
 .swiper-button-next {
-  /* border: 1px solid red; */
-  color: rgba(128, 128, 128, 0.5) !important;
+  color: rgba(15, 118, 110, 0.5) !important;
 }
 
 .swiper-button-prev:hover,
 .swiper-button-next:hover {
-  color: gray !important;
+  color: #0f766e !important;
 }
 
 button:hover {
   cursor: pointer;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
