@@ -14,9 +14,8 @@ export default function Wishlist() {
 
   return (
     <>
-      {/* Hero Section */}
       <section
-        className="relative bg-linear-to-br from-blue-900 via-indigo-900 to-purple-900 text-white py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden"
+        className="relative bg-gradient-to-br from-teal-900 via-teal-800 to-slate-900 text-white py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -36,15 +35,15 @@ export default function Wishlist() {
               <span>{t("wishlist.save_love")}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <FaTag className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
+              <FaTag className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
               <span>{t("wishlist.exclusive_offers")}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <FaTruckFast className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
+              <FaTruckFast className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
               <span>{t("wishlist.fast_delivery")}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <FaStore className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
+              <FaStore className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
               <span>{t("wishlist.always_available")}</span>
             </div>
           </div>
@@ -60,7 +59,6 @@ export default function Wishlist() {
         </div>
       </section>
 
-      {/* Wishlist Content */}
       <div
         className="min-h-screen bg-gray-50 py-12 sm:py-16 md:py-20"
         dir={isRTL ? "rtl" : "ltr"}
@@ -68,7 +66,7 @@ export default function Wishlist() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {state.wishlistLoading ? (
             <div className="text-center py-20 sm:py-32">
-              <div className="text-2xl sm:text-3xl text-blue-600 animate-pulse">
+              <div className="text-2xl sm:text-3xl text-teal-700 animate-pulse">
                 {t("wishlist.loading")}
               </div>
             </div>
@@ -82,7 +80,7 @@ export default function Wishlist() {
               </p>
               <Link
                 to="/store"
-                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-xl text-lg sm:text-xl font-bold transition transform hover:scale-105 shadow-lg"
+                className="inline-block bg-teal-600 hover:bg-teal-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-xl text-lg sm:text-xl font-bold transition transform hover:scale-105 shadow-lg"
               >
                 {t("wishlist.browse_store")}
               </Link>
