@@ -18,7 +18,7 @@ export default function SpecialOffersBanner() {
         />
         <div
           className={`absolute inset-0 ${
-            isRTL ? "bg-linear-to-l" : "bg-linear-to-r"
+            isRTL ? "bg-gradient-to-l" : "bg-gradient-to-r"
           } from-black/70 to-transparent`}
         />
       </div>
@@ -38,7 +38,7 @@ export default function SpecialOffersBanner() {
           </p>
           <Link
             to="/store?discount=true"
-            className="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-5 px-12 rounded-2xl text-2xl transition transform hover:scale-110 shadow-2xl"
+            className="inline-block bg-amber-400 hover:bg-amber-500 text-black font-bold py-5 px-12 rounded-2xl text-2xl transition transform hover:scale-110 shadow-2xl"
           >
             {t("home_sections.special_offers.btn")}
           </Link>
