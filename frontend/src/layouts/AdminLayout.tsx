@@ -14,28 +14,25 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
   const pageTitle = title || t("admin.layout.default_title");
 
   return (
-    <div className="flex min-h-screen bg-gray-100" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-surface" dir={isRTL ? "rtl" : "ltr"}>
       <AdminSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
-      {/* Main Content */}
       <div
         className={`flex-1 ${
           isRTL ? "lg:pr-64" : "lg:pl-64"
         } transition-all duration-300`}
       >
-        {/* Mobile Header */}
         <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 lg:hidden">
           <div className="flex items-center justify-between p-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition"
+              className="p-2 rounded-lg hover:bg-primary-soft transition"
             >
               <svg
-                className="w-7 h-7 text-gray-800"
+                className="w-7 h-7 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -48,17 +45,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                 />
               </svg>
             </button>
-            <h1 className="text-xl font-bold text-gray-800">{pageTitle}</h1>
+            <h1 className="text-xl font-bold text-primary">{pageTitle}</h1>
             <div className="w-10" />
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-4 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            <h1 className="hidden lg:block text-4xl font-bold text-gray-800 mb-8 text-center">
+            <h1 className="hidden lg:block text-4xl font-bold text-ink mb-2 text-center">
               {pageTitle}
             </h1>
+            <div className="hidden lg:block w-24 h-1 bg-gradient-to-r from-primary to-accent rounded-full mx-auto mb-8" />
             {children}
           </div>
         </div>
