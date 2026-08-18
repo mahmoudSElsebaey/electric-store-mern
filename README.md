@@ -1,118 +1,152 @@
-# ⚡ Electrical Store – MERN E-Commerce
+# ⚡ Electrical Store – Full MERN E-Commerce Platform
 
-متجر إلكتروني كامل للأجهزة الكهربائية مبني بـ **MERN Stack** (MongoDB + Express + React + Node.js) مع TypeScript في الواجهة الأمامية.
+A complete, production-ready e-commerce website for electrical and home appliances built with the **MERN Stack** (MongoDB, Express, React, Node.js) and TypeScript on the frontend.
 
 **Live Demo:** [https://electric-store-mern.vercel.app](https://electric-store-mern.vercel.app)
 
 ---
 
-## ✨ الميزات الرئيسية
+## ✨ Features
 
-- تسجيل دخول وتسجيل (عادي + Google OAuth)
-- تصفح المنتجات مع بحث وفلترة حسب الفئة والماركة
-- سلة تسوق + قائمة المفضلة (Wishlist)
-- تقييمات ومراجعات للمنتجات
-- عملية دفع كاملة (Stripe + PayPal)
-- لوحة تحكم أدمن قوية (منتجات، طلبات، مستخدمين، فئات، ماركات)
-- دعم لغتين: العربية والإنجليزية (RTL/LTR)
-- تصميم متجاوب بالكامل
+- User authentication (Email/Password + Google OAuth)
+- Product browsing with search, filtering by category & brand
+- Shopping cart + Wishlist
+- Product reviews & ratings
+- Full checkout flow (Stripe + PayPal)
+- Role-based Admin Dashboard (Products, Orders, Users, Brands, Categories)
+- Bilingual support: Arabic & English (full RTL/LTR)
+- Responsive design for mobile, tablet, and desktop
+- Modern design system (Teal + Amber palette)
+- Scroll-to-top button matching brand identity
 
 ---
 
-## 🛠️ التقنيات المستخدمة
+## 🛠️ Tech Stack
 
 ### Frontend
-- React 19 + TypeScript + Vite
-- Tailwind CSS + React Bootstrap
-- React Router + React Hook Form + Zod
-- i18next (عربي / إنجليزي)
-- Stripe React + Google OAuth
-- Swiper + React Icons
+| Technology | Purpose |
+|------------|---------|
+| React 19 + TypeScript | UI & type safety |
+| Vite | Build tool |
+| Tailwind CSS | Styling |
+| React Router | Navigation |
+| React Hook Form + Zod | Forms & validation |
+| i18next | Internationalization |
+| Stripe / Google OAuth | Payments & Auth |
+| Swiper + React Icons | UI components |
 
 ### Backend
-- Node.js + Express 5
-- MongoDB + Mongoose
-- JWT + bcrypt + Cookie Auth
-- Cloudinary (رفع الصور)
-- Stripe + PayPal
-- Zod Validation
+| Technology | Purpose |
+|------------|---------|
+| Node.js + Express 5 | API server |
+| MongoDB + Mongoose | Database |
+| JWT + bcrypt + Cookies | Authentication |
+| Cloudinary | Image uploads |
+| Stripe + PayPal | Payment gateways |
+| Zod | Request validation |
 
 ---
 
-## 📁 هيكل المشروع
+## 📁 Project Structure
 
 ```
 electric-store-mern/
-├── backend/                 # API Server
-│   ├── config/              # DB, Cloudinary, Stripe
+├── backend/
+│   ├── config/          # DB, Cloudinary, Stripe
 │   ├── src/
 │   │   ├── middlewares/
 │   │   ├── models/
-│   │   ├── modules/         # Auth, Products, Orders, Payment...
+│   │   ├── modules/     # Auth, Products, Orders, Payment, etc.
 │   │   └── validation/
-│   ├── seed.js
+│   ├── seed.js          # Sample products, categories & brands
+│   ├── createOwner.js   # Create the owner/admin account
 │   └── server.js
-└── frontend/                # React App
+└── frontend/
     ├── public/
+    │   └── logo.svg
     ├── src/
     │   ├── components/
     │   ├── context/
     │   ├── pages/
     │   ├── services/
-    │   └── locales/         # ar / en translations
+    │   └── locales/     # ar / en translations
     └── ...
 ```
 
 ---
 
-## 🚀 طريقة التشغيل محلياً
+## 🚀 Getting Started
 
-### المتطلبات
-- Node.js 18+
-- MongoDB (محلي أو Atlas)
+### Prerequisites
+- Node.js 18 or higher
+- MongoDB (local or Atlas)
 
-### 1. Backend
+### 1. Backend Setup
+
 ```bash
 cd backend
-cp .env.example .env   # أضف المتغيرات المطلوبة
+cp .env.example .env          # Fill in your environment variables
 npm install
-npm run seed           # (اختياري) لإضافة بيانات تجريبية
+node createOwner.js           # Create the owner account (run once)
+npm run seed                  # (Optional) Seed products, categories & brands
 npm run dev
 ```
-السيرفر يعمل على `http://localhost:5000`
 
-### 2. Frontend
+Server runs at `http://localhost:5000`
+
+### 2. Frontend Setup
+
 ```bash
 cd frontend
-cp .env.example .env   # أضف VITE_API_URL وغيرها
+cp .env.example .env          # Set VITE_API_URL and other keys
 npm install
 npm run dev
 ```
-الواجهة تعمل على `http://localhost:5173`
+
+App runs at `http://localhost:5173`
 
 ---
 
-## 🎨 نظام الألوان (Design System)
+## 🔐 Demo / Dummy Accounts
 
-| الدور              | اللون          | Hex       |
-|--------------------|----------------|-----------|
-| Primary            | Teal           | `#0F766E` |
-| Primary Dark       | Deep Teal      | `#134E4A` |
-| Accent             | Soft Amber     | `#FBBF24` |
-| Background         | Soft Slate     | `#F8FAFC` |
-| Text               | Slate          | `#1E293B` |
+After running `node createOwner.js` you will have:
 
-الألوان مختارة لتكون **غير تقليدية** وبسيطة ومتناسقة، تعطي إحساس عصري ونظيف مناسب لمتجر أجهزة كهربائية.
+| Role   | Email              | Password   |
+|--------|--------------------|------------|
+| Owner  | `owner@gmail.com`  | `owner123` |
+
+> **Note:** Regular user accounts can be created via the Register page.  
+> The seed script (`npm run seed`) populates categories, brands and products only.
+
+### Recommended Testing Flow
+1. Login as **Owner** → access Admin Dashboard
+2. Create a regular user account from the Register page
+3. Browse products, add to cart/wishlist, place an order
+4. Switch back to Owner to manage the order
 
 ---
 
-## 🔐 متغيرات البيئة المطلوبة
+## 🎨 Design System
+
+| Role            | Color       | Hex       |
+|-----------------|-------------|-----------|
+| Primary         | Teal        | `#0F766E` |
+| Primary Dark    | Deep Teal   | `#134E4A` |
+| Accent          | Soft Amber  | `#FBBF24` |
+| Background      | Soft Slate  | `#F8FAFC` |
+| Text            | Slate       | `#1E293B` |
+
+The palette is clean, modern and distinctive — suitable for an electronics store.
+
+---
+
+## 🔧 Environment Variables
 
 ### Backend (`.env`)
 ```
 PORT=5000
-MONGO_URI=...
-JWT_SECRET=...
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
 CLOUDINARY_CLOUD_NAME=...
 CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
@@ -130,18 +164,19 @@ VITE_GOOGLE_CLIENT_ID=...
 
 ---
 
-## 📝 ملاحظات
+## 📝 Notes
 
-- الـ Navbar يظهر مباشرة بدون رسالة "Checking authentication".
-- اللوجو موجود في `/public/logo.svg` ويُستخدم أيضاً كـ Favicon.
-- المشروع يدعم RTL بشكل كامل عند اختيار اللغة العربية.
+- The Navbar appears immediately (no “Checking authentication…” flash).
+- Logo is located at `/public/logo.svg` and is also used as the favicon.
+- Full RTL support when Arabic is selected.
+- Scroll-to-top button appears after scrolling 400px and matches the brand colors.
 
 ---
 
-## 📄 الترخيص
+## 📄 License
 
 MIT
 
 ---
 
-صُنع بـ ❤️ باستخدام MERN Stack
+Built with ❤️ using the MERN Stack
