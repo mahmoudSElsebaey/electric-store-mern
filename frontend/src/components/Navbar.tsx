@@ -15,8 +15,8 @@ import {
   FaBars,
   FaTimes,
   FaHeart,
-  FaGlobe, // أيقونة الكرة الأرضية للغة
-  FaChevronDown, // سهم الـ dropdown
+  FaGlobe,
+  FaChevronDown,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +28,7 @@ export default function Navbar() {
   const { showToast } = useToast();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false); // dropdown اللغة
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,8 +39,8 @@ export default function Navbar() {
   const wishlistCount = state.wishlist?.length || 0;
   const isAuthenticated = state.isAuthenticated;
   const user = state.user;
+  const isAuthLoading = isAuthenticated === null;
 
-  // تحميل اللغة من localStorage عند التحميل الأول
   useEffect(() => {
     const savedLang = localStorage.getItem("language") as "ar" | "en" | null;
     if (savedLang && savedLang !== i18n.language) {
@@ -50,10 +50,9 @@ export default function Navbar() {
     }
   }, [i18n]);
 
-  // دالة تغيير اللغة مع حفظها في localStorage
   const changeLanguage = (lng: "ar" | "en") => {
     i18n.changeLanguage(lng);
-    localStorage.setItem("language", lng); // ← حفظ اللغة
+    localStorage.setItem("language", lng);
     document.documentElement.dir = lng === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = lng;
     setLangDropdownOpen(false);
@@ -98,25 +97,15 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  // إغلاق الـ dropdown عند الكليك خارجها
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
       }
-      if (
-        langDropdownRef.current &&
-        !langDropdownRef.current.contains(event.target as Node)
-      ) {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
         setLangDropdownOpen(false);
       }
-      if (
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target as Node)
-      ) {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
         setMobileMenuOpen(false);
       }
     };
@@ -124,33 +113,22 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (isAuthenticated === null) {
-    return (
-      <nav className="bg-linear-to-r from-blue-900 via-indigo-900 to-purple-900 text-white shadow-2xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-center items-center">
-          <span className="text-xl font-medium">
-            {t("navbar.loading_auth")}
-          </span>
-        </div>
-      </nav>
-    );
-  }
-
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav
-      className="bg-linear-to-r from-blue-900 via-indigo-900 to-purple-900 text-white shadow-2xl sticky
-     top-0 z-50"
-    >
-      <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+    <nav className="bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 text-white shadow-2xl sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* اللوجو */}
         <button
           onClick={() => handleNavClick("/")}
-          className="flex items-center gap-2 hover:opacity-90 transition cursor-pointer"
+          className="flex items-center gap-2.5 hover:opacity-90 transition cursor-pointer"
         >
-          <span className="text-4xl md:text-2xl">⚡</span>
-          <h1 className="hidden sm:block text-xl md:text-[20px] font-extrabold tracking-wide">
+          <img
+            src="/logo.svg"
+            alt="Electrical Store Logo"
+            className="w-9 h-9 md:w-10 md:h-10"
+          />
+          <h1 className="hidden sm:block text-lg md:text-xl font-extrabold tracking-wide">
             {i18n.language === "ar"
               ? "متجر الأجهزة الكهربائية"
               : "Electrical Store"}
@@ -162,9 +140,7 @@ export default function Navbar() {
           <button
             onClick={() => handleNavClick("/")}
             className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/")
-                ? "text-yellow-300 font-bold"
-                : "hover:text-yellow-300"
+              isActive("/") ? "text-amber-300 font-bold" : "hover:text-amber-300"
             }`}
           >
             <FaHome /> {t("navbar.home")}
@@ -172,9 +148,7 @@ export default function Navbar() {
           <button
             onClick={() => handleNavClick("/store")}
             className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/store")
-                ? "text-yellow-300 font-bold"
-                : "hover:text-yellow-300"
+              isActive("/store") ? "text-amber-300 font-bold" : "hover:text-amber-300"
             }`}
           >
             <FaStore /> {t("navbar.store")}
@@ -182,9 +156,7 @@ export default function Navbar() {
           <button
             onClick={() => handleNavClick("/about")}
             className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/about")
-                ? "text-yellow-300 font-bold"
-                : "hover:text-yellow-300"
+              isActive("/about") ? "text-amber-300 font-bold" : "hover:text-amber-300"
             }`}
           >
             <FaInfoCircle /> {t("navbar.about")}
@@ -192,9 +164,7 @@ export default function Navbar() {
           <button
             onClick={() => handleNavClick("/contact")}
             className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/contact")
-                ? "text-yellow-300 font-bold"
-                : "hover:text-yellow-300"
+              isActive("/contact") ? "text-amber-300 font-bold" : "hover:text-amber-300"
             }`}
           >
             <FaEnvelope /> {t("navbar.contact")}
@@ -203,11 +173,10 @@ export default function Navbar() {
 
         {/* الأزرار الجانبية */}
         <div className="flex items-center gap-6">
-          {/* السلة */}
           <button
             onClick={handleCartClick}
             className={`relative group cursor-pointer ${
-              isActive("/cart") ? "text-yellow-400" : ""
+              isActive("/cart") ? "text-amber-300" : ""
             }`}
             aria-label={t("navbar.cart")}
           >
@@ -219,11 +188,10 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* المفضلة */}
           <button
             onClick={() => handleNavClick("/wishlist")}
             className={`relative cursor-pointer ${
-              isActive("/wishlist") ? "text-yellow-400" : ""
+              isActive("/wishlist") ? "text-amber-300" : ""
             }`}
           >
             <FaHeart className="text-2xl hover:scale-110 transition-transform" />
@@ -235,17 +203,21 @@ export default function Navbar() {
           </button>
 
           {/* حساب المستخدم */}
-          {isAuthenticated ? (
+          {isAuthLoading ? (
+            <div className="flex items-center gap-2 opacity-70">
+              <div className="w-8 h-8 rounded-full bg-teal-700/50 animate-pulse" />
+            </div>
+          ) : isAuthenticated ? (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className={`flex items-center gap-1 hover:text-yellow-300 transition font-semibold cursor-pointer ${
+                className={`flex items-center gap-1 hover:text-amber-300 transition font-semibold cursor-pointer ${
                   isActive("/my-orders") ||
                   isActive("/profile") ||
                   isActive("/admin/dashboard")
-                    ? "text-yellow-400"
+                    ? "text-amber-300"
                     : ""
-                } ${dropdownOpen && "text-yellow-300"}`}
+                } ${dropdownOpen && "text-amber-300"}`}
               >
                 <span className="hidden sm:block">
                   {user?.name.split(" ")[0] || t("navbar.user")}
@@ -257,9 +229,9 @@ export default function Navbar() {
                 <div
                   className={`absolute mt-4 w-64 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 ${
                     i18n.language === "ar" ? "left-0" : "right-0"
-                  } `}
+                  }`}
                 >
-                  <div className="px-6 py-4 bg-linear-to-r from-blue-600 to-indigo-700 text-white text-center">
+                  <div className="px-6 py-4 bg-gradient-to-r from-teal-700 to-teal-900 text-white text-center">
                     <p className="font-bold text-lg">{user?.name}</p>
                     <p className="text-sm opacity-90">{user?.email}</p>
                   </div>
@@ -283,7 +255,7 @@ export default function Navbar() {
                         <div className="border-t border-gray-200 my-2"></div>
                         <button
                           onClick={() => handleNavClick("/admin/dashboard")}
-                          className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-blue-50 transition font-bold text-blue-600 w-full text-right"
+                          className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-teal-50 transition font-bold text-teal-700 w-full text-right"
                         >
                           <FaUserCog /> {t("navbar.dashboard")}
                         </button>
@@ -305,33 +277,27 @@ export default function Navbar() {
             <div className="hidden sm:flex items-center gap-4">
               <button
                 onClick={() => handleNavClick("/login")}
-                className="bg-white text-blue-700 hover:bg-gray-100 px-8 py-3 rounded-full font-bold transition shadow-lg"
+                className="bg-white text-teal-800 hover:bg-slate-100 px-8 py-3 rounded-full font-bold transition shadow-lg"
               >
                 {t("navbar.login")}
               </button>
-              {/* <button
-                onClick={() => handleNavClick("/register")}
-                className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
-              >
-                {t("navbar.register")}
-              </button> */}
             </div>
           )}
 
-          {/* Dropdown اللغة الجديد */}
+          {/* Dropdown اللغة */}
           <div
             className={`relative border-gray-100/50 ${
               i18n.language === "ar" ? "border-r" : "border-l"
-            } `}
+            }`}
             ref={langDropdownRef}
           >
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="flex items-center gap-2 px-4  transitioncursor-pointer cursor-pointer"
+              className="flex items-center gap-2 px-4 transition cursor-pointer"
             >
               <div
-                className={`flex  items-center gap-2 hover:text-yellow-300 ${
-                  langDropdownOpen && "text-yellow-300 font-bold"
+                className={`flex items-center gap-2 hover:text-amber-300 ${
+                  langDropdownOpen && "text-amber-300 font-bold"
                 }`}
               >
                 <FaGlobe className="text-[14px]" />
@@ -348,16 +314,12 @@ export default function Navbar() {
 
             {langDropdownOpen && (
               <div
-                className={`absolute top-full mt-2 right-0 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 ${
-                  i18n.language === "ar" ? "" : " w-48 "
-                }`}
+                className={`absolute top-full mt-2 right-0 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50`}
               >
                 <button
                   onClick={() => changeLanguage("ar")}
-                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3  cursor-pointer ${
-                    i18n.language === "ar"
-                      ? "bg-gray-200 hover:bg-gray-200 font-bold"
-                      : ""
+                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer ${
+                    i18n.language === "ar" ? "bg-gray-200 font-bold" : ""
                   }`}
                 >
                   <span className="text-2xl">🇪🇬</span>
@@ -365,10 +327,8 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={() => changeLanguage("en")}
-                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3  cursor-pointer ${
-                    i18n.language === "en"
-                      ? "bg-gray-200 hover:bg-gray-200 font-bold"
-                      : ""
+                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer ${
+                    i18n.language === "en" ? "bg-gray-200 font-bold" : ""
                   }`}
                 >
                   <span className="text-2xl">🇬🇧</span>
@@ -378,7 +338,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* زر الموبايل */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden text-3xl"
@@ -392,55 +351,14 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div
-          className="lg:hidden bg-linear-to-r from-blue-900 via-indigo-900 to-purple-900 px-6 py-8"
+          className="lg:hidden bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 px-6 py-8"
           ref={mobileMenuRef}
         >
           <div className="flex flex-col gap-6 text-lg font-medium text-right">
-            {/* dropdown اللغة في الموبايل */}
-            {/* <div className="flex justify-center mb-6">
-              <div className="relative" ref={langDropdownRef}>
-                <button
-                  onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                  className="flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-full hover:bg-white/30 transition shadow-lg"
-                >
-                  <FaGlobe className="text-2xl" />
-                  <span>{i18n.language === "ar" ? "عربي" : "English"}</span>
-                  <FaChevronDown
-                    className={`text-lg transition-transform ${
-                      langDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {langDropdownOpen && (
-                  <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-48 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50">
-                    <button
-                      onClick={() => changeLanguage("ar")}
-                      className={`w-full px-6 py-4 hover:bg-gray-100 transition flex items-center gap-4 ${
-                        i18n.language === "ar" ? "bg-blue-50 font-bold" : ""
-                      }`}
-                    >
-                      <span className="text-3xl">🇪🇬</span> عربي
-                    </button>
-                    <button
-                      onClick={() => changeLanguage("en")}
-                      className={`w-full px-6 py-4 hover:bg-gray-100 transition flex items-center gap-4 ${
-                        i18n.language === "en" ? "bg-blue-50 font-bold" : ""
-                      }`}
-                    >
-                      <span className="text-3xl">🇬🇧</span> English
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div> */}
-
             <button
               onClick={() => handleNavClick("/")}
               className={`flex items-center gap-3 transition ${
-                isActive("/")
-                  ? "text-yellow-300 font-bold"
-                  : "hover:text-yellow-300"
+                isActive("/") ? "text-amber-300 font-bold" : "hover:text-amber-300"
               }`}
             >
               <FaHome /> {t("navbar.home")}
@@ -448,9 +366,7 @@ export default function Navbar() {
             <button
               onClick={() => handleNavClick("/store")}
               className={`flex items-center gap-3 transition ${
-                isActive("/store")
-                  ? "text-yellow-300 font-bold"
-                  : "hover:text-yellow-300"
+                isActive("/store") ? "text-amber-300 font-bold" : "hover:text-amber-300"
               }`}
             >
               <FaStore /> {t("navbar.store")}
@@ -458,9 +374,7 @@ export default function Navbar() {
             <button
               onClick={() => handleNavClick("/about")}
               className={`flex items-center gap-3 transition ${
-                isActive("/about")
-                  ? "text-yellow-300 font-bold"
-                  : "hover:text-yellow-300"
+                isActive("/about") ? "text-amber-300 font-bold" : "hover:text-amber-300"
               }`}
             >
               <FaInfoCircle /> {t("navbar.about")}
@@ -468,26 +382,24 @@ export default function Navbar() {
             <button
               onClick={() => handleNavClick("/contact")}
               className={`flex items-center gap-3 transition ${
-                isActive("/contact")
-                  ? "text-yellow-300 font-bold"
-                  : "hover:text-yellow-300"
+                isActive("/contact") ? "text-amber-300 font-bold" : "hover:text-amber-300"
               }`}
             >
               <FaEnvelope /> {t("navbar.contact")}
             </button>
 
-            {!isAuthenticated && (
+            {!isAuthLoading && !isAuthenticated && (
               <>
                 <div className="border-t border-gray-700 pt-6 mt-4"></div>
                 <button
                   onClick={() => handleNavClick("/login")}
-                  className="bg-white text-blue-700 py-3 px-6 rounded-full text-center font-bold"
+                  className="bg-white text-teal-800 py-3 px-6 rounded-full text-center font-bold"
                 >
                   {t("navbar.login")}
                 </button>
                 <button
                   onClick={() => handleNavClick("/register")}
-                  className="bg-yellow-500 text-gray-900 py-3 px-6 rounded-full text-center font-bold"
+                  className="bg-amber-400 text-slate-900 py-3 px-6 rounded-full text-center font-bold"
                 >
                   {t("navbar.register")}
                 </button>
