@@ -24,23 +24,23 @@ export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
     switch (icon) {
       case "bolt":
         return (
-          <FaBolt className="text-yellow-400 text-xl md:text-3xl lg:text-5xl" />
+          <FaBolt className="text-amber-300 text-xl md:text-3xl lg:text-5xl" />
         );
       case "tools":
         return (
-          <FaTools className="text-yellow-400 text-xl md:text-3xl lg:text-5xl" />
+          <FaTools className="text-amber-300 text-xl md:text-3xl lg:text-5xl" />
         );
       case "tag":
         return (
-          <FaTag className="text-yellow-400 text-xl md:text-3xl lg:text-5xl" />
+          <FaTag className="text-amber-300 text-xl md:text-3xl lg:text-5xl" />
         );
       case "star":
         return (
-          <FaStar className="text-yellow-400 text-xl md:text-3xl lg:text-5xl" />
+          <FaStar className="text-amber-300 text-xl md:text-3xl lg:text-5xl" />
         );
       default:
         return (
-          <FaBolt className="text-yellow-400 text-xl md:text-3xl lg:text-5xl" />
+          <FaBolt className="text-amber-300 text-xl md:text-3xl lg:text-5xl" />
         );
     }
   };
@@ -50,47 +50,41 @@ export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
       className="relative container mx-auto px-6 py-12 overflow-hidden"
       dir={isRTL ? "ltr" : ""}
     >
-      {/* خلفية متدرجة خفيفة */}
-      <div className="absolute inset-0 bg-linear-to-r from-indigo-50 via-purple-50 to-pink-50 opacity-70 -z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-teal-50 via-teal-50 to-pink-50 opacity-70 -z-10"></div>
 
       <div
         className={`flex flex-col ${
           isRTL ? "md:flex-row-reverse" : "md:flex-row"
         } items-center justify-between gap-6`}
       >
-        {/* العنوان + الأيقونة */}
         <div className="flex items-center gap-6">
           {getIcon()}
 
           <div>
             <h2 className="text-xl md:text-4xl font-extrabold text-gray-900 relative inline-block">
               {title}
-              {/* خط سفلي متدرج */}
               <span
                 className={`absolute -bottom-3 ${
                   isRTL ? "right-0" : "left-0"
-                } w-full h-1 bg-linear-to-r from-indigo-600 to-purple-700 rounded-full transform scale-x-75 group-hover:scale-x-100 transition-transform`}
+                } w-full h-1 bg-gradient-to-r from-teal-600 to-teal-800 rounded-full transform scale-x-75 group-hover:scale-x-100 transition-transform`}
               ></span>
             </h2>
           </div>
         </div>
 
-        {/* زر عرض الكل */}
         {link && (
           <Link
             to={link}
-            className="group flex items-center gap-2 text-sm md:text-[16px] font-bold   transition transform hover:scale-105 text-blue-600 hover:text-blue-800"
+            className="group flex items-center gap-2 text-sm md:text-[16px] font-bold transition transform hover:scale-105 text-teal-700 hover:text-teal-900"
           >
             {isRTL && <FaLongArrowAltLeft className="group-hover:animate-pulse" />}
             {t("common.view_all", { defaultValue: "عرض الكل" })}
-            {!isRTL && <FaLongArrowAltRight  className="group-hover:animate-pulse" />}
-            
+            {!isRTL && <FaLongArrowAltRight className="group-hover:animate-pulse" />}
           </Link>
         )}
       </div>
 
-      {/* موجة سفلية للأناقة */}
-      <div className="absolute bottom-0 left-0 right-0 h-10 bg-linear-to-t from-white to-100 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent"></div>
     </div>
   );
 }
