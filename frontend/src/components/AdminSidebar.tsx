@@ -21,7 +21,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
   };
 
   const activeClassName =
-    "flex items-center p-3 bg-teal-600 text-white rounded-xl transition shadow-lg font-bold";
+    "flex items-center p-3 bg-primary text-white rounded-xl transition shadow-lg font-bold";
   const inactiveClassName =
     "flex items-center p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition";
 
@@ -42,7 +42,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
         }`}
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <div className="text-2xl font-bold text-center mb-12 text-teal-300">
+        <div className="text-2xl font-bold text-center mb-12 text-primary-light">
           {t("admin.sidebar.title")}
         </div>
 
