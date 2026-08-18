@@ -27,6 +27,7 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import BrandsManagement from "./pages/dashboard/BrandsManagement";
 import CategoriesManagement from "./pages/dashboard/CategoriesManagement";
 import Wishlist from "./components/wishlist/Wishlist";
+import ScrollToTop from "./components/ScrollToTop";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -73,7 +74,7 @@ function App() {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/wishlist" element={<Wishlist />} />
 
-        {/* Admin & Owner Routes - لازم تيجي قبل /order/:id */}
+        {/* Admin & Owner Routes */}
         <Route
           path="/admin/dashboard"
           element={
@@ -157,7 +158,6 @@ function App() {
           }
         />
 
-        {/* Order Details - لازم تيجي في الآخر عشان :id متعارضش مع routes تانية */}
         <Route
           path="/order/:id"
           element={
@@ -172,6 +172,7 @@ function App() {
         <Route path="/register" element={<Register />} />
       </Routes>
       {/* <Footer /> */}
+      <ScrollToTop />
     </Router>
   );
 }
