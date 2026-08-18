@@ -28,7 +28,7 @@ export default function Checkout() {
     register,
     formState: { errors },
     watch,
-    trigger, // ← لتفعيل التحقق يدويًا
+    trigger,
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -37,15 +37,14 @@ export default function Checkout() {
       address: "",
       city: "",
     },
-    mode: "onChange", // التحقق فوري مع كل كتابة
+    mode: "onChange",
   });
 
   const totalPrice =
     state.cart.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0) + 50;
 
   const handleStripeSuccess = async (paymentIntentId: string) => {
-    // 1. تحقق يدوي من البيانات الشخصية قبل أي دفع
-    const isValid = await trigger(); // يفعل كل الـ validation
+    const isValid = await trigger();
 
     if (!isValid) {
       showToast(t("checkout.fill_all_fields_correctly"), "error");
@@ -75,7 +74,6 @@ export default function Checkout() {
       dispatch({ type: "LOAD_CART", payload: [] });
       localStorage.removeItem("cart");
 
-      // الرسالة "تم الدفع بنجاح" تظهر هنا فقط بعد نجاح الطلب كامل
       showToast(t("checkout.payment_success"), "success");
       navigate(`/payment-success?orderId=${res.data.order._id}`);
     } catch (err: any) {
@@ -108,7 +106,6 @@ export default function Checkout() {
         </h1>
 
         <div className="grid md:grid-cols-2 gap-10">
-          {/* Order Summary */}
           <div className="bg-white p-8 rounded-3xl shadow-xl">
             <h2 className="text-3xl font-bold mb-6">
               {t("checkout.order_summary")}
@@ -130,20 +127,18 @@ export default function Checkout() {
               <span>{t("checkout.delivery_fee")}</span>
               {formatPrice(50, lang)}
             </div>
-            <div className="flex justify-between text-3xl font-bold mt-10 text-blue-600">
+            <div className="flex justify-between text-3xl font-bold mt-10 text-teal-600">
               <span>{t("checkout.total")}</span>
               <span>{formatPrice(totalPrice, lang)}</span>
             </div>
           </div>
 
-          {/* Delivery Form + Payment */}
           <div className="bg-white p-8 rounded-3xl shadow-xl">
             <h2 className="text-3xl font-bold mb-6">
               {t("checkout.delivery_info")}
             </h2>
 
             <div className="space-y-6">
-              {/* Full Name */}
               <div>
                 <label className="block mb-2 font-semibold">
                   {t("checkout.full_name")}
@@ -151,7 +146,7 @@ export default function Checkout() {
                 <input
                   {...register("fullName")}
                   type="text"
-                  className="w-full p-4 border rounded-xl focus:border-blue-500 outline-none"
+                  className="w-full p-4 border rounded-xl focus:border-teal-500 outline-none"
                 />
                 {errors.fullName && (
                   <p className="text-red-600 text-sm mt-1">
@@ -160,7 +155,6 @@ export default function Checkout() {
                 )}
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="block mb-2 font-semibold">
                   {t("checkout.phone")}
@@ -168,7 +162,7 @@ export default function Checkout() {
                 <input
                   {...register("phone")}
                   type="tel"
-                  className="w-full p-4 border rounded-xl focus:border-blue-500 outline-none"
+                  className="w-full p-4 border rounded-xl focus:border-teal-500 outline-none"
                 />
                 {errors.phone && (
                   <p className="text-red-600 text-sm mt-1">
@@ -177,7 +171,6 @@ export default function Checkout() {
                 )}
               </div>
 
-              {/* Address */}
               <div>
                 <label className="block mb-2 font-semibold">
                   {t("checkout.address")}
@@ -185,7 +178,7 @@ export default function Checkout() {
                 <input
                   {...register("address")}
                   type="text"
-                  className="w-full p-4 border rounded-xl focus:border-blue-500 outline-none"
+                  className="w-full p-4 border rounded-xl focus:border-teal-500 outline-none"
                 />
                 {errors.address && (
                   <p className="text-red-600 text-sm mt-1">
@@ -194,7 +187,6 @@ export default function Checkout() {
                 )}
               </div>
 
-              {/* City */}
               <div>
                 <label className="block mb-2 font-semibold">
                   {t("checkout.city")}
@@ -202,7 +194,7 @@ export default function Checkout() {
                 <input
                   {...register("city")}
                   type="text"
-                  className="w-full p-4 border rounded-xl focus:border-blue-500 outline-none"
+                  className="w-full p-4 border rounded-xl focus:border-teal-500 outline-none"
                 />
                 {errors.city && (
                   <p className="text-red-600 text-sm mt-1">
@@ -211,7 +203,6 @@ export default function Checkout() {
                 )}
               </div>
 
-              {/* Stripe Payment */}
               <div className="mt-8">
                 <h3 className="text-2xl font-bold mb-4 text-center">
                   {t("checkout.card_payment")}
