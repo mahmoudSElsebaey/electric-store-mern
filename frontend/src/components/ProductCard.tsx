@@ -47,8 +47,7 @@ export default function ProductCard({ product }: { product: Product }) {
         className="block h-full w-full transition-transform duration-300 hover:scale-[1.02]"
       >
         <div className="relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 h-full flex flex-col">
-          {/* صورة المنتج */}
-          <div className="relative aspect-square overflow-hidden bg-linear-to-br from-gray-50 to-gray-100">
+          <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
             <img
               src={product.image}
               alt={product.name}
@@ -64,22 +63,17 @@ export default function ProductCard({ product }: { product: Product }) {
               </div>
             )}
 
-            {/* السعر */}
-            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/95 backdrop-blur-sm border border-yellow-400 text-yellow-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base font-bold shadow-md">
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/95 backdrop-blur-sm border border-amber-400 text-amber-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base font-bold shadow-md">
               {formatPrice(product.price, lang)}
             </div>
           </div>
 
-          {/* المحتوى */}
           <div className="p-4 sm:p-5 flex-1 flex flex-col">
-            {/* Wishlist */}
             <div className="self-end -mt-10 -mr-2 sm:-mt-12 sm:-mr-3 z-10">
               <WishlistButton productId={product._id} size="md" />
             </div>
 
-            {/* معلومات المنتج */}
             <div className="space-y-2.5 sm:space-y-3 flex-1">
-              {/* Brand & Category */}
               <div
                 className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500"
                 dir="ltr"
@@ -92,12 +86,10 @@ export default function ProductCard({ product }: { product: Product }) {
                 </span>
               </div>
 
-              {/* الاسم */}
-              <h3 className="font-bold text-base sm:text-lg h-6 text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+              <h3 className="font-bold text-base sm:text-lg h-6 text-gray-900 line-clamp-2 leading-tight group-hover:text-teal-700 transition-colors">
                 {product.name}
               </h3>
 
-              {/* التقييم */}
               <div className="flex items-center gap-2">
                 <StarRating
                   rating={reviewCount > 0 ? displayRating : 0}
@@ -110,14 +102,12 @@ export default function ProductCard({ product }: { product: Product }) {
                 </span>
               </div>
 
-              {/* الوصف */}
               <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
                 {product.description || t("product_detail.no_description")}
               </p>
             </div>
           </div>
 
-          {/* زر أضف للسلة */}
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
             <button
               onClick={addToCart}
@@ -125,7 +115,7 @@ export default function ProductCard({ product }: { product: Product }) {
               className={`w-full py-3 sm:py-4 font-semibold text-sm sm:text-base transition-all duration-300 cursor-pointer shadow-xl ${
                 isOutOfStock
                   ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                  : "bg-linear-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800"
+                  : "bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800"
               }`}
             >
               {isOutOfStock ? t("store.out_of_stock") : t("store.add_to_cart")}
