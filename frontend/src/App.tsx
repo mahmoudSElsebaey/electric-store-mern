@@ -37,7 +37,8 @@ const ProtectedRoute = ({ children, roles }: ProtectedRouteProps) => {
   const { state } = useStore();
   if (state.isAuthenticated === null) {
     return (
-      <div className="p-10 text-center text-gray-600">
+      <div className="p-10 text-center text-slate-500 flex items-center justify-center gap-2">
+        <div className="w-5 h-5 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" />
         جارٍ التحقق من تسجيل الدخول...
       </div>
     );
