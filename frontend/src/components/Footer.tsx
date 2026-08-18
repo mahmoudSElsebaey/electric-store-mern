@@ -132,14 +132,14 @@ export default function Footer() {
             <div className="flex gap-5 text-3xl">
               <a
                 href="#"
-                className="w-14 h-14 bg-teal-600 rounded-full flex items-center justify-center hover:bg-teal-700 hover:-translate-y-2 transition-all duration-300 shadow-lg"
+                className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 hover:-translate-y-2 transition-all duration-300 shadow-lg"
                 aria-label="Facebook"
               >
                 <FaFacebookF />
               </a>
               <a
                 href="#"
-                className="w-14 h-14 bg-gradient-to-r from-teal-600 to-teal-800 rounded-full flex items-center justify-center hover:from-teal-700 hover:to-teal-900 hover:-translate-y-2 transition-all duration-300 shadow-lg"
+                className="w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center hover:from-purple-700 hover:to-pink-700 hover:-translate-y-2 transition-all duration-300 shadow-lg"
                 aria-label="Instagram"
               >
                 <FaInstagram />
