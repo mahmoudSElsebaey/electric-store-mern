@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
+import { FaCheckCircle, FaTimesCircle, FaTimes } from "react-icons/fa";
 
 type ToastType = "success" | "error";
 
@@ -18,32 +19,59 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = (message: string, type: ToastType) => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
+  const removeToast = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
 
-    // حذف الرسالة بعد 5 ثواني
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 1500);
-  };
+  const showToast = useCallback(
+    (message: string, type: ToastType) => {
+      const id = Date.now() + Math.random();
+      setToasts((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => removeToast(id), 3500);
+    },
+    [removeToast]
+  );
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
 
-      {/* مكان ظهور التوست */}
-      <div className="fixed bottom-5 right-5 space-y-3 z-9999">
+      <div className="fixed top-20 end-4 sm:end-6 z-[9999] flex flex-col gap-3 max-w-[min(100vw-2rem,24rem)] pointer-events-none">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`px-10 py-4 rounded-xl shadow-lg text-white text-lg animate-slide 
-            ${toast.type === "success" ? "bg-green-600" : "bg-red-600"}`}
+            className={`pointer-events-auto flex items-start gap-3 px-4 py-3.5 rounded-xl shadow-xl border text-sm sm:text-base font-medium animate-[slideIn_0.35s_ease-out]
+              ${
+                toast.type === "success"
+                  ? "bg-white text-ink border-primary/30 border-s-4 border-s-primary"
+                  : "bg-white text-ink border-red-300 border-s-4 border-s-red-500"
+              }`}
           >
-            {toast.message}
+            <span className="mt-0.5 shrink-0">
+              {toast.type === "success" ? (
+                <FaCheckCircle className="text-primary text-xl" />
+              ) : (
+                <FaTimesCircle className="text-red-500 text-xl" />
+              )}
+            </span>
+            <p className="flex-1 leading-snug pt-0.5">{toast.message}</p>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="shrink-0 text-muted hover:text-ink transition p-1"
+              aria-label="Close"
+            >
+              <FaTimes className="text-sm" />
+            </button>
           </div>
         ))}
       </div>
+
+      <style>{`
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(1.5rem); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
     </ToastContext.Provider>
   );
 };
