@@ -57,7 +57,7 @@ export default function ProductCard({ product }: { product: Product }) {
               </div>
             )}
 
-            <div className="absolute top-3 start-3 bg-primary/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-extrabold shadow-md tabular-nums ring-2 ring-white/40">
+            <div className="absolute top-3 start-3 bg-primary text-accent px-3 py-1.5 rounded-lg text-sm font-extrabold shadow-md tabular-nums ring-1 ring-accent/40">
               {formatPrice(product.price, lang)}
             </div>
           </div>
