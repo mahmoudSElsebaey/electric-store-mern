@@ -52,7 +52,6 @@ export default function Store() {
 
   useEffect(() => {
     let result = products;
-
     if (search) {
       result = result.filter(
         (p) =>
@@ -60,12 +59,10 @@ export default function Store() {
           p.brand.name.toLowerCase().includes(search.toLowerCase())
       );
     }
-
     if (brand) result = result.filter((p) => p.brand.name === brand);
     if (category) result = result.filter((p) => p.category.name === category);
     if (minPrice) result = result.filter((p) => p.price >= Number(minPrice));
     if (maxPrice) result = result.filter((p) => p.price <= Number(maxPrice));
-
     setFiltered(result);
     setCurrentPage(1);
   }, [search, brand, category, minPrice, maxPrice, products]);
@@ -74,113 +71,98 @@ export default function Store() {
   const indexOfFirst = indexOfLast - PRODUCTS_PER_PAGE;
   const currentProducts = filtered.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
-
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
   const brands = [...new Set(products.map((p) => p.brand.name))];
   const categories = [...new Set(products.map((p) => p.category.name))];
 
   return (
     <>
       <section
-        className="relative bg-gradient-to-br from-teal-900 via-teal-800 to-slate-900 text-white py-20 sm:py-28 md:py-32 lg:py-40 overflow-hidden"
+        className="relative bg-gradient-to-br from-primary-dark via-primary to-slate-900 text-white py-12 sm:py-16 md:py-20 overflow-hidden"
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-
+        <div className="absolute inset-0 bg-black opacity-40" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight">
             {t("store.hero.title")}
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light max-w-4xl mx-auto leading-relaxed mb-10 sm:mb-12">
+          <p className="text-sm sm:text-lg md:text-xl font-light max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 text-white/90">
             {t("store.hero.subtitle")}
           </p>
-
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 text-base sm:text-lg">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <GoZap className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-base">
+            <div className="flex items-center gap-2">
+              <GoZap className="w-5 h-5 sm:w-7 sm:h-7 text-accent" />
               <span>{t("store.hero.price")}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaTruckFast className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
+            <div className="flex items-center gap-2">
+              <FaTruckFast className="w-5 h-5 sm:w-7 sm:h-7 text-accent" />
               <span>{t("store.hero.delivery")}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaShieldAlt className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
+            <div className="flex items-center gap-2">
+              <FaShieldAlt className="w-5 h-5 sm:w-7 sm:h-7 text-accent" />
               <span>{t("store.hero.warranty")}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaTags className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
+            <div className="flex items-center gap-2">
+              <FaTags className="w-5 h-5 sm:w-7 sm:h-7 text-accent" />
               <span>{t("store.hero.offers")}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaHeadphones className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
+            <div className="flex items-center gap-2">
+              <FaHeadphones className="w-5 h-5 sm:w-7 sm:h-7 text-accent" />
               <span>{t("store.hero.support")}</span>
             </div>
           </div>
         </div>
-
-        <div className="absolute -bottom-1 left-0 right-0">
-          <svg viewBox="0 0 1440 120" className="w-full">
-            <path fill="#f9fafb" d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"></path>
-          </svg>
-        </div>
       </section>
 
-      <div className="min-h-screen bg-gray-50 py-10 sm:py-12 md:py-16" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="min-h-screen bg-surface py-6 sm:py-10" dir={isRTL ? "rtl" : "ltr"}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-6 mb-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-primary/10 p-4 sm:p-6 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
               <input
                 type="text"
                 placeholder={t("store.filters.search")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-teal-300 focus:border-teal-400 transition"
+                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
               />
-
               <select
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-teal-300 focus:border-teal-400 transition"
+                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
               >
                 <option value="">{t("store.filters.all_brands")}</option>
                 {brands.map((b) => (
                   <option key={b} value={b}>{b}</option>
                 ))}
               </select>
-
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-teal-300 focus:border-teal-400 transition"
+                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
               >
                 <option value="">{t("store.filters.all_categories")}</option>
                 {categories.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-
               <input
                 type="number"
                 placeholder={t("store.filters.price_from")}
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-teal-300 focus:border-teal-400 transition"
+                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
               />
-
               <input
                 type="number"
                 placeholder={t("store.filters.price_to")}
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="px-5 py-3.5 rounded-xl border border-gray-300 text-base focus:ring-2 focus:ring-teal-300 focus:border-teal-400 transition"
+                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
               />
             </div>
-
-            <p className="mt-6 text-base sm:text-lg text-gray-600 text-center sm:text-left">
+            <p className="mt-4 text-sm text-muted text-center sm:text-start">
               {t("store.filters.showing", {
-                from: indexOfFirst + 1,
+                from: filtered.length === 0 ? 0 : indexOfFirst + 1,
                 to: Math.min(indexOfLast, filtered.length),
                 total: filtered.length,
               })}
@@ -188,50 +170,46 @@ export default function Store() {
           </div>
 
           {loading ? (
-            <div className="text-center py-32">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-600"></div>
-              <p className="mt-6 text-xl sm:text-2xl text-gray-600">{t("store.loading")}</p>
+            <div className="text-center py-20">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary" />
+              <p className="mt-4 text-muted">{t("store.loading")}</p>
             </div>
           ) : currentProducts.length === 0 ? (
-            <div className="text-center py-32 text-xl sm:text-3xl text-gray-500">
-              {t("store.no_products")}
-            </div>
+            <div className="text-center py-20 text-muted">{t("store.no_products")}</div>
           ) : (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
                 {currentProducts.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
               </div>
 
               {totalPages > 1 && (
-                <div className="flex flex-wrap justify-center items-center mt-12 sm:mt-16 gap-2 sm:gap-3">
+                <div className="flex flex-wrap justify-center items-center mt-10 gap-2">
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-5 py-2.5 sm:px-6 sm:py-3 bg-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition font-medium text-sm sm:text-base"
+                    className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50 hover:bg-gray-300 transition text-sm"
                   >
                     {t("store.previous")}
                   </button>
-
                   {[...Array(totalPages)].map((_, i) => (
                     <button
                       key={i + 1}
                       onClick={() => paginate(i + 1)}
-                      className={`px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-medium transition text-sm sm:text-base min-w-10 ${
+                      className={`px-3.5 py-2 rounded-xl text-sm min-w-9 transition ${
                         currentPage === i + 1
-                          ? "bg-teal-600 text-white"
+                          ? "bg-primary text-white"
                           : "bg-gray-200 hover:bg-gray-300"
                       }`}
                     >
                       {i + 1}
                     </button>
                   ))}
-
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-5 py-2.5 sm:px-6 sm:py-3 bg-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition font-medium text-sm sm:text-base"
+                    className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50 hover:bg-gray-300 transition text-sm"
                   >
                     {t("store.next")}
                   </button>
@@ -241,7 +219,6 @@ export default function Store() {
           )}
         </div>
       </div>
-
       <Footer />
     </>
   );
