@@ -40,6 +40,7 @@ export default function Navbar() {
   const isAuthenticated = state.isAuthenticated;
   const user = state.user;
   const isAuthLoading = isAuthenticated === null;
+  const isRTL = i18n.language === "ar";
 
   useEffect(() => {
     const savedLang = localStorage.getItem("language") as "ar" | "en" | null;
@@ -106,7 +107,7 @@ export default function Navbar() {
         setLangDropdownOpen(false);
       }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        setMobileMenuOpen(false);
+        // don't close when clicking hamburger - handled separately
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -116,157 +117,118 @@ export default function Navbar() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 text-white shadow-2xl sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        {/* اللوجو */}
+    <nav className="bg-gradient-to-r from-primary-dark via-primary to-slate-900 text-white shadow-2xl sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+        {/* Logo */}
         <button
           onClick={() => handleNavClick("/")}
           className="flex items-center gap-2.5 hover:opacity-90 transition cursor-pointer"
         >
-          <img
-            src="/logo.svg"
-            alt="Electrical Store Logo"
-            className="w-9 h-9 md:w-10 md:h-10"
-          />
+          <img src="/logo.svg" alt="Electrical Store Logo" className="w-9 h-9 md:w-10 md:h-10" />
           <h1 className="hidden sm:block text-lg md:text-xl font-extrabold tracking-wide">
-            {i18n.language === "ar"
-              ? "متجر الأجهزة الكهربائية"
-              : "Electrical Store"}
+            {i18n.language === "ar" ? "متجر الأجهزة الكهربائية" : "Electrical Store"}
           </h1>
         </button>
 
-        {/* الروابط في الديسكتوب */}
+        {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-8 text-md font-medium">
-          <button
-            onClick={() => handleNavClick("/")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-            }`}
-          >
-            <FaHome /> {t("navbar.home")}
-          </button>
-          <button
-            onClick={() => handleNavClick("/store")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/store") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-            }`}
-          >
-            <FaStore /> {t("navbar.store")}
-          </button>
-          <button
-            onClick={() => handleNavClick("/about")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/about") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-            }`}
-          >
-            <FaInfoCircle /> {t("navbar.about")}
-          </button>
-          <button
-            onClick={() => handleNavClick("/contact")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/contact") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-            }`}
-          >
-            <FaEnvelope /> {t("navbar.contact")}
-          </button>
+          {[
+            { path: "/", icon: FaHome, label: t("navbar.home") },
+            { path: "/store", icon: FaStore, label: t("navbar.store") },
+            { path: "/about", icon: FaInfoCircle, label: t("navbar.about") },
+            { path: "/contact", icon: FaEnvelope, label: t("navbar.contact") },
+          ].map(({ path, icon: Icon, label }) => (
+            <button
+              key={path}
+              onClick={() => handleNavClick(path)}
+              className={`flex items-center gap-2 transition cursor-pointer ${
+                isActive(path) ? "text-accent font-bold" : "hover:text-accent"
+              }`}
+            >
+              <Icon /> {label}
+            </button>
+          ))}
         </div>
 
-        {/* الأزرار الجانبية */}
-        <div className="flex items-center gap-6">
+        {/* Right actions */}
+        <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
+          {/* Cart — always visible */}
           <button
             onClick={handleCartClick}
             className={`relative group cursor-pointer ${
-              isActive("/cart") ? "text-amber-300" : ""
+              isActive("/cart") ? "text-accent" : ""
             }`}
             aria-label={t("navbar.cart")}
           >
             <FaShoppingCart className="text-2xl group-hover:scale-110 transition-transform" />
             {cartCount > 0 && (
-              <span className="absolute -top-3 -right-3 bg-red-600 text-white font-bold text-sm rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-pulse">
+              <span className="absolute -top-2.5 -end-2.5 bg-red-600 text-white font-bold text-xs rounded-full min-w-5 h-5 flex items-center justify-center px-1 shadow-lg">
                 {cartCount}
               </span>
             )}
           </button>
 
+          {/* Wishlist — desktop only */}
           <button
             onClick={() => handleNavClick("/wishlist")}
-            className={`relative cursor-pointer ${
-              isActive("/wishlist") ? "text-amber-300" : ""
+            className={`hidden lg:block relative cursor-pointer ${
+              isActive("/wishlist") ? "text-accent" : ""
             }`}
           >
             <FaHeart className="text-2xl hover:scale-110 transition-transform" />
             {wishlistCount > 0 && (
-              <span className="absolute -top-3 -right-3 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+              <span className="absolute -top-2.5 -end-2.5 bg-red-500 text-white text-xs rounded-full min-w-5 h-5 flex items-center justify-center px-1 shadow-lg">
                 {wishlistCount}
               </span>
             )}
           </button>
 
-          {/* حساب المستخدم */}
+          {/* User — desktop only */}
           {isAuthLoading ? (
-            <div className="flex items-center gap-2 opacity-70">
-              <div className="w-8 h-8 rounded-full bg-teal-700/50 animate-pulse" />
+            <div className="hidden lg:flex items-center gap-2 opacity-70">
+              <div className="w-8 h-8 rounded-full bg-primary/50 animate-pulse" />
             </div>
           ) : isAuthenticated ? (
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative hidden lg:block" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className={`flex items-center gap-1 hover:text-amber-300 transition font-semibold cursor-pointer ${
-                  isActive("/my-orders") ||
-                  isActive("/profile") ||
-                  isActive("/admin/dashboard")
-                    ? "text-amber-300"
+                className={`flex items-center gap-1 hover:text-accent transition font-semibold cursor-pointer ${
+                  isActive("/my-orders") || isActive("/profile") || isActive("/admin/dashboard")
+                    ? "text-accent"
                     : ""
-                } ${dropdownOpen && "text-amber-300"}`}
+                } ${dropdownOpen ? "text-accent" : ""}`}
               >
-                <span className="hidden sm:block">
-                  {user?.name.split(" ")[0] || t("navbar.user")}
-                </span>
+                <span className="hidden sm:block">{user?.name?.split(" ")[0] || t("navbar.user")}</span>
                 <FaUser className="text-xl" />
               </button>
 
               {dropdownOpen && (
                 <div
                   className={`absolute mt-4 w-64 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 ${
-                    i18n.language === "ar" ? "left-0" : "right-0"
+                    isRTL ? "left-0" : "right-0"
                   }`}
                 >
-                  <div className="px-6 py-4 bg-gradient-to-r from-teal-700 to-teal-900 text-white text-center">
+                  <div className="px-6 py-4 bg-gradient-to-r from-primary to-primary-dark text-white text-center">
                     <p className="font-bold text-lg">{user?.name}</p>
                     <p className="text-sm opacity-90">{user?.email}</p>
                   </div>
-
                   <div className="py-2 text-right">
-                    <button
-                      onClick={() => handleNavClick("/profile")}
-                      className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-gray-100 transition w-full text-right"
-                    >
+                    <button onClick={() => handleNavClick("/profile")} className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-gray-100 transition w-full text-right">
                       <FaUser /> {t("navbar.profile")}
                     </button>
-                    <button
-                      onClick={() => handleNavClick("/my-orders")}
-                      className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-gray-100 transition w-full text-right"
-                    >
+                    <button onClick={() => handleNavClick("/my-orders")} className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-gray-100 transition w-full text-right">
                       <FaShoppingCart /> {t("navbar.my_orders")}
                     </button>
-
                     {["admin", "owner"].includes(user?.role || "") && (
                       <>
-                        <div className="border-t border-gray-200 my-2"></div>
-                        <button
-                          onClick={() => handleNavClick("/admin/dashboard")}
-                          className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-teal-50 transition font-bold text-teal-700 w-full text-right"
-                        >
+                        <div className="border-t border-gray-200 my-2" />
+                        <button onClick={() => handleNavClick("/admin/dashboard")} className="flex items-center justify-start gap-3 px-6 py-3 hover:bg-primary-soft transition font-bold text-primary w-full text-right">
                           <FaUserCog /> {t("navbar.dashboard")}
                         </button>
                       </>
                     )}
-
-                    <div className="border-t border-gray-200 my-2"></div>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center justify-start gap-3 w-full px-6 py-3 hover:bg-red-50 text-red-600 transition font-semibold"
-                    >
+                    <div className="border-t border-gray-200 my-2" />
+                    <button onClick={handleLogout} className="flex items-center justify-start gap-3 w-full px-6 py-3 hover:bg-red-50 text-red-600 transition font-semibold">
                       <FaSignOutAlt /> {t("navbar.logout")}
                     </button>
                   </div>
@@ -274,20 +236,20 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
               <button
                 onClick={() => handleNavClick("/login")}
-                className="bg-white text-teal-800 hover:bg-slate-100 px-8 py-3 rounded-full font-bold transition shadow-lg"
+                className="bg-white text-primary-dark hover:bg-slate-100 px-6 py-2.5 rounded-full font-bold transition shadow-lg"
               >
                 {t("navbar.login")}
               </button>
             </div>
           )}
 
-          {/* Dropdown اللغة */}
+          {/* Language — desktop only */}
           <div
-            className={`relative border-gray-100/50 ${
-              i18n.language === "ar" ? "border-r" : "border-l"
+            className={`hidden lg:block relative ${
+              isRTL ? "border-r border-white/20" : "border-l border-white/20"
             }`}
             ref={langDropdownRef}
           >
@@ -295,115 +257,133 @@ export default function Navbar() {
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
               className="flex items-center gap-2 px-4 transition cursor-pointer"
             >
-              <div
-                className={`flex items-center gap-2 hover:text-amber-300 ${
-                  langDropdownOpen && "text-amber-300 font-bold"
-                }`}
-              >
+              <div className={`flex items-center gap-2 hover:text-accent ${langDropdownOpen ? "text-accent font-bold" : ""}`}>
                 <FaGlobe className="text-[14px]" />
-                <span className="font-medium text-[14px]">
-                  {i18n.language === "ar" ? "EN" : "AR"}
-                </span>
+                <span className="font-medium text-[14px]">{i18n.language === "ar" ? "EN" : "AR"}</span>
               </div>
-              <FaChevronDown
-                className={`text-sm transition-transform ${
-                  langDropdownOpen ? "rotate-180" : ""
-                }`}
-              />
+              <FaChevronDown className={`text-sm transition-transform ${langDropdownOpen ? "rotate-180" : ""}`} />
             </button>
-
             {langDropdownOpen && (
-              <div
-                className={`absolute top-full mt-2 right-0 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50`}
-              >
-                <button
-                  onClick={() => changeLanguage("ar")}
-                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer ${
-                    i18n.language === "ar" ? "bg-gray-200 font-bold" : ""
-                  }`}
-                >
-                  <span className="text-2xl">🇪🇬</span>
-                  عربي
+              <div className="absolute top-full mt-2 end-0 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 min-w-[10rem]">
+                <button onClick={() => changeLanguage("ar")} className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer ${i18n.language === "ar" ? "bg-gray-200 font-bold" : ""}`}>
+                  <span className="text-2xl">🇪🇬</span> عربي
                 </button>
-                <button
-                  onClick={() => changeLanguage("en")}
-                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer ${
-                    i18n.language === "en" ? "bg-gray-200 font-bold" : ""
-                  }`}
-                >
-                  <span className="text-2xl">🇬🇧</span>
-                  English
+                <button onClick={() => changeLanguage("en")} className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer ${i18n.language === "en" ? "bg-gray-200 font-bold" : ""}`}>
+                  <span className="text-2xl">🇬🇧</span> English
                 </button>
               </div>
             )}
           </div>
 
+          {/* Hamburger — mobile only */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-3xl"
-            aria-label="قائمة"
+            className="lg:hidden text-2xl p-1"
+            aria-label="menu"
           >
             {mobileMenuOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile drawer */}
       {mobileMenuOpen && (
         <div
-          className="lg:hidden bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 px-6 py-8"
+          className="lg:hidden border-t border-white/10 bg-gradient-to-b from-primary-dark to-slate-900 shadow-2xl"
           ref={mobileMenuRef}
         >
-          <div className="flex flex-col gap-6 text-lg font-medium text-right">
+          <div className={`flex flex-col gap-1 px-4 py-5 text-base font-medium ${isRTL ? "text-right" : "text-left"}`}>
+            {!isAuthLoading && isAuthenticated && user && (
+              <div className="mb-3 flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
+                <div className="w-10 h-10 rounded-full bg-accent text-primary-dark flex items-center justify-center font-bold">
+                  {(user.name || "U").charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold truncate">{user.name}</p>
+                  <p className="text-xs text-white/70 truncate">{user.email}</p>
+                </div>
+              </div>
+            )}
+
+            {[
+              { path: "/", icon: FaHome, label: t("navbar.home") },
+              { path: "/store", icon: FaStore, label: t("navbar.store") },
+              { path: "/about", icon: FaInfoCircle, label: t("navbar.about") },
+              { path: "/contact", icon: FaEnvelope, label: t("navbar.contact") },
+            ].map(({ path, icon: Icon, label }) => (
+              <button
+                key={path}
+                onClick={() => handleNavClick(path)}
+                className={`flex items-center gap-3 rounded-xl px-4 py-3.5 transition ${
+                  isActive(path) ? "bg-white/15 text-accent font-bold" : "text-white/90 hover:bg-white/10"
+                }`}
+              >
+                <Icon className="text-lg" />
+                <span>{label}</span>
+              </button>
+            ))}
+
             <button
-              onClick={() => handleNavClick("/")}
-              className={`flex items-center gap-3 transition ${
-                isActive("/") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-              }`}
+              onClick={() => handleNavClick("/wishlist")}
+              className="flex items-center justify-between rounded-xl px-4 py-3.5 text-white/90 hover:bg-white/10 transition"
             >
-              <FaHome /> {t("navbar.home")}
-            </button>
-            <button
-              onClick={() => handleNavClick("/store")}
-              className={`flex items-center gap-3 transition ${
-                isActive("/store") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-              }`}
-            >
-              <FaStore /> {t("navbar.store")}
-            </button>
-            <button
-              onClick={() => handleNavClick("/about")}
-              className={`flex items-center gap-3 transition ${
-                isActive("/about") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-              }`}
-            >
-              <FaInfoCircle /> {t("navbar.about")}
-            </button>
-            <button
-              onClick={() => handleNavClick("/contact")}
-              className={`flex items-center gap-3 transition ${
-                isActive("/contact") ? "text-amber-300 font-bold" : "hover:text-amber-300"
-              }`}
-            >
-              <FaEnvelope /> {t("navbar.contact")}
+              <span className="flex items-center gap-3">
+                <FaHeart className="text-lg" />
+                <span>{t("navbar.wishlist", { defaultValue: "المفضلة" })}</span>
+              </span>
+              {wishlistCount > 0 && (
+                <span className="bg-red-500 text-white text-[10px] rounded-full min-w-5 h-5 flex items-center justify-center px-1">
+                  {wishlistCount}
+                </span>
+              )}
             </button>
 
-            {!isAuthLoading && !isAuthenticated && (
+            <button
+              onClick={() => {
+                changeLanguage(i18n.language === "ar" ? "en" : "ar");
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-white/90 hover:bg-white/10 transition"
+            >
+              <FaGlobe className="text-lg" />
+              <span>{i18n.language === "ar" ? "English" : "العربية"}</span>
+            </button>
+
+            {!isAuthLoading && isAuthenticated && (
               <>
-                <div className="border-t border-gray-700 pt-6 mt-4"></div>
-                <button
-                  onClick={() => handleNavClick("/login")}
-                  className="bg-white text-teal-800 py-3 px-6 rounded-full text-center font-bold"
-                >
-                  {t("navbar.login")}
+                <button onClick={() => handleNavClick("/profile")} className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-white/90 hover:bg-white/10 transition">
+                  <FaUser className="text-lg" />
+                  <span>{t("navbar.profile", { defaultValue: "حسابي" })}</span>
                 </button>
+                <button onClick={() => handleNavClick("/my-orders")} className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-white/90 hover:bg-white/10 transition">
+                  <FaShoppingCart className="text-lg" />
+                  <span>{t("navbar.my_orders")}</span>
+                </button>
+                {(user?.role === "admin" || user?.role === "owner") && (
+                  <button onClick={() => handleNavClick("/admin/dashboard")} className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-accent font-bold hover:bg-white/10 transition">
+                    <FaUserCog className="text-lg" />
+                    <span>{t("navbar.dashboard", { defaultValue: "لوحة التحكم" })}</span>
+                  </button>
+                )}
                 <button
-                  onClick={() => handleNavClick("/register")}
-                  className="bg-amber-400 text-slate-900 py-3 px-6 rounded-full text-center font-bold"
+                  onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-red-300 hover:bg-red-500/20 transition"
                 >
-                  {t("navbar.register")}
+                  <FaSignOutAlt className="text-lg" />
+                  <span>{t("navbar.logout", { defaultValue: "تسجيل الخروج" })}</span>
                 </button>
               </>
+            )}
+
+            {!isAuthLoading && !isAuthenticated && (
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <button onClick={() => handleNavClick("/login")} className="bg-white text-primary-dark py-3.5 rounded-xl text-center font-bold shadow-md">
+                  {t("navbar.login")}
+                </button>
+                <button onClick={() => handleNavClick("/register")} className="bg-accent text-primary-dark py-3.5 rounded-xl text-center font-bold shadow-md">
+                  {t("navbar.register")}
+                </button>
+              </div>
             )}
           </div>
         </div>
