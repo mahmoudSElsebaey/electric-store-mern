@@ -69,96 +69,18 @@ function App() {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/wishlist" element={<Wishlist />} />
 
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/orders"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <OrdersManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/products"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <ProductsManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/products/add"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <ProductForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/products/edit/:id"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <ProductForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/brands"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <BrandsManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/categories"
-          element={
-            <ProtectedRoute roles={["admin", "owner"]}>
-              <CategoriesManagement />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <ProtectedRoute roles={["owner"]}>
-              <UsersManagement />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/admin/dashboard" element={<ProtectedRoute roles={["admin", "owner"]}><Dashboard /></ProtectedRoute>} />
+        <Route path="/admin/orders" element={<ProtectedRoute roles={["admin", "owner"]}><OrdersManagement /></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute roles={["admin", "owner"]}><ProductsManagement /></ProtectedRoute>} />
+        <Route path="/admin/products/add" element={<ProtectedRoute roles={["admin", "owner"]}><ProductForm /></ProtectedRoute>} />
+        <Route path="/admin/products/edit/:id" element={<ProtectedRoute roles={["admin", "owner"]}><ProductForm /></ProtectedRoute>} />
+        <Route path="/admin/brands" element={<ProtectedRoute roles={["admin", "owner"]}><BrandsManagement /></ProtectedRoute>} />
+        <Route path="/admin/categories" element={<ProtectedRoute roles={["admin", "owner"]}><CategoriesManagement /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute roles={["owner"]}><UsersManagement /></ProtectedRoute>} />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute roles={["user", "admin", "owner"]}>
-              <UserProfile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-orders"
-          element={
-            <ProtectedRoute roles={["user", "admin", "owner"]}>
-              <MyOrders />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/order/:id"
-          element={
-            <ProtectedRoute roles={["user", "admin", "owner"]}>
-              <OrderDetails />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/profile" element={<ProtectedRoute roles={["user", "admin", "owner"]}><UserProfile /></ProtectedRoute>} />
+        <Route path="/my-orders" element={<ProtectedRoute roles={["user", "admin", "owner"]}><MyOrders /></ProtectedRoute>} />
+        <Route path="/order/:id" element={<ProtectedRoute roles={["user", "admin", "owner"]}><OrderDetails /></ProtectedRoute>} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
