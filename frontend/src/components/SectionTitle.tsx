@@ -19,57 +19,39 @@ export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
-  const getIcon = () => {
-    switch (icon) {
-      case "bolt":
-        return <FaBolt className="text-accent text-xl md:text-3xl lg:text-5xl" />;
-      case "tools":
-        return <FaTools className="text-accent text-xl md:text-3xl lg:text-5xl" />;
-      case "tag":
-        return <FaTag className="text-accent text-xl md:text-3xl lg:text-5xl" />;
-      case "star":
-        return <FaStar className="text-accent text-xl md:text-3xl lg:text-5xl" />;
-      default:
-        return <FaBolt className="text-accent text-xl md:text-3xl lg:text-5xl" />;
-    }
+  const icons = {
+    bolt: FaBolt,
+    tools: FaTools,
+    tag: FaTag,
+    star: FaStar,
   };
+  const Icon = icons[icon || "bolt"] || FaBolt;
 
   return (
-    <div
-      className="relative container mx-auto px-6 py-12 overflow-hidden"
-      dir={isRTL ? "ltr" : ""}
-    >
-      <div className="absolute inset-0 bg-gradient-to-r from-primary-soft via-primary-soft to-accent-soft opacity-70 -z-10"></div>
-
-      <div
-        className={`flex flex-col ${
-          isRTL ? "md:flex-row-reverse" : "md:flex-row"
-        } items-center justify-between gap-6`}
-      >
-        <div className="flex items-center gap-6">
-          {getIcon()}
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-primary-soft text-primary shadow-sm">
+            <Icon className="text-lg sm:text-2xl" />
+          </div>
           <div>
-            <h2 className="text-xl md:text-4xl font-extrabold text-gray-900 relative inline-block">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-ink tracking-tight">
               {title}
-              <span
-                className={`absolute -bottom-3 ${
-                  isRTL ? "right-0" : "left-0"
-                } w-full h-1 bg-gradient-to-r from-primary to-primary-dark rounded-full transform scale-x-75`}
-              ></span>
             </h2>
+            <div className="mt-2 h-1 w-16 sm:w-24 rounded-full bg-gradient-to-r from-primary to-accent" />
           </div>
         </div>
 
         {link && (
           <Link
             to={link}
-            className="group flex items-center gap-2 text-sm md:text-[16px] font-bold text-primary hover:text-primary-dark transition transform hover:scale-105"
+            className="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm transition hover:border-primary/40 hover:bg-primary-soft"
           >
             {t("common.view_all")}
             {isRTL ? (
-              <FaLongArrowAltLeft className="group-hover:-translate-x-1 transition" />
+              <FaLongArrowAltLeft className="transition group-hover:-translate-x-0.5" />
             ) : (
-              <FaLongArrowAltRight className="group-hover:translate-x-1 transition" />
+              <FaLongArrowAltRight className="transition group-hover:translate-x-0.5" />
             )}
           </Link>
         )}
