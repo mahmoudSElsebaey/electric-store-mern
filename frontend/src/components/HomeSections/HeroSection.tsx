@@ -39,7 +39,7 @@ export default function HeroSection() {
         pagination={{ clickable: true }}
         navigation
         dir={isRTL ? "rtl" : "ltr"}
-        className="h-full"
+        className="h-full hero-swiper"
       >
         {heroSlides.map((slide) => (
           <SwiperSlide key={slide.id}>
@@ -47,11 +47,11 @@ export default function HeroSection() {
               <img
                 src={slide.image}
                 alt={t(`home_sections.hero.${slide.key}.title`)}
-                className="w-full h-full object-cover brightness-75"
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary/40 to-black/30" />
 
               <div className="absolute inset-0 flex items-center justify-center text-center text-white px-4 sm:px-8">
                 <div className="max-w-4xl w-full">
@@ -59,13 +59,13 @@ export default function HeroSection() {
                     {t(`home_sections.hero.${slide.key}.title`)}
                   </h1>
 
-                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-10 drop-shadow-xl">
+                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-10 text-white/90 drop-shadow-xl">
                     {t(`home_sections.hero.${slide.key}.subtitle`)}
                   </p>
 
                   <Link
                     to="/store"
-                    className="inline-block bg-amber-400 hover:bg-amber-300 text-black font-bold px-8 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 rounded-full text-lg sm:text-xl md:text-2xl transition transform hover:scale-105 shadow-2xl"
+                    className="inline-block bg-accent hover:bg-accent-dark text-primary-dark font-bold px-8 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 rounded-full text-lg sm:text-xl md:text-2xl transition transform hover:scale-105 shadow-2xl"
                   >
                     {t(`home_sections.hero.${slide.key}.btn`)}
                   </Link>

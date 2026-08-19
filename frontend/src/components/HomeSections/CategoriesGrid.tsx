@@ -11,9 +11,32 @@ type Category = {
   image?: string;
 };
 
+const CATEGORY_EN: Record<string, string> = {
+  "غسالات": "Washing Machines",
+  "ثلاجات": "Refrigerators",
+  "تكييفات": "Air Conditioners",
+  "خلاطات": "Blenders",
+  "مكانس": "Vacuum Cleaners",
+  "مكاوي": "Irons",
+  "أجهزة مطبخ": "Kitchen Appliances",
+  "تلفزيونات": "TVs",
+  "سخانات مياه": "Water Heaters",
+  "مراوح": "Fans",
+};
+
+const CATEGORY_DESC_EN: Record<string, string> = {
+  "غسالات": "Automatic, semi-automatic & front-load washers",
+  "ثلاجات": "No-frost fridges, freezers & side-by-side",
+  "تكييفات": "Split, window & energy-saving inverter ACs",
+  "خلاطات": "Blenders, food processors & multi-use",
+  "مكانس": "Upright, robot & handheld vacuums",
+  "مكاوي": "Steam irons – vertical & horizontal",
+};
+
 export default function CategoriesGrid() {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
+  const isEn = i18n.language === "en";
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,21 +55,27 @@ export default function CategoriesGrid() {
     fetchCategories();
   }, []);
 
+  const displayName = (name: string) =>
+    isEn ? CATEGORY_EN[name] || name : name;
+
+  const displayDesc = (name: string, desc?: string) =>
+    isEn ? CATEGORY_DESC_EN[name] || desc : desc;
+
   if (loading) {
     return (
       <div className="py-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 max-w-7xl mx-auto px-6">
         {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="h-44 rounded-2xl bg-primary-soft/40 animate-pulse"
-          />
+          <div key={i} className="h-44 rounded-2xl bg-primary-soft/40 animate-pulse" />
         ))}
       </div>
     );
   }
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-b from-white to-primary-soft/30" dir={isRTL ? "rtl" : "ltr"}>
+    <section
+      className="py-12 md:py-16 bg-gradient-to-b from-white to-primary-soft/30"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
           {categories.map((category) => (
@@ -61,12 +90,11 @@ export default function CategoriesGrid() {
                     category.image ||
                     "https://via.placeholder.com/400x300?text=Category"
                   }
-                  alt={category.name}
+                  alt={displayName(category.name)}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/70 via-primary/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-
                 <div className="absolute top-3 end-3 w-8 h-8 rounded-full bg-accent text-primary-dark flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
                   {isRTL ? (
                     <FaArrowLeft className="text-xs" />
@@ -78,11 +106,11 @@ export default function CategoriesGrid() {
 
               <div className="p-3 sm:p-4 text-center">
                 <h3 className="text-sm sm:text-base font-bold text-ink group-hover:text-primary transition-colors line-clamp-1">
-                  {category.name}
+                  {displayName(category.name)}
                 </h3>
                 {category.description && (
                   <p className="mt-1 text-xs text-muted line-clamp-2 hidden sm:block">
-                    {category.description}
+                    {displayDesc(category.name, category.description)}
                   </p>
                 )}
               </div>

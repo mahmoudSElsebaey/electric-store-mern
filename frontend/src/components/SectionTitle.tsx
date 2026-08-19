@@ -65,7 +65,7 @@ export default function SectionTitle({ title, link, icon }: SectionTitleProps) {
             to={link}
             className="group flex items-center gap-2 text-sm md:text-[16px] font-bold text-primary hover:text-primary-dark transition transform hover:scale-105"
           >
-            {t("home.view_all", { defaultValue: "عرض الكل" })}
+            {t("common.view_all")}
             {isRTL ? (
               <FaLongArrowAltLeft className="group-hover:-translate-x-1 transition" />
             ) : (
