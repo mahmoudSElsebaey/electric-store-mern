@@ -1,14 +1,8 @@
 @import "tailwindcss";
 
 /*
-  ═══════════════════════════════════════════
   DESIGN TOKENS – غيّر اللون الأساسي من هنا فقط
-  ═══════════════════════════════════════════
-  أمثلة الاستخدام:
-    bg-primary   text-primary   border-primary
-    bg-primary-dark   hover:bg-primary-dark
-    bg-accent    text-accent    border-accent
-    bg-surface   text-ink
+  bg-primary / text-primary / bg-accent / bg-surface / text-ink
 */
 
 @theme {
