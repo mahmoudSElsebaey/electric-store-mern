@@ -121,9 +121,9 @@ export default function Navbar() {
           onClick={() => handleNavClick("/")}
           className="flex items-center gap-2.5 hover:opacity-90 transition cursor-pointer"
         >
-          <img src="/logo.svg" alt="Volt Logo" className="w-9 h-9 md:w-10 md:h-10" />
+          <img src="/logo.svg" alt="Volt Store Logo" className="w-9 h-9 md:w-10 md:h-10" />
           <h1 className="hidden sm:block text-lg md:text-xl font-extrabold tracking-wide">
-            {i18n.language === "ar" ? "فولت" : "Volt"}
+            {i18n.language === "ar" ? "فولت ستور" : "Volt Store"}
           </h1>
         </button>
 
