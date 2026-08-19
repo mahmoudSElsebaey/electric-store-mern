@@ -29,7 +29,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <h3 className="text-3xl font-bold mb-6 flex items-center gap-3">
               <span className="text-accent text-4xl">⚡</span>
-              {t("footer.store_name")}
+              {t("footer.store_name", { defaultValue: "فولت ستور" })}
             </h3>
             <p className="text-white/80 leading-relaxed mb-6">
               {t("footer.description")}
@@ -95,7 +95,7 @@ export default function Footer() {
                   <FaEnvelope className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-medium">support@electrostore.eg</p>
+                  <p className="font-medium">support@voltstore.eg</p>
                   <p className="text-sm text-white/60">{t("footer.support_email")}</p>
                 </div>
               </li>
@@ -144,13 +144,17 @@ export default function Footer() {
               !isRTL && "md:flex-row-reverse"
             }`}
           >
-            <p>{t("footer.copyright")}</p>
+            <p>{t("footer.copyright", { defaultValue: "© 2025 فولت ستور - جميع الحقوق محفوظة" })}</p>
             <div className="flex gap-8 text-sm">
               <Link to="/privacy" className="hover:text-accent transition">{t("footer.privacy")}</Link>
               <Link to="/terms" className="hover:text-accent transition">{t("footer.terms")}</Link>
               <Link to="/returns" className="hover:text-accent transition">{t("footer.returns")}</Link>
             </div>
-            <p className="text-sm">{t("footer.developed_by")}</p>
+            <p className="text-sm">
+              {t("footer.developed_by", {
+                defaultValue: "تم تصميم وتطوير الموقع بالكامل بواسطة محمود السباعي ⚡",
+              })}
+            </p>
           </div>
         </div>
       </div>
