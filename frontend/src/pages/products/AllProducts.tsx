@@ -118,47 +118,17 @@ export default function Store() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl shadow-sm border border-primary/10 p-4 sm:p-6 mb-6 sm:mb-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-              <input
-                type="text"
-                placeholder={t("store.filters.search")}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
-              />
-              <select
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
-              >
+              <input type="text" placeholder={t("store.filters.search")} value={search} onChange={(e) => setSearch(e.target.value)} className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition" />
+              <select value={brand} onChange={(e) => setBrand(e.target.value)} className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition">
                 <option value="">{t("store.filters.all_brands")}</option>
-                {brands.map((b) => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
+                {brands.map((b) => (<option key={b} value={b}>{b}</option>))}
               </select>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
-              >
+              <select value={category} onChange={(e) => setCategory(e.target.value)} className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition">
                 <option value="">{t("store.filters.all_categories")}</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
+                {categories.map((c) => (<option key={c} value={c}>{c}</option>))}
               </select>
-              <input
-                type="number"
-                placeholder={t("store.filters.price_from")}
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
-              />
-              <input
-                type="number"
-                placeholder={t("store.filters.price_to")}
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition"
-              />
+              <input type="number" placeholder={t("store.filters.price_from")} value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition" />
+              <input type="number" placeholder={t("store.filters.price_to")} value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="px-4 py-3 rounded-xl border border-gray-300 text-sm sm:text-base focus:ring-2 focus:ring-primary-light focus:border-primary transition" />
             </div>
             <p className="mt-4 text-sm text-muted text-center sm:text-start">
               {t("store.filters.showing", {
@@ -178,7 +148,7 @@ export default function Store() {
             <div className="text-center py-20 text-muted">{t("store.no_products")}</div>
           ) : (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
                 {currentProducts.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
@@ -186,31 +156,15 @@ export default function Store() {
 
               {totalPages > 1 && (
                 <div className="flex flex-wrap justify-center items-center mt-10 gap-2">
-                  <button
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50 hover:bg-gray-300 transition text-sm"
-                  >
+                  <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50 hover:bg-gray-300 transition text-sm">
                     {t("store.previous")}
                   </button>
                   {[...Array(totalPages)].map((_, i) => (
-                    <button
-                      key={i + 1}
-                      onClick={() => paginate(i + 1)}
-                      className={`px-3.5 py-2 rounded-xl text-sm min-w-9 transition ${
-                        currentPage === i + 1
-                          ? "bg-primary text-white"
-                          : "bg-gray-200 hover:bg-gray-300"
-                      }`}
-                    >
+                    <button key={i + 1} onClick={() => paginate(i + 1)} className={`px-3.5 py-2 rounded-xl text-sm min-w-9 transition ${currentPage === i + 1 ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}>
                       {i + 1}
                     </button>
                   ))}
-                  <button
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50 hover:bg-gray-300 transition text-sm"
-                  >
+                  <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50 hover:bg-gray-300 transition text-sm">
                     {t("store.next")}
                   </button>
                 </div>

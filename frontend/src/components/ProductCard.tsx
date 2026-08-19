@@ -38,91 +38,84 @@ export default function ProductCard({ product }: { product: Product }) {
   const reviewCount = product.numReviews || 0;
 
   return (
-    <div
-      className="group relative h-full w-full"
-      dir={isRTL ? "rtl" : "ltr"}
-    >
-      <Link
-        to={`/product/${product._id}`}
-        className="block h-full w-full transition-transform duration-300 hover:scale-[1.02]"
-      >
-        <div className="relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 h-full flex flex-col">
-          <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="group relative h-full w-full" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-primary/10 h-full flex flex-col">
+        <Link to={`/product/${product._id}`} className="relative block">
+          <div className="relative aspect-[4/3] sm:aspect-square overflow-hidden bg-primary-soft/30">
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-contain p-3 sm:p-4 transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
 
             {isOutOfStock && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <div className="bg-red-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl text-base sm:text-xl font-bold tracking-wide shadow-xl">
+              <div className="absolute inset-0 bg-black/55 flex items-center justify-center">
+                <span className="bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
                   {t("store.out_of_stock")}
-                </div>
+                </span>
               </div>
             )}
 
-            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/95 backdrop-blur-sm border border-amber-400 text-amber-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base font-bold shadow-md">
+            <div className="absolute top-3 start-3 bg-primary text-white px-3 py-1.5 rounded-lg text-sm font-extrabold shadow-md tabular-nums">
               {formatPrice(product.price, lang)}
             </div>
           </div>
+        </Link>
 
-          <div className="p-4 sm:p-5 flex-1 flex flex-col">
-            <div className="self-end -mt-10 -mr-2 sm:-mt-12 sm:-mr-3 z-10">
-              <WishlistButton productId={product._id} size="md" />
-            </div>
+        <div className="absolute top-3 end-3 z-10">
+          <WishlistButton productId={product._id} size="md" />
+        </div>
 
-            <div className="space-y-2.5 sm:space-y-3 flex-1">
-              <div
-                className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500"
-                dir="ltr"
-              >
-                <span className="font-medium bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">
-                  {product.brand?.name}
-                </span>
-                <span className="text-gray-600">
-                  {product.category?.name}
-                </span>
-              </div>
-
-              <h3 className="font-bold text-base sm:text-lg h-6 text-gray-900 line-clamp-2 leading-tight group-hover:text-teal-700 transition-colors">
-                {product.name}
-              </h3>
-
-              <div className="flex items-center gap-2">
-                <StarRating
-                  rating={reviewCount > 0 ? displayRating : 0}
-                  size="sm"
-                />
-                <span className="text-xs sm:text-sm text-gray-600 font-medium">
-                  {reviewCount > 0
-                    ? t("store.reviews_count", { count: reviewCount })
-                    : t("store.no_reviews")}
-                </span>
-              </div>
-
-              <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                {product.description || t("product_detail.no_description")}
-              </p>
-            </div>
+        <div className="p-4 flex-1 flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {product.brand?.name && (
+              <span className="font-medium bg-primary-soft text-primary-dark px-2.5 py-0.5 rounded-full">
+                {product.brand.name}
+              </span>
+            )}
+            {product.category?.name && (
+              <span className="text-muted">{product.category.name}</span>
+            )}
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
+          <Link to={`/product/${product._id}`}>
+            <h3 className="font-bold text-base sm:text-lg text-ink line-clamp-2 leading-snug group-hover:text-primary transition-colors min-h-[2.5rem]">
+              {product.name}
+            </h3>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <StarRating rating={reviewCount > 0 ? displayRating : 0} size="sm" />
+            <span className="text-xs text-muted">
+              {reviewCount > 0
+                ? t("store.reviews_count", { count: reviewCount })
+                : t("store.no_reviews")}
+            </span>
+          </div>
+
+          <p className="text-xs sm:text-sm text-muted line-clamp-2 flex-1">
+            {product.description || t("product_detail.no_description")}
+          </p>
+
+          <div className="flex items-center justify-between gap-3 pt-2 border-t border-primary/10 mt-auto">
+            <span className="text-lg sm:text-xl font-extrabold text-primary tabular-nums">
+              {formatPrice(product.price, lang)}
+            </span>
             <button
               onClick={addToCart}
               disabled={isOutOfStock}
-              className={`w-full py-3 sm:py-4 font-semibold text-sm sm:text-base transition-all duration-300 cursor-pointer shadow-xl ${
+              className={`shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition ${
                 isOutOfStock
-                  ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                  : "bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800"
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-primary hover:bg-primary-dark text-white shadow-sm"
               }`}
             >
               {isOutOfStock ? t("store.out_of_stock") : t("store.add_to_cart")}
             </button>
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 }
