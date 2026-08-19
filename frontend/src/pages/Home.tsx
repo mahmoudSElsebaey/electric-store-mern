@@ -3,12 +3,13 @@ import CategoriesGrid from "../components/HomeSections/CategoriesGrid";
 import FeaturedProducts from "../components/HomeSections/FeaturedProducts";
 import BrandsCarousel from "../components/HomeSections/BrandsCarousel";
 import SpecialOffersBanner from "../components/HomeSections/SpecialOffersBanner";
+import WhyChooseUs from "../components/HomeSections/WhyChooseUs";
 import Footer from "../components/Footer";
 import SectionTitle from "../components/SectionTitle";
-import { useTranslation } from "react-i18next"; // ← جديد
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
-  const { t } = useTranslation(); // ← جديد
+  const { t } = useTranslation();
 
   return (
     <>
@@ -27,6 +28,8 @@ export default function Home() {
         icon="tools"
       />
       <CategoriesGrid />
+
+      <WhyChooseUs />
 
       <SpecialOffersBanner />
 
