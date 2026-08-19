@@ -57,7 +57,7 @@ export default function ProductCard({ product }: { product: Product }) {
               </div>
             )}
 
-            <div className="absolute top-3 start-3 bg-primary text-white px-3 py-1.5 rounded-lg text-sm font-extrabold shadow-md tabular-nums">
+            <div className="absolute top-3 start-3 bg-primary/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-extrabold shadow-md tabular-nums ring-2 ring-white/40">
               {formatPrice(product.price, lang)}
             </div>
           </div>
@@ -98,14 +98,11 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.description || t("product_detail.no_description")}
           </p>
 
-          <div className="flex items-center justify-between gap-3 pt-2 border-t border-primary/10 mt-auto">
-            <span className="text-lg sm:text-xl font-extrabold text-primary tabular-nums">
-              {formatPrice(product.price, lang)}
-            </span>
+          <div className="pt-2 border-t border-primary/10 mt-auto">
             <button
               onClick={addToCart}
               disabled={isOutOfStock}
-              className={`shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition ${
+              className={`w-full py-2.5 rounded-xl text-sm font-bold transition ${
                 isOutOfStock
                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                   : "bg-primary hover:bg-primary-dark text-white shadow-sm"
