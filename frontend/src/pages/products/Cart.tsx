@@ -1,12 +1,21 @@
 import { useStore } from "../../context/StoreContext";
 import { useToast } from "../../context/ToastContext";
 import { Link, useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaCreditCard, FaShieldAlt } from "react-icons/fa";
-import { GoZap } from "react-icons/go";
-import { FaTruckFast } from "react-icons/fa6";
+import {
+  FaShoppingCart,
+  FaTrash,
+  FaMinus,
+  FaPlus,
+  FaArrowLeft,
+  FaArrowRight,
+  FaShieldAlt,
+  FaTruck,
+} from "react-icons/fa";
 import Footer from "../../components/Footer";
 import { useTranslation } from "react-i18next";
 import { formatPrice } from "../../utils/formatPrice";
+
+const DELIVERY_FEE = 50;
 
 export default function Cart() {
   const { t, i18n } = useTranslation();
@@ -18,11 +27,11 @@ export default function Cart() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const totalPrice =
-    cart.reduce(
-      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
-      0
-    ) + 50;
+  const subtotal = cart.reduce(
+    (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+    0
+  );
+  const totalPrice = subtotal + (cart.length > 0 ? DELIVERY_FEE : 0);
 
   const removeFromCart = (id: string) =>
     dispatch({ type: "REMOVE_FROM_CART", payload: id });
@@ -30,10 +39,7 @@ export default function Cart() {
   const increaseQuantity = (id: string) => {
     const item = cart.find((i) => i._id === id);
     if (item && (item.quantity || 1) >= item.countInStock) {
-      showToast(
-        t("cart.out_of_stock_qty", { stock: item.countInStock }),
-        "error"
-      );
+      showToast(t("cart.out_of_stock_qty", { stock: item.countInStock }), "error");
       return;
     }
     dispatch({ type: "INCREASE_QTY", payload: id });
@@ -52,15 +58,13 @@ export default function Cart() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-20">
-        <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6">
-            {t("cart.login_required")}
-          </h2>
-          <Link
-            to="/login"
-            className="inline-block bg-teal-600 hover:bg-teal-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-xl text-lg sm:text-xl font-bold transition"
-          >
+      <div className="min-h-[60vh] flex items-center justify-center bg-surface px-4">
+        <div className="text-center max-w-md">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-primary">
+            <FaShoppingCart className="text-2xl" />
+          </div>
+          <h2 className="text-2xl font-bold text-ink mb-3">{t("cart.login_required")}</h2>
+          <Link to="/login" className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-3 font-bold text-white hover:bg-primary-dark transition">
             {t("cart.login_now")}
           </Link>
         </div>
@@ -70,128 +74,121 @@ export default function Cart() {
 
   return (
     <>
-      <section
-        className="relative bg-gradient-to-br from-teal-900 via-teal-800 to-slate-900 text-white py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden"
-        dir={isRTL ? "rtl" : "ltr"}
-      >
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight flex items-center justify-center gap-4 sm:gap-6">
-            <FaShoppingCart className="text-5xl sm:text-6xl md:text-8xl" />
-            {t("cart.hero_title")}
-          </h1>
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12">
-            {t("cart.hero_subtitle")}
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 text-base sm:text-lg md:text-xl">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <GoZap className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
-              <span>{t("cart.secure_payment")}</span>
+      <section className="bg-gradient-to-r from-primary-dark via-primary to-slate-900 text-white" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+              <FaShoppingCart className="text-xl" />
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaTruckFast className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
-              <span>{t("cart.fast_delivery")}</span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaShieldAlt className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
-              <span>{t("cart.genuine_warranty")}</span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <FaCreditCard className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
-              <span>{t("cart.installments")}</span>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold">
+                {t("cart.title", { defaultValue: "سلة التسوق" })}
+              </h1>
+              <p className="text-white/70 text-sm sm:text-base mt-1">
+                {cart.length === 0
+                  ? t("cart.empty")
+                  : t("cart.items_count", { count: cart.length, defaultValue: `${cart.length} منتجات` })}
+              </p>
             </div>
           </div>
         </div>
-
-        <div className="absolute -bottom-1 left-0 right-0">
-          <svg viewBox="0 0 1440 120" className="w-full">
-            <path fill="#f9fafb" d="M0,0 C300,100 600,0 1440,80 L1440,120 L0,120 Z"></path>
-          </svg>
-        </div>
       </section>
 
-      <div className="min-h-screen bg-gray-50 py-12 sm:py-16 md:py-20" dir={isRTL ? "rtl" : "ltr"}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-surface min-h-[50vh] py-8 sm:py-12" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {cart.length === 0 ? (
-            <div className="text-center py-20 sm:py-32">
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6">{t("cart.empty")}</h1>
-              <p className="text-lg sm:text-xl text-gray-600 mb-8">{t("cart.empty_desc")}</p>
-              <Link
-                to="/store"
-                className="inline-block bg-teal-600 hover:bg-teal-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-xl text-lg sm:text-xl font-bold transition transform hover:scale-105"
-              >
-                {t("cart.go_shopping")}
+            <div className="rounded-2xl bg-white border border-primary/10 shadow-sm p-10 sm:p-16 text-center">
+              <FaShoppingCart className="mx-auto text-4xl text-muted mb-4" />
+              <h2 className="text-xl font-bold text-ink mb-2">{t("cart.empty")}</h2>
+              <Link to="/store" className="inline-flex items-center gap-2 mt-4 rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition">
+                {t("cart.continue_shopping")}
+                {isRTL ? <FaArrowLeft /> : <FaArrowRight />}
               </Link>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 lg:p-10">
-              <div className="space-y-6 sm:space-y-8">
-                {cart.map((item) => (
-                  <div key={item._id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 py-6 border-b last:border-0">
-                    <img src={item.image} alt={item.name} className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-xl" />
-                    <div className="flex-1">
-                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{item.name}</h3>
-                      <p className="text-sm sm:text-base text-gray-600 mt-1">
-                        {typeof item.brand === "string" ? item.brand : item.brand?.name}
-                      </p>
-                      <p className="text-sm sm:text-base text-gray-600">
-                        {typeof item.category === "string" ? item.category : item.category?.name}
-                      </p>
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mt-4 sm:mt-0">
-                      <div className="flex items-center gap-3 text-lg">
-                        <button onClick={() => decreaseQuantity(item._id)} className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition">-</button>
-                        <span className="text-xl sm:text-2xl font-bold w-10 sm:w-12 text-center">{item.quantity || 1}</span>
-                        <button
-                          onClick={() => increaseQuantity(item._id)}
-                          disabled={(item.quantity || 1) >= item.countInStock}
-                          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ${
-                            (item.quantity || 1) >= item.countInStock
-                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                              : "bg-gray-200 hover:bg-gray-300"
-                          }`}
-                        >+</button>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+              <div className="lg:col-span-2 space-y-4">
+                {cart.map((item) => {
+                  const lineTotal = (item.price || 0) * (item.quantity || 1);
+                  return (
+                    <div key={item._id} className="flex flex-col sm:flex-row gap-4 rounded-2xl bg-white border border-primary/10 p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+                      <Link to={`/product/${item._id}`} className="shrink-0">
+                        <img src={item.image} alt={item.name} className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl object-cover bg-primary-soft/40" />
+                      </Link>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <Link to={`/product/${item._id}`} className="font-bold text-ink hover:text-primary line-clamp-2 text-base sm:text-lg">
+                              {item.name}
+                            </Link>
+                            <p className="text-sm text-muted mt-1">
+                              {formatPrice(item.price || 0, lang)}
+                              <span className="mx-1">×</span>
+                              {item.quantity || 1}
+                            </p>
+                          </div>
+                          <button onClick={() => removeFromCart(item._id)} className="shrink-0 rounded-lg p-2 text-red-500 hover:bg-red-50 transition" aria-label={t("cart.remove")}>
+                            <FaTrash />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="inline-flex items-center rounded-xl border border-gray-200 bg-surface overflow-hidden">
+                            <button onClick={() => decreaseQuantity(item._id)} className="h-9 w-9 flex items-center justify-center hover:bg-primary-soft text-ink transition">
+                              <FaMinus className="text-xs" />
+                            </button>
+                            <span className="w-10 text-center font-bold text-sm">{item.quantity || 1}</span>
+                            <button onClick={() => increaseQuantity(item._id)} disabled={(item.quantity || 1) >= item.countInStock} className="h-9 w-9 flex items-center justify-center hover:bg-primary-soft text-ink transition disabled:opacity-40">
+                              <FaPlus className="text-xs" />
+                            </button>
+                          </div>
+                          <div className="text-end">
+                            <p className="text-xs text-muted">{t("cart.line_total", { defaultValue: "الإجمالي" })}</p>
+                            <p className="text-lg sm:text-xl font-extrabold text-primary tabular-nums">{formatPrice(lineTotal, lang)}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold text-teal-600 whitespace-nowrap">
-                        {formatPrice((item.price || 0) * (item.quantity || 1), lang)}
-                      </div>
                     </div>
-                    <button
-                      onClick={() => removeFromCart(item._id)}
-                      className="bg-red-600 px-4 sm:px-4 py-2 cursor-pointer rounded-lg hover:bg-red-700 text-white text-lg sm:text-xl font-medium mt-4 sm:mt-0"
-                    >
-                      {t("cart.remove")}
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
-                <div className="flex flex-col md:flex-row justify-between items-center sm:items-start gap-6 sm:gap-0">
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">
-                    {t("cart.total_with_delivery")}:
-                    <span className="text-teal-600 mr-3">{formatPrice(totalPrice, lang)}</span>
+              <div className="lg:col-span-1">
+                <div className="sticky top-24 rounded-2xl bg-white border border-primary/10 shadow-sm p-5 sm:p-6 space-y-5">
+                  <h3 className="text-lg font-extrabold text-ink">{t("cart.summary", { defaultValue: "ملخص الطلب" })}</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between text-muted">
+                      <span>{t("cart.subtotal", { defaultValue: "المجموع الفرعي" })}</span>
+                      <span className="font-semibold text-ink tabular-nums">{formatPrice(subtotal, lang)}</span>
+                    </div>
+                    <div className="flex justify-between text-muted">
+                      <span className="inline-flex items-center gap-1.5">
+                        <FaTruck className="text-primary" />
+                        {t("cart.delivery", { defaultValue: "التوصيل" })}
+                      </span>
+                      <span className="font-semibold text-ink tabular-nums">{formatPrice(DELIVERY_FEE, lang)}</span>
+                    </div>
+                    <div className="border-t border-primary/10 pt-3 flex justify-between items-baseline">
+                      <span className="font-bold text-ink">{t("cart.total", { defaultValue: "الإجمالي" })}</span>
+                      <span className="text-2xl font-extrabold text-primary tabular-nums">{formatPrice(totalPrice, lang)}</span>
+                    </div>
                   </div>
-                  <button
-                    onClick={goToCheckout}
-                    className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white text-xl sm:text-2xl px-10 sm:px-12 py-4 sm:py-5 my-5 md:my-0 cursor-pointer rounded-2xl font-bold transition transform hover:scale-105 shadow-xl"
-                  >
+                  <button onClick={goToCheckout} className="w-full rounded-xl bg-primary hover:bg-primary-dark text-white font-bold py-3.5 transition shadow-md">
                     {t("cart.checkout")}
                   </button>
-                </div>
-                <div className="text-center mt-8">
-                  <Link to="/store" className="text-lg sm:text-xl text-teal-600 hover:underline">
+                  <Link to="/store" className="flex items-center justify-center gap-2 text-sm font-semibold text-primary hover:underline">
+                    {isRTL ? <FaArrowRight className="text-xs" /> : <FaArrowLeft className="text-xs" />}
                     {t("cart.continue_shopping")}
                   </Link>
+                  <div className="flex items-center gap-2 rounded-xl bg-primary-soft/50 px-3 py-2.5 text-xs text-primary-dark">
+                    <FaShieldAlt className="shrink-0" />
+                    <span>{t("cart.secure", { defaultValue: "دفع آمن وتوصيل مضمون" })}</span>
+                  </div>
                 </div>
               </div>
             </div>
           )}
         </div>
       </div>
-
       <Footer />
     </>
   );
