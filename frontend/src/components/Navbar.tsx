@@ -19,6 +19,7 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import NavbarSearch from "./NavbarSearch";
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
@@ -106,9 +107,6 @@ export default function Navbar() {
       if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
         setLangDropdownOpen(false);
       }
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        // don't close when clicking hamburger - handled separately
-      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -119,18 +117,16 @@ export default function Navbar() {
   return (
     <nav className="bg-gradient-to-r from-primary-dark via-primary to-slate-900 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-        {/* Logo */}
         <button
           onClick={() => handleNavClick("/")}
           className="flex items-center gap-2.5 hover:opacity-90 transition cursor-pointer"
         >
-          <img src="/logo.svg" alt="Electrical Store Logo" className="w-9 h-9 md:w-10 md:h-10" />
+          <img src="/logo.svg" alt="Volt Logo" className="w-9 h-9 md:w-10 md:h-10" />
           <h1 className="hidden sm:block text-lg md:text-xl font-extrabold tracking-wide">
-            {i18n.language === "ar" ? "متجر الأجهزة الكهربائية" : "Electrical Store"}
+            {i18n.language === "ar" ? "فولت" : "Volt"}
           </h1>
         </button>
 
-        {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-8 text-md font-medium">
           {[
             { path: "/", icon: FaHome, label: t("navbar.home") },
@@ -150,9 +146,9 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right actions */}
         <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
-          {/* Cart — always visible */}
+          <NavbarSearch variant="desktop" />
+
           <button
             onClick={handleCartClick}
             className={`relative group cursor-pointer ${
@@ -168,7 +164,6 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* Wishlist — desktop only */}
           <button
             onClick={() => handleNavClick("/wishlist")}
             className={`hidden lg:block relative cursor-pointer ${
@@ -183,7 +178,6 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* User — desktop only */}
           {isAuthLoading ? (
             <div className="hidden lg:flex items-center gap-2 opacity-70">
               <div className="w-8 h-8 rounded-full bg-primary/50 animate-pulse" />
@@ -246,7 +240,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Language — desktop only */}
           <div
             className={`hidden lg:block relative ${
               isRTL ? "border-r border-white/20" : "border-l border-white/20"
@@ -275,7 +268,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Hamburger — mobile only */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden text-2xl p-1"
@@ -286,13 +278,14 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile drawer */}
       {mobileMenuOpen && (
         <div
           className="lg:hidden border-t border-white/10 bg-gradient-to-b from-primary-dark to-slate-900 shadow-2xl"
           ref={mobileMenuRef}
         >
           <div className={`flex flex-col gap-1 px-4 py-5 text-base font-medium ${isRTL ? "text-right" : "text-left"}`}>
+            <NavbarSearch variant="mobile" />
+
             {!isAuthLoading && isAuthenticated && user && (
               <div className="mb-3 flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
                 <div className="w-10 h-10 rounded-full bg-accent text-primary-dark flex items-center justify-center font-bold">
