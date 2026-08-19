@@ -9,132 +9,135 @@ const MyOrders: React.FC = () => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
   const isRTL = lang === "ar";
-
   const { orders, ordersLoading, ordersError } = useOrders();
 
-  const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { label: string; color: string }> = {
-      Pending: { label: t("my_orders.status_pending"), color: "yellow" },
-      Processing: { label: t("my_orders.status_processing"), color: "blue" },
-      Shipped: { label: t("my_orders.status_shipped"), color: "indigo" },
-      Delivered: { label: t("my_orders.status_delivered"), color: "green" },
-      Cancelled: { label: t("my_orders.status_cancelled"), color: "red" },
-    };
-
-    const { label, color } = statusMap[status] || {
-      label: status,
-      color: "gray",
-    };
-
-    return (
-      <span
-        className={`px-3 py-1 text-sm font-medium text-${color}-800 bg-${color}-200 rounded-full`}
-      >
-        {label}
-      </span>
-    );
+  const statusStyles: Record<string, string> = {
+    Pending: "bg-amber-100 text-amber-800",
+    Processing: "bg-sky-100 text-sky-800",
+    Shipped: "bg-indigo-100 text-indigo-800",
+    Delivered: "bg-green-100 text-green-800",
+    Cancelled: "bg-red-100 text-red-800",
   };
 
-  const getPaymentBadge = (isPaid: boolean) => {
-    return isPaid ? (
-      <span className="px-3 py-1 text-sm font-medium text-green-800 bg-green-200 rounded-full">
-        {t("my_orders.paid")}
-      </span>
-    ) : (
-      <span className="px-3 py-1 text-sm font-medium text-red-800 bg-red-200 rounded-full">
-        {t("my_orders.unpaid")}
-      </span>
-    );
+  const statusLabel = (status: string) => {
+    const map: Record<string, string> = {
+      Pending: t("my_orders.status_pending"),
+      Processing: t("my_orders.status_processing"),
+      Shipped: t("my_orders.status_shipped"),
+      Delivered: t("my_orders.status_delivered"),
+      Cancelled: t("my_orders.status_cancelled"),
+    };
+    return map[status] || status;
   };
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8" dir={isRTL ? "rtl" : "ltr"}>
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          {t("my_orders.title")}
-        </h2>
+      <div className="min-h-[60vh] bg-surface" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-ink mb-6 sm:mb-8 text-center">
+            {t("my_orders.title")}
+          </h2>
 
-        {/* Loading Spinner */}
-        {ordersLoading && (
-          <div className="flex justify-center my-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600"></div>
-          </div>
-        )}
+          {ordersLoading && (
+            <div className="flex justify-center my-16">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary" />
+            </div>
+          )}
 
-        {/* Error Message */}
-        {ordersError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-8 text-center">
-            {ordersError}
-          </div>
-        )}
+          {ordersError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-center text-sm sm:text-base">
+              {ordersError}
+            </div>
+          )}
 
-        {/* No Orders */}
-        {!ordersLoading && !ordersError && orders.length === 0 && (
-          <div className="bg-blue-100 border border-blue-400 text-blue-700 px-6 py-8 rounded-lg text-center text-xl">
-            {t("my_orders.no_orders")}
-          </div>
-        )}
+          {!ordersLoading && !ordersError && orders.length === 0 && (
+            <div className="rounded-2xl border border-primary/15 bg-primary-soft/30 px-6 py-12 text-center">
+              <p className="text-lg text-primary-dark font-semibold mb-4">
+                {t("my_orders.no_orders", { defaultValue: "لا توجد طلبات بعد" })}
+              </p>
+              <Link to="/store" className="inline-flex rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary-dark transition">
+                {t("my_orders.shop_now", { defaultValue: "تسوق الآن" })}
+              </Link>
+            </div>
+          )}
 
-        {/* Orders Table */}
-        {!ordersLoading && !ordersError && orders.length > 0 && (
-          <div className="overflow-x-auto shadow-lg rounded-xl border border-gray-200">
-            <table className="w-full bg-white">
-              <thead className="bg-gray-900 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-sm font-semibold">
-                    {t("my_orders.order_id")}
-                  </th>
-                  <th className="px-6 py-4 text-sm font-semibold">
-                    {t("my_orders.date")}
-                  </th>
-                  <th className="px-6 py-4 text-sm font-semibold">
-                    {t("my_orders.total")}
-                  </th>
-                  <th className="px-6 py-4 text-sm font-semibold">
-                    {t("my_orders.payment")}
-                  </th>
-                  <th className="px-6 py-4 text-sm font-semibold">
-                    {t("my_orders.status")}
-                  </th>
-                  <th className="px-6 py-4 text-sm font-semibold">
-                    {t("my_orders.actions")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
+          {!ordersLoading && !ordersError && orders.length > 0 && (
+            <>
+              <div className="hidden md:block overflow-x-auto rounded-2xl border border-primary/10 bg-white shadow-sm">
+                <table className="w-full min-w-[700px]">
+                  <thead className="bg-primary-dark text-white">
+                    <tr>
+                      <th className="px-4 py-3 text-sm font-semibold text-start">{t("my_orders.order_id")}</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-start">{t("my_orders.date")}</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-start">{t("my_orders.total")}</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-start">{t("my_orders.payment")}</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-start">{t("my_orders.status")}</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-center">{t("my_orders.actions")}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {orders.map((order) => (
+                      <tr key={order._id} className="hover:bg-primary-soft/30 transition">
+                        <td className="px-4 py-3 text-sm font-medium">#{order._id.slice(-8)}</td>
+                        <td className="px-4 py-3 text-sm text-muted">
+                          {new Date(order.createdAt).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-bold text-primary tabular-nums">
+                          {formatPrice(order.totalPrice, lang)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${order.isPaid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                            {order.isPaid ? t("my_orders.paid") : t("my_orders.unpaid")}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${statusStyles[order.status] || "bg-gray-100 text-gray-800"}`}>
+                            {statusLabel(order.status)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <Link to={`/order/${order._id}`} className="inline-block px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition">
+                            {t("my_orders.view", { defaultValue: t("my_orders.view_details") })}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="md:hidden space-y-4">
                 {orders.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      #{order._id.substring(order._id.length - 8)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {new Date(order.createdAt).toLocaleDateString(
-                        lang === "ar" ? "ar-EG" : "en-US"
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                      {formatPrice(order.totalPrice, lang)}
-                    </td>
-                    <td className="px-6 py-4">
-                      {getPaymentBadge(order.isPaid)}
-                    </td>
-                    <td className="px-6 py-4">
-                      {getStatusBadge(order.status)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link
-                        to={`/order/${order._id}`}
-                        className="inline-block px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition"
-                      >
-                        {t("my_orders.view_details")}
+                  <div key={order._id} className="rounded-2xl border border-primary/10 bg-white p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <p className="font-bold text-ink">#{order._id.slice(-8)}</p>
+                        <p className="text-xs text-muted mt-0.5">
+                          {new Date(order.createdAt).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}
+                        </p>
+                      </div>
+                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full shrink-0 ${statusStyles[order.status] || "bg-gray-100 text-gray-800"}`}>
+                        {statusLabel(order.status)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm mb-4">
+                      <span className="text-muted">{t("my_orders.total")}</span>
+                      <span className="font-extrabold text-primary tabular-nums">{formatPrice(order.totalPrice, lang)}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${order.isPaid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                        {order.isPaid ? t("my_orders.paid") : t("my_orders.unpaid")}
+                      </span>
+                      <Link to={`/order/${order._id}`} className="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-primary-dark rounded-lg transition">
+                        {t("my_orders.view", { defaultValue: t("my_orders.view_details") })}
                       </Link>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
       <Footer />
     </>
