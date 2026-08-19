@@ -48,7 +48,6 @@ export const getProductById = async (req, res) => {
 //________________________________________ Create Product  ________________________________________
 export const createProduct = async (req, res) => {
   try {
-    // الحماية: Owner أو Admin فقط
     if (!req.user || !["admin", "owner"].includes(req.user.role)) {
       return res
         .status(403)
@@ -62,7 +61,6 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ message: "جميع الحقول مطلوبة" });
     }
 
-    // التحقق من وجود الـ brand و category
     const [foundBrand, foundCategory] = await Promise.all([
       Brand.findById(brand),
       Category.findById(category),
@@ -129,7 +127,6 @@ export const updateProduct = async (req, res) => {
       countInStock: parseInt(countInStock, 10),
     };
 
-    // تحديث brand و category لو موجودين
     if (brand) {
       const foundBrand = await Brand.findById(brand);
       if (!foundBrand)
@@ -144,7 +141,6 @@ export const updateProduct = async (req, res) => {
       updates.category = foundCategory._id;
     }
 
-    // رفع صورة جديدة لو موجودة
     if (req.file) {
       const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -212,18 +208,21 @@ export const addReview = async (req, res) => {
         .json({ message: "التقييم يجب أن يكون بين 1 و 5 نجوم" });
     }
 
-    // التحقق من إن المستخدم اشترى المنتج (طلب مكتمل أو تم تسليمه)
+    // يسمح بالتقييم بعد شراء المنتج (طلب مدفوع وغير ملغي)
     const hasPurchased = await Order.findOne({
       user: req.user._id,
       "orderItems.product": productId,
-      status: { $in: ["Delivered"] }, // أو "Processing" لو عايز تسمح قبل التسليم
+      isPaid: true,
+      status: { $nin: ["Cancelled"] },
     });
 
     if (!hasPurchased) {
-      return res.status(403).json({ message: "يجب شراء المنتج أولاً لتقييمه" });
+      return res.status(403).json({
+        message:
+          "يجب شراء المنتج أولاً لتقييمه (بعد إتمام الدفع من الطلبات)",
+      });
     }
 
-    // التحقق من إن المستخدم ما قيّمش قبل كده (بسبب الـ unique index)
     const existingReview = await Review.findOne({
       user: req.user._id,
       product: productId,
@@ -241,7 +240,6 @@ export const addReview = async (req, res) => {
       name: req.user.name,
     });
 
-    // إضافة الـ review للـ product
     await Product.findByIdAndUpdate(productId, {
       $push: { reviews: review._id },
     });
@@ -266,7 +264,6 @@ export const deleteReview = async (req, res) => {
       return res.status(404).json({ message: "التقييم غير موجود" });
     }
 
-    // حذف الـ review من الـ product
     await Product.findByIdAndUpdate(productId, {
       $pull: { reviews: review._id },
     });
