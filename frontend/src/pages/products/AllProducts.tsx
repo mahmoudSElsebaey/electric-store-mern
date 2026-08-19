@@ -8,6 +8,7 @@ import { FaShieldAlt, FaTags, FaHeadphones } from "react-icons/fa";
 import { GoZap } from "react-icons/go";
 import { FaTruckFast } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 
 type Product = {
   _id: string;
@@ -27,17 +28,23 @@ const PRODUCTS_PER_PAGE = 12;
 export default function Store() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
+  const [searchParams] = useSearchParams();
+  const urlSearch = searchParams.get("search") || "";
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filtered, setFiltered] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(urlSearch);
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+
+  useEffect(() => {
+    if (urlSearch) setSearch(urlSearch);
+  }, [urlSearch]);
 
   useEffect(() => {
     api
