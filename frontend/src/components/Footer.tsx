@@ -11,6 +11,20 @@ import {
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
+function BrandName({ name, className = "" }: { name: string; className?: string }) {
+  return (
+    <span className={className}>
+      {name.split(" ").map((word, i) => (
+        <span key={i}>
+          {i > 0 ? " " : null}
+          <span className="text-accent">{word.charAt(0)}</span>
+          {word.slice(1)}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function Footer() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
@@ -29,7 +43,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <h3 className="text-3xl font-bold mb-6 flex items-center gap-3">
               <span className="text-accent text-4xl">⚡</span>
-              {t("footer.store_name", { defaultValue: "فولت ستور" })}
+              <BrandName name={t("footer.store_name", { defaultValue: "فولت ستور" })} />
             </h3>
             <p className="text-white/80 leading-relaxed mb-6">
               {t("footer.description")}
