@@ -21,6 +21,20 @@ import {
 import { useTranslation } from "react-i18next";
 import NavbarSearch from "./NavbarSearch";
 
+function BrandName({ name, className = "" }: { name: string; className?: string }) {
+  return (
+    <span className={className}>
+      {name.split(" ").map((word, i) => (
+        <span key={i}>
+          {i > 0 ? " " : null}
+          <span className="text-accent">{word.charAt(0)}</span>
+          {word.slice(1)}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function Navbar() {
   const { t, i18n } = useTranslation();
   const { state, dispatch } = useStore();
@@ -123,7 +137,7 @@ export default function Navbar() {
         >
           <img src="/logo.svg" alt="Volt Store Logo" className="w-9 h-9 md:w-10 md:h-10" />
           <h1 className="hidden sm:block text-lg md:text-xl font-extrabold tracking-wide">
-            {i18n.language === "ar" ? "فولت ستور" : "Volt Store"}
+            <BrandName name={i18n.language === "ar" ? "فولت ستور" : "Volt Store"} />
           </h1>
         </button>
 
