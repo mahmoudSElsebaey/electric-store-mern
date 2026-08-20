@@ -185,7 +185,7 @@ export default function Navbar() {
         </button>
 
         {/* الروابط في الديسكتوب */}
-        <div className="hidden lg:flex itemss-center gap-8 text-md font-medium">
+        <div className="hidden lg:flex items-center gap-8 text-md font-medium">
           <button
             onClick={() => handleNavClick("/")}
             className={`flex items-center gap-2 transition cursor-pointer ${
