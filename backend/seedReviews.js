@@ -63,6 +63,7 @@ const run = async () => {
     reviewUsers.push(u);
   }
 
+  // امسح تقييمات الـ reviewers السابقين فقط
   const reviewerIds = reviewUsers.map((u) => u._id);
   const old = await Review.find({ user: { $in: reviewerIds } });
   const oldIds = old.map((r) => r._id);
@@ -73,7 +74,7 @@ const run = async () => {
 
   const reviewsToCreate = [];
   for (const product of products) {
-    const count = 5 + Math.floor(Math.random() * 8);
+    const count = 5 + Math.floor(Math.random() * 8); // 5-12
     const used = new Set();
     for (let i = 0; i < count; i++) {
       let u;

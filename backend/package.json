@@ -8,8 +8,8 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node seed.js",
-    "seed:reviews": "node seedReviews.js",
-    "build": "echo 'No build step needed for Express'"
+    "build": "echo 'No build step needed for Express'",
+    "seed:reviews": "node seedReviews.js"
   },
   "keywords": [],
   "author": "",
