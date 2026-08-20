@@ -92,8 +92,8 @@ export default function WhyChooseUs() {
             {t("home.why.title", {
               defaultValue:
                 lang === "ar"
-                  ? "لماذا تختار متجر الأجهزة الكهربائية؟"
-                  : "Why choose Electric Store?",
+                  ? "لماذا تختار فولت ستور؟"
+                  : "Why choose Volt Store?",
             })}
           </h2>
           <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-gradient-to-r from-primary to-accent" />
