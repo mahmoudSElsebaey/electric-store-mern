@@ -22,6 +22,8 @@ export default function Home() {
       />
       <FeaturedProducts />
 
+      <SpecialOffersBanner />
+
       <SectionTitle
         title={t("home.categories")}
         link="/store?category=all"
@@ -30,8 +32,6 @@ export default function Home() {
       <CategoriesGrid />
 
       <WhyChooseUs />
-
-      <SpecialOffersBanner />
 
       <SectionTitle
         title={t("home.favorite_brands")}
