@@ -1,6 +1,6 @@
-# ⚡ Electrical Store – Full MERN E-Commerce Platform
+# ⚡ Volt Store – Full MERN E-Commerce Platform
 
-A complete, production-ready e-commerce website for electrical and home appliances built with the **MERN Stack** (MongoDB, Express, React, Node.js) and TypeScript on the frontend.
+A complete, production-ready e-commerce website for home electrical appliances built with the **MERN Stack** (MongoDB, Express, React, Node.js) and TypeScript on the frontend.
 
 **Live Demo:** [https://electric-store-mern.vercel.app](https://electric-store-mern.vercel.app)
 
@@ -47,34 +47,6 @@ A complete, production-ready e-commerce website for electrical and home applianc
 
 ---
 
-## 📁 Project Structure
-
-```
-electric-store-mern/
-├── backend/
-│   ├── config/          # DB, Cloudinary, Stripe
-│   ├── src/
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   ├── modules/     # Auth, Products, Orders, Payment, etc.
-│   │   └── validation/
-│   ├── seed.js          # Sample products, categories & brands
-│   ├── createOwner.js   # Create the owner/admin account
-│   └── server.js
-└── frontend/
-    ├── public/
-    │   └── logo.svg
-    ├── src/
-    │   ├── components/
-    │   ├── context/
-    │   ├── pages/
-    │   ├── services/
-    │   └── locales/     # ar / en translations
-    └── ...
-```
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -85,91 +57,33 @@ electric-store-mern/
 
 ```bash
 cd backend
-cp .env.example .env          # Fill in your environment variables
+cp .env.example .env
 npm install
-node createOwner.js           # Create the owner account (run once)
-npm run seed                  # (Optional) Seed products, categories & brands
+node createOwner.js
+npm run seed
+npm run seed:reviews   # optional random product reviews
 npm run dev
 ```
-
-Server runs at `http://localhost:5000`
 
 ### 2. Frontend Setup
 
 ```bash
 cd frontend
-cp .env.example .env          # Set VITE_API_URL and other keys
+cp .env.example .env
 npm install
 npm run dev
 ```
-
-App runs at `http://localhost:5173`
-
----
-
-## 🔐 Demo / Dummy Accounts
-
-After running `node createOwner.js` you will have:
-
-| Role   | Email              | Password   |
-|--------|--------------------|------------|
-| Owner  | `owner@gmail.com`  | `owner123` |
-
-> **Note:** Regular user accounts can be created via the Register page.  
-> The seed script (`npm run seed`) populates categories, brands and products only.
-
-### Recommended Testing Flow
-1. Login as **Owner** → access Admin Dashboard
-2. Create a regular user account from the Register page
-3. Browse products, add to cart/wishlist, place an order
-4. Switch back to Owner to manage the order
 
 ---
 
 ## 🎨 Design System
 
-| Role            | Color       | Hex       |
-|-----------------|-------------|-----------|
-| Primary         | Teal        | `#0F766E` |
-| Primary Dark    | Deep Teal   | `#134E4A` |
-| Accent          | Soft Amber  | `#FBBF24` |
-| Background      | Soft Slate  | `#F8FAFC` |
-| Text            | Slate       | `#1E293B` |
+| Role | Color | Hex |
+|------|-------|-----|
+| Primary | Teal | `#0F766E` |
+| Accent | Soft Amber | `#FBBF24` |
 
-The palette is clean, modern and distinctive — suitable for an electronics store.
-
----
-
-## 🔧 Environment Variables
-
-### Backend (`.env`)
-```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-STRIPE_SECRET_KEY=...
-STRIPE_WEBHOOK_SECRET=...
-GOOGLE_CLIENT_ID=...
-```
-
-### Frontend (`.env`)
-```
-VITE_API_URL=http://localhost:5000/api
-VITE_STRIPE_PUBLISHABLE_KEY=...
-VITE_GOOGLE_CLIENT_ID=...
-```
-
----
-
-## 📝 Notes
-
-- The Navbar appears immediately (no “Checking authentication…” flash).
-- Logo is located at `/public/logo.svg` and is also used as the favicon.
-- Full RTL support when Arabic is selected.
-- Scroll-to-top button appears after scrolling 400px and matches the brand colors.
+Brand name: **Volt Store** / **فولت ستور**
 
 ---
 
@@ -177,6 +91,4 @@ VITE_GOOGLE_CLIENT_ID=...
 
 MIT
 
----
-
-Built with ❤️ using the MERN Stack
+Built with ❤️ — Volt Store

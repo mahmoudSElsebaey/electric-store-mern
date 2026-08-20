@@ -19,7 +19,7 @@ export default function Contact() {
   return (
     <>
       <section
-        className="relative bg-gradient-to-br from-teal-900 via-teal-800 to-slate-900 text-white py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden"
+        className="relative bg-gradient-to-br from-primary-dark via-primary to-slate-900 text-white py-16 sm:py-24 md:py-32 lg:py-40 overflow-hidden"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -38,7 +38,7 @@ export default function Contact() {
               <span>{t("contact.hero.whatsapp")}</span>
             </div>
             <div className="flex items-center gap-3">
-              <FaPhoneAlt className="w-8 h-8 sm:w-10 sm:h-10 text-amber-300" />
+              <FaPhoneAlt className="w-8 h-8 sm:w-10 sm:h-10 text-accent" />
               <span>{t("contact.hero.hotline")}</span>
             </div>
           </div>
@@ -67,7 +67,7 @@ export default function Contact() {
                   <input
                     type="text"
                     placeholder={t("contact.form.name_placeholder")}
-                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition text-base sm:text-lg"
+                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-primary focus:ring-4 focus:ring-primary/10 transition text-base sm:text-lg"
                     required
                   />
                 </div>
@@ -79,7 +79,7 @@ export default function Contact() {
                   <input
                     type="email"
                     placeholder={t("contact.form.email_placeholder")}
-                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition text-base sm:text-lg"
+                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-primary focus:ring-4 focus:ring-primary/10 transition text-base sm:text-lg"
                     required
                   />
                 </div>
@@ -91,7 +91,7 @@ export default function Contact() {
                   <input
                     type="tel"
                     placeholder={t("contact.form.phone_placeholder")}
-                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition text-base sm:text-lg"
+                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-primary focus:ring-4 focus:ring-primary/10 transition text-base sm:text-lg"
                   />
                 </div>
 
@@ -102,14 +102,14 @@ export default function Contact() {
                   <textarea
                     placeholder={t("contact.form.message_placeholder")}
                     rows={6}
-                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition text-base sm:text-lg resize-none"
+                    className="w-full px-5 sm:px-6 py-4 sm:py-5 rounded-xl border border-gray-300 focus:border-primary focus:ring-4 focus:ring-primary/10 transition text-base sm:text-lg resize-none"
                     required
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-teal-600 to-teal-800 text-white py-4 sm:py-5 rounded-xl text-lg sm:text-2xl font-bold hover:from-teal-700 hover:to-teal-900 transition transform hover:scale-[1.02] shadow-lg"
+                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-4 sm:py-5 rounded-xl text-lg sm:text-2xl font-bold hover:opacity-95 transition transform hover:scale-[1.02] shadow-lg"
                 >
                   {t("contact.form.submit")}
                 </button>
@@ -124,8 +124,8 @@ export default function Contact() {
 
                 <div className="space-y-6 sm:space-y-8 text-base sm:text-lg">
                   <div className="flex items-start gap-4 sm:gap-6">
-                    <div className="bg-teal-100 p-3 sm:p-4 rounded-full shrink-0">
-                      <FaPhoneAlt className="w-6 h-6 sm:w-8 sm:h-8 text-teal-600" />
+                    <div className="bg-primary-soft p-3 sm:p-4 rounded-full shrink-0">
+                      <FaPhoneAlt className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                     </div>
                     <div dir="ltr">
                       <p className="font-bold text-lg sm:text-xl">0100 123 4567</p>
@@ -148,14 +148,14 @@ export default function Contact() {
                       <FaEnvelope className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
                     </div>
                     <div dir="ltr">
-                      <p className="font-bold text-lg sm:text-xl">support@electrostore.eg</p>
+                      <p className="font-bold text-lg sm:text-xl">support@voltstore.eg</p>
                       <p className="text-gray-600">{t("contact.info.email")}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4 sm:gap-6">
-                    <div className="bg-teal-100 p-3 sm:p-4 rounded-full shrink-0">
-                      <FaMapMarkerAlt className="w-6 h-6 sm:w-8 sm:h-8 text-teal-600" />
+                    <div className="bg-primary-soft p-3 sm:p-4 rounded-full shrink-0">
+                      <FaMapMarkerAlt className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                     </div>
                     <div>
                       <p className="font-bold text-lg sm:text-xl">
@@ -183,10 +183,10 @@ export default function Contact() {
                     {t("contact.info.social_title")}
                   </h4>
                   <div className="flex flex-wrap gap-4 sm:gap-6">
-                    <a href="#" className="bg-teal-600 p-3 sm:p-4 rounded-full text-white hover:bg-teal-700 hover:-translate-y-1 transition shadow-md" target="_blank" rel="noopener noreferrer">
+                    <a href="#" className="bg-primary p-3 sm:p-4 rounded-full text-white hover:bg-primary-dark hover:-translate-y-1 transition shadow-md" target="_blank" rel="noopener noreferrer">
                       <FaFacebookF className="w-6 h-6 sm:w-8 sm:h-8" />
                     </a>
-                    <a href="#" className="bg-gradient-to-r from-teal-600 to-teal-800 p-3 sm:p-4 rounded-full text-white hover:from-teal-700 hover:to-teal-900 hover:-translate-y-1 transition shadow-md" target="_blank" rel="noopener noreferrer">
+                    <a href="#" className="bg-gradient-to-r from-primary to-primary-dark p-3 sm:p-4 rounded-full text-white hover:opacity-90 hover:-translate-y-1 transition shadow-md" target="_blank" rel="noopener noreferrer">
                       <FaInstagram className="w-6 h-6 sm:w-8 sm:h-8" />
                     </a>
                     <a href="#" className="bg-sky-500 p-3 sm:p-4 rounded-full text-white hover:bg-sky-600 hover:-translate-y-1 transition shadow-md" target="_blank" rel="noopener noreferrer">
@@ -208,7 +208,7 @@ export default function Contact() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="موقع المتجر"
+                  title="موقع فولت ستور"
                 ></iframe>
               </div>
             </div>
