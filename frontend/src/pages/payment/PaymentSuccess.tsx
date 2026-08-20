@@ -48,7 +48,7 @@ export default function PaymentSuccess() {
           <p className="text-muted text-sm sm:text-base mb-8">
             {t("payment_success.thanks", { defaultValue: "شكراً لتسوقك من" })}{" "}
             <span className="font-bold text-primary">
-              {t("footer.store_name")}
+              {t("footer.store_name", { defaultValue: "فولت ستور" })}
             </span>
           </p>
 

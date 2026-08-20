@@ -18,7 +18,7 @@ export default function Loading({
       <div className="relative">
         <img
           src="/logo.svg"
-          alt="Electrical Store"
+          alt="Volt Store"
           className="w-16 h-16 md:w-20 md:h-20 drop-shadow-md"
         />
         <div className="absolute inset-0 rounded-2xl bg-accent/20 blur-xl -z-10 scale-150" />
