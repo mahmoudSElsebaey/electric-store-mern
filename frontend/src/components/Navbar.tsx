@@ -15,12 +15,11 @@ import {
   FaBars,
   FaTimes,
   FaHeart,
-  FaGlobe, // أيقونة الكرة الأرضية للغة
-  FaChevronDown, // سهم الـ dropdown
+  FaGlobe,
+  FaChevronDown,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import NavbarSearch from "./NavbarSearch";
-
 
 function BrandName({ name, className = "" }: { name: string; className?: string }) {
   return (
@@ -44,7 +43,7 @@ export default function Navbar() {
   const { showToast } = useToast();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false); // dropdown اللغة
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,7 +56,6 @@ export default function Navbar() {
   const user = state.user;
   const isRTL = i18n.language === "ar";
 
-  // تحميل اللغة من localStorage عند التحميل الأول
   useEffect(() => {
     const savedLang = localStorage.getItem("language") as "ar" | "en" | null;
     if (savedLang && savedLang !== i18n.language) {
@@ -67,10 +65,9 @@ export default function Navbar() {
     }
   }, [i18n]);
 
-  // دالة تغيير اللغة مع حفظها في localStorage
   const changeLanguage = (lng: "ar" | "en") => {
     i18n.changeLanguage(lng);
-    localStorage.setItem("language", lng); // ← حفظ اللغة
+    localStorage.setItem("language", lng);
     document.documentElement.dir = lng === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = lng;
     setLangDropdownOpen(false);
@@ -115,7 +112,6 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  // إغلاق الـ dropdown عند الكليك خارجها
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -130,19 +126,16 @@ export default function Navbar() {
       ) {
         setLangDropdownOpen(false);
       }
-      // لا نغلق قائمة الموبايل من هنا — الزر والروابط تتكفل بذلك
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // قفل سكرول الصفحة خلف قائمة الموبايل + دعم الإغلاق بـ Escape
   useEffect(() => {
     if (!mobileMenuOpen) return;
 
     const prevOverflow = document.body.style.overflow;
     const prevPaddingRight = document.body.style.paddingRight;
-    // منع سكرول الخلفية مع الحفاظ على عرض الشريط الجانبي إن وُجد
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
     if (scrollbarW > 0) {
@@ -165,11 +158,8 @@ export default function Navbar() {
   const isAuthLoading = isAuthenticated === null;
 
   return (
-    <nav
-      className="bg-gradient-to-r from-primary-dark via-primary to-slate-900 text-white shadow-2xl sticky top-0 z-50"
-    >
+    <nav className="bg-gradient-to-r from-primary-dark via-primary to-slate-900 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        {/* اللوجو */}
         <button
           onClick={() => handleNavClick("/")}
           className="flex items-center gap-2.5 hover:opacity-90 transition cursor-pointer"
@@ -184,59 +174,38 @@ export default function Navbar() {
           </h1>
         </button>
 
-        {/* الروابط في الديسكتوب */}
         <div className="hidden lg:flex items-center gap-8 text-md font-medium">
           <button
             onClick={() => handleNavClick("/")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/")
-                ? "text-accent font-bold"
-                : "hover:text-accent"
-            }`}
+            className={`flex items-center gap-2 transition cursor-pointer ${isActive("/") ? "text-accent font-bold" : "hover:text-accent"}`}
           >
             <FaHome /> {t("navbar.home")}
           </button>
           <button
             onClick={() => handleNavClick("/store")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/store")
-                ? "text-accent font-bold"
-                : "hover:text-accent"
-            }`}
+            className={`flex items-center gap-2 transition cursor-pointer ${isActive("/store") ? "text-accent font-bold" : "hover:text-accent"}`}
           >
             <FaStore /> {t("navbar.store")}
           </button>
           <button
             onClick={() => handleNavClick("/about")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/about")
-                ? "text-accent font-bold"
-                : "hover:text-accent"
-            }`}
+            className={`flex items-center gap-2 transition cursor-pointer ${isActive("/about") ? "text-accent font-bold" : "hover:text-accent"}`}
           >
             <FaInfoCircle /> {t("navbar.about")}
           </button>
           <button
             onClick={() => handleNavClick("/contact")}
-            className={`flex items-center gap-2 transition cursor-pointer ${
-              isActive("/contact")
-                ? "text-accent font-bold"
-                : "hover:text-accent"
-            }`}
+            className={`flex items-center gap-2 transition cursor-pointer ${isActive("/contact") ? "text-accent font-bold" : "hover:text-accent"}`}
           >
             <FaEnvelope /> {t("navbar.contact")}
           </button>
         </div>
 
-        {/* الأزرار الجانبية */}
         <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
           <NavbarSearch variant="desktop" />
-          {/* السلة - تظهر دائماً */}
           <button
             onClick={handleCartClick}
-            className={`relative group cursor-pointer ${
-              isActive("/cart") ? "text-accent" : ""
-            }`}
+            className={`relative group cursor-pointer ${isActive("/cart") ? "text-accent" : ""}`}
             aria-label={t("navbar.cart")}
           >
             <FaShoppingCart className="text-2xl group-hover:scale-110 transition-transform" />
@@ -247,12 +216,9 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* المفضلة - ديسكتوب فقط */}
           <button
             onClick={() => handleNavClick("/wishlist")}
-            className={`hidden lg:block relative cursor-pointer ${
-              isActive("/wishlist") ? "text-accent" : ""
-            }`}
+            className={`hidden lg:block relative cursor-pointer ${isActive("/wishlist") ? "text-accent" : ""}`}
           >
             <FaHeart className="text-2xl hover:scale-110 transition-transform" />
             {wishlistCount > 0 && (
@@ -262,7 +228,6 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* حساب المستخدم */}
           {isAuthLoading ? (
             <div className="hidden lg:flex items-center gap-2 opacity-70">
               <div className="w-8 h-8 rounded-full bg-primary/50 animate-pulse" />
@@ -272,12 +237,10 @@ export default function Navbar() {
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className={`flex items-center gap-1 hover:text-accent transition font-semibold cursor-pointer ${
-                  isActive("/my-orders") ||
-                  isActive("/profile") ||
-                  isActive("/admin/dashboard")
+                  isActive("/my-orders") || isActive("/profile") || isActive("/admin/dashboard")
                     ? "text-accent"
                     : ""
-                } ${dropdownOpen && "text-accent"}`}
+                } ${dropdownOpen ? "text-accent" : ""}`}
               >
                 <span className="hidden sm:block">
                   {user?.name.split(" ")[0] || t("navbar.user")}
@@ -289,7 +252,7 @@ export default function Navbar() {
                 <div
                   className={`absolute mt-4 w-64 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 ${
                     i18n.language === "ar" ? "left-0" : "right-0"
-                  } `}
+                  }`}
                 >
                   <div className="px-6 py-4 bg-gradient-to-r from-primary to-primary-dark text-white text-center">
                     <p className="font-bold text-lg">{user?.name}</p>
@@ -344,20 +307,19 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Dropdown اللغة الجديد */}
           <div
             className={`hidden lg:block relative border-gray-100/50 ${
               i18n.language === "ar" ? "border-r" : "border-l"
-            } `}
+            }`}
             ref={langDropdownRef}
           >
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="flex items-center gap-2 px-4  transitioncursor-pointer cursor-pointer"
+              className="flex items-center gap-2 px-4 cursor-pointer"
             >
               <div
-                className={`flex  items-center gap-2 hover:text-accent ${
-                  langDropdownOpen && "text-accent font-bold"
+                className={`flex items-center gap-2 hover:text-accent ${
+                  langDropdownOpen ? "text-accent font-bold" : ""
                 }`}
               >
                 <FaGlobe className="text-[14px]" />
@@ -375,26 +337,25 @@ export default function Navbar() {
             {langDropdownOpen && (
               <div
                 className={`absolute top-full mt-2 right-0 bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 ${
-                  i18n.language === "ar" ? "" : " w-48 "
+                  i18n.language === "ar" ? "" : "w-48"
                 }`}
               >
                 <button
                   onClick={() => changeLanguage("ar")}
-                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3  cursor-pointer ${
-                    i18n.language === "ar"
-                      ? "bg-gray-200 hover:bg-gray-200 font-bold"
-                      : ""
-                  }`}
+                  className={
+                    "w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer " +
+                    (i18n.language === "ar" ? "bg-gray-200 hover:bg-gray-200 font-bold" : "")
+                  }
                 >
                   <span className="text-2xl">🇪🇬</span>
                   عربي
                 </button>
                 <button
                   onClick={() => changeLanguage("en")}
-                  className={`w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3  cursor-pointer ${\n                    i18n.language === "en"
-                      ? "bg-gray-200 hover:bg-gray-200 font-bold"
-                      : ""
-                  }`}
+                  className={
+                    "w-full text-right px-6 py-3 hover:bg-gray-100 transition flex items-center gap-3 cursor-pointer " +
+                    (i18n.language === "en" ? "bg-gray-200 hover:bg-gray-200 font-bold" : "")
+                  }
                 >
                   <span className="text-2xl">🇬🇧</span>
                   English
@@ -403,18 +364,16 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* زر الموبايل */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden text-3xl"
-            aria-label="قائمة"
+            aria-label="menu"
           >
             {mobileMenuOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu — scrollable panel under sticky bar */}
       {mobileMenuOpen && (
         <div
           className="lg:hidden border-t border-white/10 bg-gradient-to-b from-primary-dark to-slate-900 shadow-2xl max-h-[min(85dvh,calc(100dvh-4.5rem))] overflow-y-auto overscroll-contain touch-pan-y"
@@ -428,7 +387,6 @@ export default function Navbar() {
           >
             <NavbarSearch variant="mobile" />
 
-            {/* User chip on mobile */}
             {!isAuthLoading && isAuthenticated && user && (
               <div className="mb-3 flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
                 <div className="w-10 h-10 rounded-full bg-accent text-primary-dark flex items-center justify-center font-bold">
@@ -461,7 +419,6 @@ export default function Navbar() {
               </button>
             ))}
 
-            {/* Quick actions */}
             <div className="my-2 border-t border-white/15" />
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -490,7 +447,6 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Language toggle */}
             <button
               onClick={() => changeLanguage(i18n.language === "ar" ? "en" : "ar")}
               className="mt-2 flex items-center gap-3 rounded-xl px-4 py-3.5 text-white/90 hover:bg-white/10 transition"
@@ -499,7 +455,6 @@ export default function Navbar() {
               <span>{i18n.language === "ar" ? "English" : "العربية"}</span>
             </button>
 
-            {/* Auth actions */}
             {!isAuthLoading && isAuthenticated && (
               <>
                 <button
