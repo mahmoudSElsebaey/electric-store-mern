@@ -12,6 +12,10 @@ import { useLoginSchema, type LoginFormData } from "../validation/authSchemas";
 import { useState } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
+const DEMO = [
+  { role: "Owner", email: "owner@gmail.com", password: "owner123" },
+];
+
 export default function Login() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -26,9 +30,14 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      email: "owner@gmail.com",
+      password: "owner123",
+    },
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -69,6 +78,11 @@ export default function Login() {
 
   const handleGoogleError = () => {
     showToast(t("auth.errors.google_error") || "حدث خطأ مع جوجل", "error");
+  };
+
+  const fillDemo = (acc: (typeof DEMO)[0]) => {
+    setValue("email", acc.email, { shouldValidate: true });
+    setValue("password", acc.password, { shouldValidate: true });
   };
 
   return (
@@ -140,7 +154,26 @@ export default function Login() {
             {isSubmitting ? t("auth.login.loading") : t("auth.login.submit")}
           </button>
 
-          <div className="mt-6">
+          {/* Demo / test accounts */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Test accounts
+            </p>
+            {DEMO.map((acc) => (
+              <button
+                key={acc.email}
+                type="button"
+                onClick={() => fillDemo(acc)}
+                className="w-full text-start rounded-xl border border-teal-200 bg-teal-50/80 px-4 py-3 text-sm hover:border-teal-400 hover:bg-teal-50 transition"
+              >
+                <span className="font-semibold text-teal-700">{acc.role}</span>
+                <p className="mt-0.5 font-mono text-xs text-gray-600">{acc.email}</p>
+                <p className="font-mono text-xs text-gray-500">{acc.password}</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-2">
             <GoogleOAuthProvider
               clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
             >
